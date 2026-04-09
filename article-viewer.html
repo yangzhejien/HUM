@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Viewer | Humanity & Thought Journal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #F5F5F5;
+        }
+        .viewer-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .article-header {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--color-border);
+        }
+        .article-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .article-category.public {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .article-category.academic {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+        .article-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .article-meta {
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+        }
+        .pre-publication-notice {
+            background: #FEF3C7;
+            border: 1px solid #F59E0B;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        .pre-publication-notice strong {
+            color: #92400E;
+        }
+        .viewer-frame {
+            background: white;
+            border: 1px solid var(--color-border);
+            min-height: 600px;
+            position: relative;
+        }
+        .viewer-toolbar {
+            background: #FAFAFA;
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .zoom-btn:hover {
+            background: #E5E5E5;
+        }
+        .zoom-level {
+            min-width: 50px;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .page-btn:hover {
+            background: #E5E5E5;
+        }
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-indicator {
+            font-size: 0.875rem;
+        }
+        .fullscreen-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .fullscreen-btn:hover {
+            background: #E5E5E5;
+        }
+        .document-container {
+            padding: 2rem;
+            background: white;
+            min-height: 500px;
+            overflow: auto;
+        }
+        .document-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-size: 1rem;
+            transform-origin: top center;
+            transition: transform 0.2s ease;
+        }
+        .article-footer {
+            background: white;
+            padding: 1rem 2rem;
+            margin-top: 1rem;
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        .disclaimer {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--color-primary);
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-secondary);
+        }
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            color: #DC2626;
+        }
+        .fullscreen-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: white;
+            overflow: auto;
+        }
+        .fullscreen-mode .viewer-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem;
+        }
+        .fullscreen-mode .viewer-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .fullscreen-mode .document-container {
+            max-height: calc(100vh - 150px);
+            overflow: auto;
+        }
+        @media (max-width: 768px) {
+            .viewer-toolbar {
+                flex-direction: column;
+            }
+            .zoom-controls, .page-controls {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-container" id="viewerContainer">
+        <div id="articleContent">
+            <div class="loading">加载中... Loading article...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        const CONFIG = {
+            SUPABASE_URL: 'https://xbyywomrdepmbveideja.supabase.co',
+            SUPABASE_KEY: 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY'
+        };
+
+        // Get article ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
+
+        if (!articleId) {
+            document.getElementById('articleContent').innerHTML =
+                '<div class="error-message">未找到文章ID Article ID not found.<br><a href="javascript:history.back()">返回 Return</a></div>';
+            return;
+        }
+
+        let client = null;
+        let article = null;
+        let currentZoom = 100;
+
+        function init() {
+            if (typeof supabase !== 'undefined') {
+                client = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+                fetchArticle();
+            } else {
+                setTimeout(init, 50);
+            }
+        }
+
+        async function fetchArticle() {
+            try {
+                const { data, error } = await client
+                    .from('articles')
+                    .select('*')
+                    .eq('id', articleId)
+                    .single();
+
+                if (error) throw error;
+
+                article = data;
+                renderArticle();
+
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('articleContent').innerHTML =
+                    '<div class="error-message">无法加载文章 Unable to load article.<br><a href="javascript:history.back()">返回 Return</a></div>';
+            }
+        }
+
+        function renderArticle() {
+            if (!article) return;
+
+            const categoryClass = article.category === 'public' ? 'public' : 'academic';
+            const categoryLabel = article.category === 'public' ? 'HUM-Public 大众刊' : 'HUM-Academic 专业刊';
+            const backUrl = article.category === 'public' ? 'public.html' : 'academic.html';
+            const date = formatDate(article.created_at);
+
+            document.getElementById('articleContent').innerHTML = `
+                <div class="article-header">
+                    <span class="article-category ${categoryClass}">${categoryLabel}</span>
+                    <h1 class="article-title">${escapeHtml(article.title)}</h1>
+                    <p class="article-meta">${escapeHtml(article.author || 'Anonymous')} | ${date}</p>
+                    ${article.abstract ? '<p style="color: var(--color-text-secondary); line-height: 1.6;">' + escapeHtml(article.abstract) + '</p>' : ''}
+                </div>
+
+                <div class="pre-publication-notice">
+                    <strong>⚠️ 预出版声明 | Pre-Publication Notice</strong><br>
+                    本文为预出版版本，待ISSN获批后转为正式出版。<br>
+                    This is a pre-publication version. Upon ISSN approval, it will be converted to official publication.
+                </div>
+
+                <div class="viewer-frame" id="viewerFrame">
+                    <div class="viewer-toolbar">
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" onclick="zoomOut()" title="缩小 Zoom Out">−</button>
+                            <span class="zoom-level" id="zoomLevel">${currentZoom}%</span>
+                            <button class="zoom-btn" onclick="zoomIn()" title="放大 Zoom In">+</button>
+                            <button class="zoom-btn" onclick="resetZoom()" title="重置 Reset" style="font-size: 0.75rem;">100%</button>
+                        </div>
+                        <div class="page-controls">
+                            <button class="page-btn" onclick="prevPage()">◀ 上一页</button>
+                            <span class="page-indicator">页面 Page 1</span>
+                            <button class="page-btn" onclick="nextPage()">下一页 ▶</button>
+                        </div>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
+                    </div>
+                    <div class="document-container" id="documentContainer">
+                        <div class="document-content" id="documentContent" style="transform: scale(${currentZoom/100});">
+                            ${article.content ? article.content : '<p style="text-align: center; color: var(--color-text-secondary);">文章内容加载中... Loading article content...</p>'}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="article-footer">
+                    <p class="disclaimer">预出版版本｜仅用于学术参考<br>Pre-Publication Version | For Academic Reference Only</p>
+                    <a href="${backUrl}" class="back-link">← 返回列表 Back to List</a>
+                </div>
+            `;
+        }
+
+        function zoomIn() {
+            if (currentZoom < 200) {
+                currentZoom += 10;
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 50) {
+                currentZoom -= 10;
+                updateZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 100;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+            document.getElementById('documentContent').style.transform = `scale(${currentZoom/100})`;
+        }
+
+        function prevPage() {
+            // Simple page navigation - scroll up
+            window.scrollBy(0, -500);
+        }
+
+        function nextPage() {
+            // Simple page navigation - scroll down
+            window.scrollBy(0, 500);
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('viewerContainer');
+            const isFullscreen = container.classList.contains('fullscreen-mode');
+
+            if (isFullscreen) {
+                container.classList.remove('fullscreen-mode');
+                document.body.classList.remove('fullscreen-mode');
+            } else {
+                container.classList.add('fullscreen-mode');
+                document.body.classList.add('fullscreen-mode');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '+' || e.key === '=') {
+                zoomIn();
+            } else if (e.key === '-') {
+                zoomOut();
+            } else if (e.key === '0') {
+                resetZoom();
+            } else if (e.key === 'Escape') {
+                const container = document.getElementById('viewerContainer');
+                if (container.classList.contains('fullscreen-mode')) {
+                    toggleFullscreen();
+                }
+            }
+        });
+
+        init();
+
+</body>
+</html>

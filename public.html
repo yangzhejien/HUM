@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUM-Public | 大众刊 | Humanity & Thought Journal</title>
+    <meta name="description" content="HUM-Public - Open publication without barriers. Free expression of ideas.">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <span class="logo-main">HUM</span>
+                <span class="logo-sub">Journal</span>
+            </a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">首页 <span style="font-size:0.8em;color:#888;">Home</span></a>
+                <a href="public.html" class="nav-link active">大众刊 <span style="font-size:0.8em;color:#888;">Public</span></a>
+                <a href="academic.html" class="nav-link">专业刊 <span style="font-size:0.8em;color:#888;">Academic</span></a>
+                <a href="about.html" class="nav-link">关于 <span style="font-size:0.8em;color:#888;">About</span></a>
+                <a href="journal-info.html" class="nav-link">期刊 <span style="font-size:0.8em;color:#888;">Journal</span></a>
+                <a href="submission.html" class="nav-link">投稿 <span style="font-size:0.8em;color:#888;">Submit</span></a>
+                <a href="rules.html" class="nav-link">规则 <span style="font-size:0.8em;color:#888;">Rules</span></a>
+            </nav>
+            <a href="login.html" class="nav-link" style="color: var(--color-text-secondary);">Admin</a>
+            <button id="langToggle" onclick="HUM_LANG.toggle()" style="background:none;border:1px solid #0A2342;color:#0A2342;padding:0.25rem 0.75rem;cursor:pointer;font-size:0.875rem;margin-left:0.5rem;border-radius:3px;">中文</button>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="hero" style="padding: var(--spacing-lg) 0;">
+        <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">HUM-Public</h1>
+        <p class="hero-subtitle">大众刊 | 自由投稿区</p>
+    </section>
+
+    <!-- Search Box -->
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="输入标题、关键词、作者，检索大众刊文章 | Search by title, keywords, author">
+            <button onclick="performSearch()" class="search-btn">搜索 Search</button>
+        </div>
+        <div style="text-align: center; margin-top: 0.5rem;">
+            <a href="submission.html" style="font-size: 0.875rem; color: var(--color-primary);">投稿 Submit Article →</a>
+        </div>
+    </div>
+
+    <!-- Article List -->
+    <section class="content-section" style="padding-top: 0;">
+        <div class="article-list-container">
+            <div class="article-section-header">
+                <h2>大众刊 | HUM-Public</h2>
+                <p class="article-section-desc">所有人均可投稿，内容不违法即可发布<br>Open to all contributors. Published upon compliance verification.</p>
+            </div>
+
+            <div id="articlesList">
+                <div class="empty-state">
+                    <p>加载中... Loading...</p>
+                </div>
+            </div>
+
+            <div id="searchResults" style="display: none;">
+                <div style="margin-bottom: var(--spacing-md);">
+                    <h3 style="font-size: 1.25rem;">搜索结果 Search Results</h3>
+                    <p id="searchCount" style="color: var(--color-text-secondary); margin-top: 0.25rem;"></p>
+                    <button onclick="clearSearch()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: #E5E5E5; border: none; cursor: pointer; font-size: 0.875rem;">清除搜索 Clear Search</button>
+                </div>
+                <div id="searchResultsList"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-logo">Humanity & Thought Journal</div>
+                <div class="footer-slogan">"Freedom of Thought, Rational Expression"</div>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="about.html">About</a>
+                    <a href="journal-info.html">Journal</a>
+                    <a href="submission.html">Submit</a>
+                    <a href="rules.html">Rules</a>
+                </div>
+                <div class="footer-feature">全文支持Word在线浏览 | Full Word Online Viewing Support</div>
+                <div class="footer-copyright">© 2026 Kyrgyz. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/lang.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        const CONFIG = {
+            SUPABASE_URL: 'https://xbyywomrdepmbveideja.supabase.co',
+            SUPABASE_KEY: 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY'
+        };
+
+        let client = null;
+        let allArticles = [];
+
+        function init() {
+            if (typeof supabase !== 'undefined') {
+                client = supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY);
+                fetchArticles();
+            } else {
+                setTimeout(init, 50);
+            }
+        }
+
+        async function fetchArticles() {
+            try {
+                const { data, error } = await client
+                    .from('articles')
+                    .select('*')
+                    .eq('status', 'published')
+                    .eq('category', 'public')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allArticles = data || [];
+                renderArticles(allArticles);
+
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('articlesList').innerHTML =
+                    '<div class="empty-state"><p>无法加载文章 Unable to load articles.</p></div>';
+            }
+        }
+
+        function renderArticles(articles) {
+            const container = document.getElementById('articlesList');
+
+            if (!articles || articles.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>暂无文章 No articles yet.</p><p><a href="submission.html" style="color: var(--color-primary);">成为第一个投稿人 →</a></p></div>';
+                return;
+            }
+
+            container.innerHTML = articles.map(renderArticle).join('');
+        }
+
+        function renderArticle(article) {
+            const date = formatDate(article.created_at);
+            const author = escapeHtml(article.author || 'Anonymous');
+            const wordUrl = article.word_url || '#';
+
+            return '<div class="article-item">' +
+                '<div class="article-info">' +
+                    '<h3 class="article-title"><a href="article-viewer.html?id=' + article.id + '">' + escapeHtml(article.title) + '</a></h3>' +
+                    '<p class="article-meta">' + author + ' | ' + date + '</p>' +
+                '</div>' +
+                '<a href="article-viewer.html?id=' + article.id + '" class="word-view-btn">Word在线浏览 Word View →</a>' +
+            '</div>';
+        }
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            if (!query) {
+                clearSearch();
+                return;
+            }
+
+            // Search in public articles only
+            const results = allArticles.filter(article => {
+                const title = (article.title || '').toLowerCase();
+                const author = (article.author || '').toLowerCase();
+                const keywords = (article.keywords || '').toLowerCase();
+                const abstract = (article.abstract || '').toLowerCase();
+
+                return title.includes(query) || author.includes(query) ||
+                       keywords.includes(query) || abstract.includes(query);
+            });
+
+            // Show results
+            document.getElementById('articlesList').style.display = 'none';
+            document.getElementById('searchResults').style.display = 'block';
+            document.getElementById('searchCount').textContent = '找到 ' + results.length + ' 篇文章 Found ' + results.length + ' articles';
+
+            const resultsContainer = document.getElementById('searchResultsList');
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<div class="empty-state"><p>未找到相关文章 No articles found.</p></div>';
+            } else {
+                resultsContainer.innerHTML = results.map(renderArticle).join('');
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('articlesList').style.display = 'block';
+            document.getElementById('searchResults').style.display = 'none';
+        }
+
+        // Enter key search
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        init();
+
+</body>
+</html>

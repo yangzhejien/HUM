@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit | 投稿 | HUM Journal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .upload-box { border: 2px dashed #E5E5E5; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: #FAFAFA; }
+        .upload-box:hover { border-color: #0A2342; background: rgba(10,35,66,0.05); }
+        .upload-box.processing { border-color: #3B82F6; background: #EFF6FF; }
+        .upload-box.success { border-color: #10B981; background: #D1FAE5; }
+        .upload-box.error { border-color: #DC2626; background: #FEE2E2; }
+        label a { color: #0A2342; text-decoration: underline; }
+        #progressBar { width: 100%; height: 8px; background: #E5E7EB; margin-top: 1rem; border-radius: 4px; overflow: hidden; display: none; }
+        #progressBar .progress { height: 100%; background: #10B981; width: 0%; transition: width 0.3s; }
+        #pdfPreview { display: none; margin-top: 1rem; padding: 1rem; background: #F3F4F6; border: 1px solid #E5E7EB; }
+        #pdfPreview iframe { width: 100%; height: 500px; border: 1px solid #E5E7EB; background: white; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="index.html" class="logo"><span class="logo-main">HUM</span><span class="logo-sub">Journal</span></a>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="public.html" class="nav-link">大众刊</a>
+                <a href="academic.html" class="nav-link">专业刊</a>
+                <a href="about.html" class="nav-link">关于</a>
+                <a href="submission.html" class="nav-link active">投稿</a>
+                <a href="rules.html" class="nav-link">规则</a>
+            </nav>
+            <a href="login.html" class="nav-link">Admin</a>
+        </div>
+    </header>
+
+    <section class="hero" style="padding: 3rem 0;">
+        <h1 style="font-size: 3rem;">Submission</h1>
+        <p class="hero-subtitle">投稿</p>
+    </section>
+
+    <section class="content-section">
+        <div class="container" style="max-width: 900px;">
+            <div style="background: #0A2342; padding: 1.5rem; margin-bottom: 2rem;">
+                <h3 style="color: white; margin-bottom: 0.5rem;">投稿方式 Submission Method</h3>
+                <p style="color: white; opacity: 0.9; font-size: 0.9rem;">
+                    上传 PDF 文件 → 直接发布<br>
+                    Upload PDF → Publish directly
+                </p>
+            </div>
+
+            <div id="messageBox" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;"></div>
+
+            <form id="submissionForm" style="background: white; padding: 2rem; border: 1px solid #E5E5E5;">
+                <h3 style="margin-bottom: 1.5rem;">文章信息 Article Information</h3>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">标题 Title *</label>
+                        <input type="text" id="articleTitle" required placeholder="Enter title / 输入标题" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">作者 Author *</label>
+                        <input type="text" id="articleAuthor" required placeholder="Enter name / 输入作者" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">邮箱 Email *</label>
+                    <input type="email" id="articleEmail" required placeholder="For notifications / 接收通知" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">摘要 Abstract</label>
+                    <textarea id="articleAbstract" rows="3" placeholder="Enter abstract / 输入摘要" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; resize: vertical;"></textarea>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">关键词 Keywords</label>
+                    <input type="text" id="articleKeywords" placeholder="keyword1, keyword2 / 关键词1, 关键词2" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">板块 Section *</label>
+                    <select id="articleCategory" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                        <option value="public">HUM-Public 大众刊 (直接发布)</option>
+                        <option value="academic">HUM-Academic 专业刊 (需审核)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">
+                        论文文件 PDF File (.pdf) *
+                        <span style="font-weight: normal; font-size: 0.875rem; color: #666; margin-left: 0.5rem;">(推荐 / Recommended)</span>
+                    </label>
+                    <div class="upload-box" id="uploadBox">
+                        <p id="uploadIcon" style="font-size: 3rem; margin-bottom: 0.5rem;">📄</p>
+                        <p id="uploadText" style="font-weight: 500;">点击或拖拽上传 PDF 文件</p>
+                        <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">Click or drag to upload PDF file</p>
+                        <input type="file" id="pdfFile" style="display: none;" accept=".pdf" onchange="handleFileSelect(this)">
+                    </div>
+                    <div id="fileInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: #D1FAE5; border: 1px solid #10B981;">
+                        <p id="fileName" style="font-weight: 500;"></p>
+                        <p id="fileStatus" style="font-size: 0.875rem; color: #065F46; margin-top: 0.5rem;"></p>
+                        <div id="progressBar"><div class="progress"></div></div>
+                    </div>
+                    <div id="pdfPreview">
+                        <p style="font-weight: 500; margin-bottom: 0.5rem;">PDF 预览 PDF Preview:</p>
+                        <iframe id="pdfIframe"></iframe>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: flex; align-items: center;">
+                        <input type="checkbox" id="agreeRules" required style="width: 18px; height: 18px; margin-right: 0.5rem;">
+                        <span>我已阅读并同意 <a href="rules.html" target="_blank">审核规则</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" id="submitBtn" style="width: 100%; padding: 1rem; background: #0A2342; color: white; border: none; font-size: 1rem; font-weight: 500; cursor: pointer;">
+                    提交投稿 Submit Article
+                </button>
+            </form>
+
+            <div style="margin-top: 2rem; padding: 1.5rem; border: 1px solid #E5E5E5; text-align: center;">
+                <p>备用投稿 / Alternative: <a href="mailto:yangll_0502@qq.com">yangll_0502@qq.com</a></p>
+                <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">格式 Format: [HUM-Public/HUM-Academic] Title - Author</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-logo">Humanity & Thought Journal</div>
+                <div class="footer-copyright">© 2026 Kyrgyz. All rights reserved.</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // ============================================================
+        // Supabase 配置 - 请替换为您的项目凭据
+        // 获取地址: Supabase Dashboard -> Settings -> API
+        // ============================================================
+        const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhieXl3b21yZGVwbWJ2ZWlkZWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwNjM3MDAsImV4cCI6MjA1OTYzOTcwMH0.W-xFtJtNp9TESF3RBn3xkstoDg3_7IbNJ7pl7LUBvRo';
+
+        let supabase = null;
+        let selectedFile = null;
+        let uploadedUrl = null;
+        let useLocalMode = false;
+
+        // 初始化 Supabase
+        function initSupabase() {
+            if (typeof window.supabase === 'undefined') {
+                console.error('Supabase SDK 未加载');
+                showMessage('Supabase SDK 未加载，请刷新页面', true);
+                useLocalMode = true;
+                return;
+            }
+
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase client initialized');
+                testConnection();
+            } catch (error) {
+                console.error('Supabase 初始化失败:', error);
+                showMessage('Supabase 配置错误: ' + error.message, true);
+                useLocalMode = true;
+            }
+        }
+
+        async function testConnection() {
+            try {
+                const { data, error } = await supabase.storage.listBuckets();
+                if (error) {
+                    console.error('Storage 连接错误:', error.message);
+
+                    if (error.message.includes('signature') || error.message.includes('JWT')) {
+                        showMessage('⚠️ Supabase 凭据无效，请检查 API 密钥', true);
+                    } else {
+                        showMessage('⚠️ Storage 连接失败: ' + error.message, true);
+                    }
+                    useLocalMode = true;
+                    return;
+                }
+
+                console.log('✅ Supabase Storage 连接成功');
+                console.log('可用存储桶:', data.map(b => b.name));
+
+                const papersBucket = data.find(b => b.name === 'papers');
+                if (!papersBucket) {
+                    console.warn('⚠️ papers 存储桶不存在，请在 Storage 中创建');
+                    showMessage('⚠️ 请在 Storage 中创建 papers 桶', true);
+                }
+            } catch (error) {
+                console.error('连接测试失败:', error);
+                useLocalMode = true;
+            }
+        }
+
+        // 文件选择处理
+        function handleFileSelect(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            if (!file.name.endsWith('.pdf')) {
+                showMessage('请上传 PDF 文件 / Please upload PDF file', true);
+                return;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                showMessage('文件过大，最大 50MB', true);
+                return;
+            }
+
+            selectedFile = file;
+            document.getElementById('uploadBox').classList.add('processing');
+            document.getElementById('uploadBox').classList.remove('success', 'error');
+            document.getElementById('fileInfo').style.display = 'block';
+            document.getElementById('fileName').textContent = '📄 ' + file.name + ' (' + formatSize(file.size) + ')';
+            document.getElementById('fileStatus').textContent = '准备上传... / Ready...';
+            document.getElementById('progressBar').style.display = 'block';
+            document.getElementById('progressBar').querySelector('.progress').style.width = '10%';
+
+            showPdfPreview(file);
+            document.getElementById('fileStatus').textContent = 'PDF 已选择';
+            document.getElementById('progressBar').querySelector('.progress').style.width = '100%';
+            document.getElementById('uploadBox').classList.remove('processing');
+            document.getElementById('uploadBox').classList.add('success');
+            document.getElementById('uploadIcon').textContent = '✅';
+
+            uploadFile(file);
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function showPdfPreview(file) {
+            const previewDiv = document.getElementById('pdfPreview');
+            const iframe = document.getElementById('pdfIframe');
+            iframe.src = URL.createObjectURL(file);
+            previewDiv.style.display = 'block';
+        }
+
+        // 上传到 Supabase Storage
+        async function uploadFile(file) {
+            const progressBar = document.getElementById('progressBar').querySelector('.progress');
+            const title = document.getElementById('articleTitle').value.trim() || file.name.replace(/\.[^/.]+$/, '');
+            const safeName = title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_').substring(0, 50);
+            const timestamp = Date.now();
+            const randomStr = Math.random().toString(36).substring(2, 8);
+            const fileName = `${safeName}_${timestamp}_${randomStr}.pdf`;
+
+            if (useLocalMode || !supabase) {
+                document.getElementById('fileStatus').textContent = '本地模式：保存到浏览器...';
+                progressBar.style.width = '100%';
+                uploadedUrl = URL.createObjectURL(file);
+                showMessage('✅ 已保存到本地（请配置 Supabase 以启用云端存储）', false);
+                return;
+            }
+
+            try {
+                document.getElementById('fileStatus').textContent = '上传中... / Uploading...';
+                progressBar.style.width = '30%';
+
+                const { data, error } = await supabase.storage
+                    .from('papers')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false,
+                        contentType: 'application/pdf'
+                    });
+
+                if (error) throw error;
+
+                progressBar.style.width = '80%';
+                document.getElementById('fileStatus').textContent = '获取链接... / Getting URL...';
+
+                const { data: urlData } = supabase.storage
+                    .from('papers')
+                    .getPublicUrl(fileName);
+
+                uploadedUrl = urlData.publicUrl;
+                console.log('File uploaded:', uploadedUrl);
+
+                progressBar.style.width = '100%';
+                document.getElementById('uploadBox').classList.remove('processing');
+                document.getElementById('uploadBox').classList.add('success');
+                document.getElementById('uploadIcon').textContent = '✅';
+                document.getElementById('fileStatus').textContent = '上传成功！/ Upload successful!';
+
+            } catch (error) {
+                console.error('Upload error:', error);
+                document.getElementById('uploadBox').classList.remove('processing');
+                document.getElementById('uploadBox').classList.add('error');
+                document.getElementById('uploadIcon').textContent = '❌';
+                document.getElementById('fileStatus').textContent = '上传失败';
+
+                if (error.message.includes('signature') || error.message.includes('JWT')) {
+                    showMessage('❌ Supabase 凭据无效！请检查 API 密钥', true);
+                    useLocalMode = true;
+                } else {
+                    showMessage('❌ 上传失败: ' + error.message, true);
+                }
+
+                uploadedUrl = URL.createObjectURL(selectedFile);
+            }
+        }
+
+        // 表单提交
+        document.getElementById('submissionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('articleTitle').value.trim();
+            const author = document.getElementById('articleAuthor').value.trim();
+            const email = document.getElementById('articleEmail').value.trim();
+            const abstract = document.getElementById('articleAbstract').value.trim();
+            const keywords = document.getElementById('articleKeywords').value.trim();
+            const category = document.getElementById('articleCategory').value;
+
+            if (!title || !author || !email) {
+                showMessage('请填写所有必填项 / Please fill all required fields', true);
+                return;
+            }
+
+            if (!selectedFile && !uploadedUrl) {
+                showMessage('请上传 PDF 文件 / Please upload PDF file', true);
+                return;
+            }
+
+            if (!document.getElementById('agreeRules').checked) {
+                showMessage('请阅读并同意审核规则 / Please agree to rules', true);
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = '提交中... / Submitting...';
+
+            const status = category === 'public' ? 'published' : 'pending';
+
+            const article = {
+                title,
+                author,
+                email,
+                abstract,
+                keywords,
+                category,
+                status,
+                file_url: uploadedUrl || '',
+                file_name: selectedFile ? selectedFile.name : 'document.pdf',
+                content: abstract || 'PDF file: ' + (uploadedUrl || 'local file'),
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                if (supabase && !useLocalMode) {
+                    const { data, error } = await supabase
+                        .from('articles')
+                        .insert([article])
+                        .select()
+                        .single();
+
+                    if (error) throw error;
+                    console.log('Article saved:', data);
+                    article.id = data?.id;
+                }
+
+                const localArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]');
+                article.id = article.id || Date.now().toString();
+                localArticles.push(article);
+                localStorage.setItem('hum_articles', JSON.stringify(localArticles));
+
+                showMessage(
+                    category === 'public'
+                        ? '✅ 文章已发布！/ Article published!'
+                        : '✅ 已提交审核！/ Submitted for review!',
+                    false
+                );
+
+                setTimeout(() => {
+                    document.getElementById('submissionForm').reset();
+                    resetUploadArea();
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '提交投稿 Submit Article';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Submit error:', error);
+
+                const localArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]');
+                article.id = Date.now().toString();
+                article.file_path = 'local/' + article.id;
+                localArticles.push(article);
+                localStorage.setItem('hum_articles', JSON.stringify(localArticles));
+
+                showMessage('⚠️ 已保存到本地 / Saved locally', false);
+                submitBtn.disabled = false;
+                submitBtn.textContent = '提交投稿 Submit Article';
+            }
+        });
+
+        function resetUploadArea() {
+            selectedFile = null;
+            uploadedUrl = null;
+            document.getElementById('uploadBox').classList.remove('success', 'processing', 'error');
+            document.getElementById('uploadIcon').textContent = '📄';
+            document.getElementById('uploadText').textContent = '点击或拖拽上传 PDF 文件';
+            document.getElementById('fileInfo').style.display = 'none';
+            document.getElementById('pdfPreview').style.display = 'none';
+            document.getElementById('pdfIframe').src = '';
+        }
+
+        function showMessage(msg, isError) {
+            const box = document.getElementById('messageBox');
+            box.textContent = msg;
+            box.style.display = 'block';
+            box.style.background = isError ? '#FEE2E2' : '#D1FAE5';
+            box.style.borderColor = isError ? '#DC2626' : '#10B981';
+            box.style.color = isError ? '#991B1B' : '#065F46';
+            if (!isError) setTimeout(() => { box.style.display = 'none'; }, 5000);
+        }
+
+        // 拖拽上传
+        const uploadBox = document.getElementById('uploadBox');
+        uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.style.borderColor = '#0A2342'; });
+        uploadBox.addEventListener('dragleave', e => { e.preventDefault(); uploadBox.style.borderColor = '#E5E5E5'; });
+        uploadBox.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadBox.style.borderColor = '#E5E5E5';
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                document.getElementById('pdfFile').files = e.dataTransfer.files;
+                handleFileSelect(document.getElementById('pdfFile'));
+            }
+        });
+        uploadBox.addEventListener('click', () => document.getElementById('pdfFile').click());
+
+        // 初始化
+        initSupabase();
+
+</body>
+</html>
