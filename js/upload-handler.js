@@ -5,7 +5,7 @@
 
 // Supabase configuration
 const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qzzc_9VfWz0yKf1mR4xL7sP2nQ5jH8gB';
+const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
 
 let supabase = null;
 
@@ -130,12 +130,12 @@ async function uploadToStorage(file, fileName) {
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 8);
     const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filePath = `papers/${timestamp}_${randomStr}_${safeFileName}`;
+    const filePath = `${timestamp}_${randomStr}_${safeFileName}`;
 
     try {
         // Upload file
         const { data, error } = await client.storage
-            .from('papers')
+            .from('articles')
             .upload(filePath, file, {
                 cacheControl: '3600',
                 upsert: false,
@@ -149,7 +149,7 @@ async function uploadToStorage(file, fileName) {
 
         // Get public URL
         const { data: urlData } = client.storage
-            .from('papers')
+            .from('articles')
             .getPublicUrl(filePath);
 
         return {

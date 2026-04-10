@@ -3,7 +3,7 @@
 
 // Supabase configuration
 const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhieXl3b21yZGVwbWJ2ZWlkZWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwNjM3MDAsImV4cCI6MjA1OTYzOTcwMH0.W-xFtJtNp9TESF3RBn3xkstoDg3_7IbNJ7pl7LUBvRo';
+const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
 
 let supabaseClient = null;
 let useSupabase = false;

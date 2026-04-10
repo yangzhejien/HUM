@@ -3,7 +3,7 @@
 
 // Supabase configuration
 const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qzzc_9VfWz0yKf1mR4xL7sP2nQ5jH8gB';
+const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
 
 // Note: In production, these should be environment variables
 // For now, we'll use a simple approach with fetch API
