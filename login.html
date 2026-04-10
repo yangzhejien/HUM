@@ -90,16 +90,6 @@
         .back-link:hover {
             color: #0A2342;
         }
-        .admin-info {
-            font-size: 0.75rem;
-            color: #6B7280;
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid #E5E5E5;
-        }
-        .admin-info strong {
-            color: #0A2342;
-        }
     </style>
 </head>
 <body>
@@ -110,8 +100,8 @@
 
             <form id="loginForm">
                 <div class="form-group">
-                    <label class="form-label" for="email">Username / 用户名</label>
-                    <input type="text" id="email" class="form-input" placeholder="Enter your username" required>
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
                 </div>
 
                 <div class="form-group">
@@ -125,146 +115,74 @@
             </form>
 
             <a href="index.html" class="back-link">← Back to Home / 返回首页</a>
-
-            <div class="admin-info">
-                <strong>Admin Accounts:</strong><br>
-                主编: Orion<br>
-                编辑: Lyra
-            </div>
         </div>
     </div>
 
     <script>
-        // Security Configuration
+        // Supabase config
+        const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
+        const HASH_SALT = 'hum_salt_v1';
+
+        // Rate limiting
         const MAX_LOGIN_ATTEMPTS = 5;
-        const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
-        const REQUEST_LIMIT = 10; // Max requests per second
-        const REQUEST_WINDOW = 1000; // 1 second window
+        const LOCKOUT_DURATION = 15 * 60 * 1000;
 
-        // Admin accounts configuration - supports multiple passwords per account
-        const ADMIN_ACCOUNTS = {
-            'yangll_0502@qq.com': {
-                passwords: ['HUM@Orion_2026!', 'K3p#xZ9$qL7', 'V8s&2mP#wR5'],
-                role: 'admin',
-                name: '主编/审核',
-                displayName: 'Orion'
-            },
-            'dmh12345676@qq.com': {
-                passwords: ['HUM@Lyra_2026!', 'T4g#7sN$pM2', 'X6d&9fB#vC1'],
-                role: 'editor',
-                name: '编辑/排版',
-                displayName: 'Lyra'
-            }
-        };
-
-        // Helper function to get client IP (simulated - in production would need backend)
-        function getClientIP() {
-            return 'client_' + Math.random().toString(36).substring(7);
-        }
-
-        // Login attempt tracking
         function getLoginAttempts() {
-            const attempts = localStorage.getItem('login_attempts');
-            return attempts ? JSON.parse(attempts) : {};
+            try { return JSON.parse(localStorage.getItem('login_attempts') || '{}'); }
+            catch { return {}; }
         }
 
-        function recordFailedAttempt(ip) {
+        function recordFailedAttempt() {
             const attempts = getLoginAttempts();
             const now = Date.now();
+            if (!attempts.lockedUntil) attempts.lockedUntil = 0;
+            if (!attempts.count) attempts.count = 0;
 
-            if (!attempts[ip]) {
-                attempts[ip] = { count: 0, lockedUntil: 0 };
+            if (attempts.lockedUntil > now) return true;
+
+            attempts.count++;
+            if (attempts.count >= MAX_LOGIN_ATTEMPTS) {
+                attempts.lockedUntil = now + LOCKOUT_DURATION;
+                attempts.count = 0;
             }
-
-            // Check if still locked
-            if (attempts[ip].lockedUntil > now) {
-                return true;
-            }
-
-            attempts[ip].count++;
-
-            // Lock after MAX_LOGIN_ATTEMPTS failures
-            if (attempts[ip].count >= MAX_LOGIN_ATTEMPTS) {
-                attempts[ip].lockedUntil = now + LOCKOUT_DURATION;
-                attempts[ip].count = 0;
-            }
-
             localStorage.setItem('login_attempts', JSON.stringify(attempts));
-            return attempts[ip].lockedUntil > now;
+            return attempts.lockedUntil > now;
         }
 
-        function clearLoginAttempts(ip) {
-            const attempts = getLoginAttempts();
-            if (attempts[ip]) {
-                delete attempts[ip];
-                localStorage.setItem('login_attempts', JSON.stringify(attempts));
-            }
+        function clearLoginAttempts() {
+            localStorage.removeItem('login_attempts');
         }
 
-        function getLockoutTimeRemaining(ip) {
+        function getLockoutRemaining() {
             const attempts = getLoginAttempts();
-            if (attempts[ip] && attempts[ip].lockedUntil > Date.now()) {
-                return Math.ceil((attempts[ip].lockedUntil - Date.now()) / 1000);
+            if (attempts.lockedUntil && attempts.lockedUntil > Date.now()) {
+                return Math.ceil((attempts.lockedUntil - Date.now()) / 1000);
             }
             return 0;
         }
 
-        // Request rate limiting
-        function getRequestCounts() {
-            const counts = localStorage.getItem('request_counts');
-            return counts ? JSON.parse(counts) : {};
+        // SHA-256 hash (Web Crypto API)
+        async function hashPassword(password) {
+            const data = HASH_SALT + password;
+            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data));
+            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        function checkRateLimit(ip) {
-            const counts = getRequestCounts();
-            const now = Date.now();
-
-            // Clean old entries
-            if (!counts[ip]) {
-                counts[ip] = { count: 0, windowStart: now };
-            }
-
-            // Reset if window has passed
-            if (now - counts[ip].windowStart > REQUEST_WINDOW) {
-                counts[ip] = { count: 0, windowStart: now };
-            }
-
-            counts[ip].count++;
-            localStorage.setItem('request_counts', JSON.stringify(counts));
-
-            return counts[ip].count <= REQUEST_LIMIT;
-        }
-
-        // Operation logging
-        function logOperation(action, details) {
-            const logs = JSON.parse(localStorage.getItem('operation_logs') || '[]');
-            const logEntry = {
-                timestamp: new Date().toISOString(),
-                action: action,
-                adminEmail: sessionStorage.getItem('adminEmail') || 'unknown',
-                adminName: sessionStorage.getItem('adminName') || 'unknown',
-                details: details,
-                ip: getClientIP()
-            };
-            logs.unshift(logEntry);
-            // Keep only last 1000 entries
-            if (logs.length > 1000) logs.pop();
-            localStorage.setItem('operation_logs', JSON.stringify(logs));
-        }
-
-        // Login logging
-        function logLoginAttempt(email, success) {
-            const logs = JSON.parse(localStorage.getItem('login_logs') || '[]');
-            const logEntry = {
-                timestamp: new Date().toISOString(),
-                email: email,
-                success: success,
-                ip: getClientIP()
-            };
-            logs.unshift(logEntry);
-            // Keep only last 1000 entries
-            if (logs.length > 1000) logs.pop();
-            localStorage.setItem('login_logs', JSON.stringify(logs));
+        // Query Supabase admins table
+        async function verifyLogin(email, passwordHash) {
+            const resp = await fetch(
+                `${SUPABASE_URL}/rest/v1/admins?email=eq.${encodeURIComponent(email)}&password_hash=eq.sha256$${HASH_SALT}$${passwordHash}&select=*`,
+                {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                }
+            );
+            if (!resp.ok) throw new Error('Query failed');
+            const data = await resp.json();
+            return data.length > 0 ? data[0] : null;
         }
 
         const loginForm = document.getElementById('loginForm');
@@ -272,54 +190,49 @@
         const passwordInput = document.getElementById('password');
         const loginError = document.getElementById('loginError');
         const submitBtn = document.getElementById('submitBtn');
-        const clientIP = getClientIP();
 
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            loginError.style.display = 'none';
 
-            // Check rate limit
-            if (!checkRateLimit(clientIP)) {
-                showError('请求过于频繁，请稍后再试。');
+            if (recordFailedAttempt()) {
+                const remaining = getLockoutRemaining();
+                showError('登录尝试过多，请 ' + remaining + ' 秒后重试。');
                 return;
             }
 
-            // Check if locked out
-            if (recordFailedAttempt(clientIP)) {
-                const remaining = getLockoutTimeRemaining(clientIP);
-                showError(`登录尝试过多，请 ${remaining} 秒后重试。`);
-                return;
-            }
-
-            const email = emailInput.value.toLowerCase().trim();
+            const email = emailInput.value.trim().toLowerCase();
             const password = passwordInput.value;
 
-            // Sanitize input to prevent XSS
-            const sanitizedEmail = email.replace(/[<>\"\'%;()&+]/g, '');
-
-            // Check if email is allowed
-            if (!ADMIN_ACCOUNTS[sanitizedEmail]) {
-                logLoginAttempt(sanitizedEmail, false);
-                showError('账号或密码错误。');
+            if (!email || !password) {
+                showError('请输入邮箱和密码。');
                 return;
             }
 
-            // Verify password (check if password is in the allowed list)
-            if (!ADMIN_ACCOUNTS[sanitizedEmail].passwords.includes(password)) {
-                logLoginAttempt(sanitizedEmail, false);
-                showError('账号或密码错误。');
-                return;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Verifying...';
+
+            try {
+                const passwordHash = await hashPassword(password);
+                const admin = await verifyLogin(email, passwordHash);
+
+                if (admin) {
+                    clearLoginAttempts();
+                    sessionStorage.setItem('adminLoggedIn', 'true');
+                    sessionStorage.setItem('adminEmail', admin.email);
+                    sessionStorage.setItem('adminRole', admin.role);
+                    sessionStorage.setItem('adminName', admin.name);
+                    window.location.href = 'admin.html';
+                } else {
+                    showError('账号或密码错误。');
+                }
+            } catch (err) {
+                console.error('[Login]', err);
+                showError('登录服务暂时不可用，请稍后重试。');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Login / 登录';
             }
-
-            // Login success - clear failed attempts and store session
-            clearLoginAttempts(clientIP);
-            logLoginAttempt(sanitizedEmail, true);
-
-            sessionStorage.setItem('adminLoggedIn', 'true');
-            sessionStorage.setItem('adminEmail', sanitizedEmail);
-            sessionStorage.setItem('adminRole', ADMIN_ACCOUNTS[sanitizedEmail].role);
-            sessionStorage.setItem('adminName', ADMIN_ACCOUNTS[sanitizedEmail].name);
-
-            window.location.href = 'admin.html';
         });
 
         function showError(msg) {
@@ -327,16 +240,8 @@
             loginError.style.display = 'block';
         }
 
-        // Clear error when typing
-        emailInput.addEventListener('input', function() {
-            loginError.style.display = 'none';
-        });
-
-        passwordInput.addEventListener('input', function() {
-            loginError.style.display = 'none';
-        });
-
-        // Expose logOperation for admin page to use
-
+        emailInput.addEventListener('input', function() { loginError.style.display = 'none'; });
+        passwordInput.addEventListener('input', function() { loginError.style.display = 'none'; });
+    </script>
 </body>
 </html>
