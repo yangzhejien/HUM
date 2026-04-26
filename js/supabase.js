@@ -1,9 +1,9 @@
-// HUM Journal - Supabase Integration
+﻿// HUM Journal - Supabase Integration
 // This module handles all database operations with Supabase
 
 // Supabase configuration
-const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
+const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
 
 // Note: In production, these should be environment variables
 // For now, we'll use a simple approach with fetch API
@@ -113,3 +113,4 @@ async function checkSupabaseAvailability() {
         return false;
     }
 }
+

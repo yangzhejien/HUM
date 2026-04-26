@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -375,12 +375,12 @@
     <div class="admin-container">
         <header class="admin-header">
             <div>
-                <h1>HUM Journal Admin / 管理后台</h1>
+                <h1>HUM Journal Admin / 绠＄悊鍚庡彴</h1>
                 <span id="adminInfo" style="font-size: 0.875rem; opacity: 0.8;"></span>
             </div>
             <div>
                 <a href="index.html" class="logout-btn" style="margin-right: 0.5rem;">Home</a>
-                <a href="login.html" class="logout-btn" onclick="logout()">Logout / 退出</a>
+                <a href="login.html" class="logout-btn" onclick="logout()">Logout / 閫€鍑?/a>
             </div>
         </header>
 
@@ -393,36 +393,36 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number" id="statTotal">0</div>
-                    <div class="stat-label">Total Articles / 总文章</div>
+                    <div class="stat-label">Total Articles / 鎬绘枃绔?/div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="statPublished">0</div>
-                    <div class="stat-label">Published / 已发布</div>
+                    <div class="stat-label">Published / 宸插彂甯?/div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="statPending">0</div>
-                    <div class="stat-label">Pending / 待审核</div>
+                    <div class="stat-label">Pending / 寰呭鏍?/div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="statPublic">0</div>
-                    <div class="stat-label">Public / 大众刊</div>
+                    <div class="stat-label">Public / 澶т紬鍒?/div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="statAcademic">0</div>
-                    <div class="stat-label">Academic / 专业刊</div>
+                    <div class="stat-label">Academic / 涓撲笟鍒?/div>
                 </div>
             </div>
 
             <!-- Add Article Section -->
             <div class="admin-section">
-                <h2 id="formTitle">Add New Article / 添加新文章</h2>
+                <h2 id="formTitle">Add New Article / 娣诲姞鏂版枃绔?/h2>
 
                 <div class="info-box">
-                    <strong>📝 投稿规则 Submission Rules:</strong>
+                    <strong>馃摑 鎶曠瑙勫垯 Submission Rules:</strong>
                     <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
-                        <li>HUM-Public（大众刊）：上传后<strong>直接发布</strong> | Direct publish after upload</li>
-                        <li>HUM-Academic（专业刊）：上传后进入<strong>待审核状态</strong> | Goes to pending review</li>
-                        <li>审核通过后请手动点击"通过"按钮发布 | Click "Approve" to publish after review</li>
+                        <li>HUM-Public锛堝ぇ浼楀垔锛夛細涓婁紶鍚?strong>鐩存帴鍙戝竷</strong> | Direct publish after upload</li>
+                        <li>HUM-Academic锛堜笓涓氬垔锛夛細涓婁紶鍚庤繘鍏?strong>寰呭鏍哥姸鎬?/strong> | Goes to pending review</li>
+                        <li>瀹℃牳閫氳繃鍚庤鎵嬪姩鐐瑰嚮"閫氳繃"鎸夐挳鍙戝竷 | Click "Approve" to publish after review</li>
                     </ul>
                 </div>
 
@@ -431,63 +431,63 @@
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label class="form-label" for="title">Title / 标题 *</label>
+                            <label class="form-label" for="title">Title / 鏍囬 *</label>
                             <input type="text" id="title" class="form-input" required placeholder="Enter article title">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="author">Author / 作者 *</label>
+                            <label class="form-label" for="author">Author / 浣滆€?*</label>
                             <input type="text" id="author" class="form-input" required placeholder="Enter author name">
                         </div>
                     </div>
 
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div class="form-group">
-                            <label class="form-label" for="email">Email / 邮箱</label>
+                            <label class="form-label" for="email">Email / 閭</label>
                             <input type="email" id="email" class="form-input" placeholder="Author's email">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="category">Category / 分类 *</label>
+                            <label class="form-label" for="category">Category / 鍒嗙被 *</label>
                             <select id="category" class="form-select" required>
-                                <option value="public">HUM-Public / 大众刊</option>
-                                <option value="academic">HUM-Academic / 专业刊</option>
+                                <option value="public">HUM-Public / 澶т紬鍒?/option>
+                                <option value="academic">HUM-Academic / 涓撲笟鍒?/option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="abstract">Abstract / 摘要</label>
+                        <label class="form-label" for="abstract">Abstract / 鎽樿</label>
                         <input type="text" id="abstract" class="form-input" placeholder="Enter article abstract">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="keywords">Keywords / 关键词</label>
+                        <label class="form-label" for="keywords">Keywords / 鍏抽敭璇?/label>
                         <input type="text" id="keywords" class="form-input" placeholder="Enter keywords, separated by commas">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="content">Content / 文章内容 *</label>
+                        <label class="form-label" for="content">Content / 鏂囩珷鍐呭 *</label>
                         <textarea id="content" class="form-textarea" required placeholder="Enter article content"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Word Document / Word文档 (.docx) - Optional</label>
+                        <label class="form-label">Word Document / Word鏂囨。 (.docx) - Optional</label>
                         <div class="upload-box" id="uploadBox" onclick="document.getElementById('wordFile').click()">
-                            <p id="uploadText">📄 Click or drag to upload Word document (.docx)</p>
-                            <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">点击或拖拽上传Word文档</p>
+                            <p id="uploadText">馃搫 Click or drag to upload Word document (.docx)</p>
+                            <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">鐐瑰嚮鎴栨嫋鎷戒笂浼燱ord鏂囨。</p>
                             <input type="file" id="wordFile" style="display: none;" accept=".docx" onchange="handleFileSelect(this)">
                         </div>
                         <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">
                             Note: Upload Word document. Content will be extracted for display.<br>
-                            注意：上传Word文档，系统将提取内容进行展示。
+                            娉ㄦ剰锛氫笂浼燱ord鏂囨。锛岀郴缁熷皢鎻愬彇鍐呭杩涜灞曠ず銆?
                         </p>
                     </div>
 
                     <div style="display: flex; gap: 1rem;">
-                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Article / 保存文章</button>
-                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;" onclick="cancelEdit()">Cancel / 取消</button>
-                        <button type="button" class="btn btn-success" id="publishBtn" style="display: none;" onclick="publishCurrentArticle()">Publish / 发布</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Save Article / 淇濆瓨鏂囩珷</button>
+                        <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;" onclick="cancelEdit()">Cancel / 鍙栨秷</button>
+                        <button type="button" class="btn btn-success" id="publishBtn" style="display: none;" onclick="publishCurrentArticle()">Publish / 鍙戝竷</button>
                     </div>
                 </form>
             </div>
@@ -495,19 +495,19 @@
             <!-- Articles List Section -->
             <div class="admin-section">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h2 style="margin: 0; border: none; padding: 0;">Articles / 文章列表 <span id="articleCount"></span></h2>
+                    <h2 style="margin: 0; border: none; padding: 0;">Articles / 鏂囩珷鍒楄〃 <span id="articleCount"></span></h2>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-sm" style="background: #E5E7EB;" onclick="filterArticles('all')" id="filterAll">All / 全部</button>
-                        <button class="btn btn-sm" style="background: #D1FAE5;" onclick="filterArticles('published')" id="filterPublished">Published / 已发布</button>
-                        <button class="btn btn-sm" style="background: #FEF3C7;" onclick="filterArticles('pending')" id="filterPending">Pending / 待审核</button>
-                        <button class="btn btn-sm" style="background: #FEE2E2;" onclick="filterArticles('unpublished')" id="filterUnpublished">Unpublished / 未发布</button>
-                        <button class="btn btn-sm" style="background: #DBEAFE;" onclick="filterArticles('public')" id="filterPublic">Public / 大众</button>
-                        <button class="btn btn-sm" style="background: #E0E7FF;" onclick="filterArticles('academic')" id="filterAcademic">Academic / 专业</button>
-                        <button class="btn btn-sm" style="background: #F3F4F6;" onclick="refreshArticles()">🔄 Refresh</button>
+                        <button class="btn btn-sm" style="background: #E5E7EB;" onclick="filterArticles('all')" id="filterAll">All / 鍏ㄩ儴</button>
+                        <button class="btn btn-sm" style="background: #D1FAE5;" onclick="filterArticles('published')" id="filterPublished">Published / 宸插彂甯?/button>
+                        <button class="btn btn-sm" style="background: #FEF3C7;" onclick="filterArticles('pending')" id="filterPending">Pending / 寰呭鏍?/button>
+                        <button class="btn btn-sm" style="background: #FEE2E2;" onclick="filterArticles('unpublished')" id="filterUnpublished">Unpublished / 鏈彂甯?/button>
+                        <button class="btn btn-sm" style="background: #DBEAFE;" onclick="filterArticles('public')" id="filterPublic">Public / 澶т紬</button>
+                        <button class="btn btn-sm" style="background: #E0E7FF;" onclick="filterArticles('academic')" id="filterAcademic">Academic / 涓撲笟</button>
+                        <button class="btn btn-sm" style="background: #F3F4F6;" onclick="refreshArticles()">馃攧 Refresh</button>
                     </div>
                 </div>
                 <div class="articles-list" id="articlesList">
-                    <div class="empty-state">Loading... / 加载中...</div>
+                    <div class="empty-state">Loading... / 鍔犺浇涓?..</div>
                 </div>
             </div>
         </div>
@@ -517,7 +517,7 @@
     <div class="pdf-modal" id="pdfModal">
         <div class="pdf-modal-content">
             <div class="pdf-modal-header">
-                <h3 id="pdfModalTitle">PDF Preview / PDF 预览</h3>
+                <h3 id="pdfModalTitle">PDF Preview / PDF 棰勮</h3>
                 <button class="pdf-modal-close" onclick="closePdfModal()">&times;</button>
             </div>
             <div class="pdf-modal-body">
@@ -531,8 +531,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/lang.js"></script>
     <script>
-        // Supabase 配置
-        const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
+        // Supabase 閰嶇疆
+        const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhieXl3b21yZGVwbWJ2ZWlkZWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQwNjM3MDAsImV4cCI6MjA1OTYzOTcwMH0.W-xFtJtNp9TESF3RBn3xkstoDg3_7IbNJ7pl7LUBvRo';
 
         let supabase = null;
@@ -542,7 +542,7 @@
         let editingId = null;
         let useLocalMode = false;
 
-        // 检查凭据是否已配置
+        // 妫€鏌ュ嚟鎹槸鍚﹀凡閰嶇疆
         function isConfigured() {
             return SUPABASE_URL !== 'YOUR_SUPABASE_URL' &&
                    SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY' &&
@@ -567,8 +567,8 @@
         // Initialize Supabase
         async function initSupabase() {
             if (!isConfigured()) {
-                console.warn('请配置 Supabase 凭据');
-                showError('请先配置 Supabase 凭据');
+                console.warn('璇烽厤缃?Supabase 鍑嵁');
+                showError('璇峰厛閰嶇疆 Supabase 鍑嵁');
                 loadArticlesFromLocal();
                 return;
             }
@@ -586,7 +586,7 @@
             } catch (error) {
                 console.error('Supabase init error:', error);
                 if (error.message.includes('signature') || error.message.includes('JWT')) {
-                    showError('Supabase 凭据无效，请检查 API 密钥');
+                    showError('Supabase 鍑嵁鏃犳晥锛岃妫€鏌?API 瀵嗛挜');
                 }
                 loadArticlesFromLocal();
             }
@@ -598,12 +598,12 @@
                 if (error) {
                     console.error('Storage error:', error);
                     if (error.message.includes('signature')) {
-                        showError('Supabase 凭据签名验证失败，请检查 API 密钥');
+                        showError('Supabase 鍑嵁绛惧悕楠岃瘉澶辫触锛岃妫€鏌?API 瀵嗛挜');
                         useLocalMode = true;
                     }
                     return;
                 }
-                console.log('✅ Supabase connected, buckets:', data.map(b => b.name));
+                console.log('鉁?Supabase connected, buckets:', data.map(b => b.name));
             } catch (error) {
                 console.error('Connection test error:', error);
             }
@@ -628,7 +628,7 @@
             } catch (error) {
                 console.error('Load articles error:', error);
                 if (error.message.includes('signature')) {
-                    showError('Supabase 凭据无效');
+                    showError('Supabase 鍑嵁鏃犳晥');
                     useLocalMode = true;
                 }
             }
@@ -660,7 +660,7 @@
 
         // Refresh articles
         async function refreshArticles() {
-            showSuccess('Refreshing... / 刷新中...');
+            showSuccess('Refreshing... / 鍒锋柊涓?..');
             await loadArticles();
         }
 
@@ -694,7 +694,7 @@
             if (file && file.name.endsWith('.docx')) {
                 selectedFile = file;
                 document.getElementById('uploadBox').classList.add('has-file');
-                document.getElementById('uploadText').textContent = '📄 ' + file.name;
+                document.getElementById('uploadText').textContent = '馃搫 ' + file.name;
 
                 // Extract content
                 extractWordContent(file);
@@ -710,9 +710,9 @@
 
                 if (content && content.trim()) {
                     document.getElementById('content').value = content.trim();
-                    showSuccess('Word content extracted! / Word内容已提取！');
+                    showSuccess('Word content extracted! / Word鍐呭宸叉彁鍙栵紒');
                 } else {
-                    showError('Cannot extract content from Word file / 无法提取Word内容');
+                    showError('Cannot extract content from Word file / 鏃犳硶鎻愬彇Word鍐呭');
                 }
             } catch (error) {
                 console.error('Word extraction error:', error);
@@ -761,7 +761,7 @@
 
             if (articles.length === 0) {
                 document.getElementById('articlesList').innerHTML =
-                    '<div class="empty-state">No articles found. / 暂无文章。<br><br>Submit from: <a href="submission.html">submission.html</a></div>';
+                    '<div class="empty-state">No articles found. / 鏆傛棤鏂囩珷銆?br><br>Submit from: <a href="submission.html">submission.html</a></div>';
                 return;
             }
 
@@ -771,10 +771,10 @@
             const html = articles.map(article => {
                 const statusClass = article.status === 'published' ? 'status-published' :
                                    article.status === 'pending' ? 'status-pending' : 'status-unpublished';
-                const statusLabel = article.status === 'published' ? 'Published / 已发布' :
-                                   article.status === 'pending' ? 'Pending / 待审核' : 'Unpublished / 未发布';
+                const statusLabel = article.status === 'published' ? 'Published / 宸插彂甯? :
+                                   article.status === 'pending' ? 'Pending / 寰呭鏍? : 'Unpublished / 鏈彂甯?;
                 const categoryClass = article.category === 'public' ? 'category-public' : 'category-academic';
-                const categoryLabel = article.category === 'public' ? 'Public 大众' : 'Academic 专业';
+                const categoryLabel = article.category === 'public' ? 'Public 澶т紬' : 'Academic 涓撲笟';
                 const date = new Date(article.created_at || article.date).toLocaleDateString('en-US', {
                     year: 'numeric', month: 'short', day: 'numeric'
                 });
@@ -791,32 +791,32 @@
                                     <span class="status-tag ${statusClass}">${statusLabel}</span>
                                 </div>
                                 <div class="article-meta">
-                                    📧 ${escapeHtml(article.author)} ${article.email ? `(${escapeHtml(article.email)})` : ''} | 📅 ${date}
-                                    ${article.keywords ? `<br>🏷️ ${escapeHtml(article.keywords)}` : ''}
-                                    ${article.file_name ? `<br>📎 ${escapeHtml(article.file_name)}` : ''}
+                                    馃摟 ${escapeHtml(article.author)} ${article.email ? `(${escapeHtml(article.email)})` : ''} | 馃搮 ${date}
+                                    ${article.keywords ? `<br>馃彿锔?${escapeHtml(article.keywords)}` : ''}
+                                    ${article.file_name ? `<br>馃搸 ${escapeHtml(article.file_name)}` : ''}
                                 </div>
                             </div>
                             <button class="expand-btn" onclick="toggleArticle('${article.id}')">
-                                ${isEditing ? '▼' : '▶'}
+                                ${isEditing ? '鈻? : '鈻?}
                             </button>
                         </div>
 
                         ${isEditing ? `
                         <div class="article-content-preview" style="max-height: none; white-space: pre-wrap;">
-${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
+${escapeHtml(article.content || article.abstract || 'No content / 鏃犲唴瀹?)}
                         </div>
                         <div class="article-actions" style="margin-top: 1rem;">
-                            <button class="btn btn-secondary btn-sm" onclick="editArticle('${article.id}')">✏️ Edit / 编辑</button>
+                            <button class="btn btn-secondary btn-sm" onclick="editArticle('${article.id}')">鉁忥笍 Edit / 缂栬緫</button>
                             ${isAdmin ? `
                                 ${article.status !== 'published' ? `
-                                    <button class="btn btn-success btn-sm" onclick="publishArticle('${article.id}')">✅ Publish / 发布</button>
+                                    <button class="btn btn-success btn-sm" onclick="publishArticle('${article.id}')">鉁?Publish / 鍙戝竷</button>
                                 ` : `
-                                    <button class="btn btn-sm" style="background: #F59E0B; color: white;" onclick="unpublishArticle('${article.id}')">📥 Unpublish / 撤稿</button>
+                                    <button class="btn btn-sm" style="background: #F59E0B; color: white;" onclick="unpublishArticle('${article.id}')">馃摜 Unpublish / 鎾ょ</button>
                                 `}
-                                <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article.id}')">🗑️ Delete / 删除</button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article.id}')">馃棏锔?Delete / 鍒犻櫎</button>
                             ` : ''}
                             ${article.file_url ? `
-                                <button class="pdf-preview-btn" onclick="previewPdf('${escapeHtml(article.file_url)}', '${escapeHtml(article.title)}')">📄 Preview PDF / 预览 PDF</button>
+                                <button class="pdf-preview-btn" onclick="previewPdf('${escapeHtml(article.file_url)}', '${escapeHtml(article.title)}')">馃搫 Preview PDF / 棰勮 PDF</button>
                             ` : ''}
                         </div>
                         ` : ''}
@@ -845,8 +845,8 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
                 document.getElementById('keywords').value = article.keywords || '';
                 document.getElementById('category').value = article.category || 'public';
                 document.getElementById('content').value = article.content || '';
-                document.getElementById('formTitle').textContent = 'Edit Article / 编辑文章';
-                document.getElementById('submitBtn').textContent = 'Update / 更新';
+                document.getElementById('formTitle').textContent = 'Edit Article / 缂栬緫鏂囩珷';
+                document.getElementById('submitBtn').textContent = 'Update / 鏇存柊';
                 document.getElementById('cancelBtn').style.display = 'inline-block';
                 document.getElementById('publishBtn').style.display = article.status !== 'published' ? 'inline-block' : 'none';
                 window.scrollTo(0, 0);
@@ -865,13 +865,13 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
         function cancelEdit() {
             document.getElementById('articleForm').reset();
             document.getElementById('articleId').value = '';
-            document.getElementById('formTitle').textContent = 'Add New Article / 添加新文章';
-            document.getElementById('submitBtn').textContent = 'Save Article / 保存文章';
+            document.getElementById('formTitle').textContent = 'Add New Article / 娣诲姞鏂版枃绔?;
+            document.getElementById('submitBtn').textContent = 'Save Article / 淇濆瓨鏂囩珷';
             document.getElementById('cancelBtn').style.display = 'none';
             document.getElementById('publishBtn').style.display = 'none';
             selectedFile = null;
             document.getElementById('uploadBox').classList.remove('has-file');
-            document.getElementById('uploadText').textContent = '📄 Click or drag to upload Word document (.docx)';
+            document.getElementById('uploadText').textContent = '馃搫 Click or drag to upload Word document (.docx)';
         }
 
         // Form submission
@@ -888,14 +888,14 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
             const content = document.getElementById('content').value.trim();
 
             if (!title || !author || !content) {
-                showError('Please fill required fields / 请填写必填项');
+                showError('Please fill required fields / 璇峰～鍐欏繀濉」');
                 return;
             }
 
             const status = category === 'public' ? 'published' : 'pending';
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Saving... / 保存中...';
+            submitBtn.textContent = 'Saving... / 淇濆瓨涓?..';
 
             const article = {
                 title,
@@ -929,7 +929,7 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
                         allArticles[index] = { ...allArticles[index], ...article };
                     }
 
-                    showSuccess('Article updated! / 文章已更新！');
+                    showSuccess('Article updated! / 鏂囩珷宸叉洿鏂帮紒');
                 } else {
                     // Create new
                     article.created_at = new Date().toISOString();
@@ -949,8 +949,8 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
 
                     allArticles.unshift(article);
                     showSuccess(category === 'public' ?
-                        'Article created and published! / 文章已创建并发布！' :
-                        'Article created and sent for review! / 文章已创建并提交审核！');
+                        'Article created and published! / 鏂囩珷宸插垱寤哄苟鍙戝竷锛? :
+                        'Article created and sent for review! / 鏂囩珷宸插垱寤哄苟鎻愪氦瀹℃牳锛?);
                 }
 
                 // Save to localStorage
@@ -966,13 +966,13 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
             }
 
             submitBtn.disabled = false;
-            submitBtn.textContent = id ? 'Update / 更新' : 'Save Article / 保存文章';
+            submitBtn.textContent = id ? 'Update / 鏇存柊' : 'Save Article / 淇濆瓨鏂囩珷';
         });
 
         // Publish article
         async function publishArticle(id) {
             if (!isAdmin) {
-                showError('Only admin can publish! / 只有管理员可以发布！');
+                showError('Only admin can publish! / 鍙湁绠＄悊鍛樺彲浠ュ彂甯冿紒');
                 return;
             }
 
@@ -994,7 +994,7 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
                     localStorage.setItem('hum_articles', JSON.stringify(allArticles));
                     updateStats();
                     renderArticles();
-                    showSuccess('Article published! / 文章已发布！');
+                    showSuccess('Article published! / 鏂囩珷宸插彂甯冿紒');
                 }
             } catch (error) {
                 console.error('Publish error:', error);
@@ -1005,11 +1005,11 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
         // Unpublish article
         async function unpublishArticle(id) {
             if (!isAdmin) {
-                showError('Only admin can unpublish! / 只有管理员可以撤稿！');
+                showError('Only admin can unpublish! / 鍙湁绠＄悊鍛樺彲浠ユ挙绋匡紒');
                 return;
             }
 
-            if (!confirm('Unpublish this article? / 确定要撤下这篇文章吗？')) return;
+            if (!confirm('Unpublish this article? / 纭畾瑕佹挙涓嬭繖绡囨枃绔犲悧锛?)) return;
 
             try {
                 const article = allArticles.find(a => a.id == id || a.id === id);
@@ -1027,7 +1027,7 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
                     localStorage.setItem('hum_articles', JSON.stringify(allArticles));
                     updateStats();
                     renderArticles();
-                    showSuccess('Article unpublished! / 文章已撤下！');
+                    showSuccess('Article unpublished! / 鏂囩珷宸叉挙涓嬶紒');
                 }
             } catch (error) {
                 console.error('Unpublish error:', error);
@@ -1038,11 +1038,11 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
         // Delete article
         async function deleteArticle(id) {
             if (!isAdmin) {
-                showError('Only admin can delete! / 只有管理员可以删除！');
+                showError('Only admin can delete! / 鍙湁绠＄悊鍛樺彲浠ュ垹闄わ紒');
                 return;
             }
 
-            if (!confirm('Delete this article? This cannot be undone. / 删除这篇文章吗？此操作不可撤销。')) return;
+            if (!confirm('Delete this article? This cannot be undone. / 鍒犻櫎杩欑瘒鏂囩珷鍚楋紵姝ゆ搷浣滀笉鍙挙閿€銆?)) return;
 
             try {
                 if (supabase) {
@@ -1056,7 +1056,7 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
                 localStorage.setItem('hum_articles', JSON.stringify(allArticles));
                 updateStats();
                 renderArticles();
-                showSuccess('Article deleted! / 文章已删除！');
+                showSuccess('Article deleted! / 鏂囩珷宸插垹闄わ紒');
             } catch (error) {
                 console.error('Delete error:', error);
                 showError('Delete failed: ' + error.message);
@@ -1101,10 +1101,10 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
         // PDF Preview Functions
         function previewPdf(url, title) {
             if (!url) {
-                showError('No PDF file available / 没有 PDF 文件');
+                showError('No PDF file available / 娌℃湁 PDF 鏂囦欢');
                 return;
             }
-            document.getElementById('pdfModalTitle').textContent = '📄 ' + (title || 'PDF Preview');
+            document.getElementById('pdfModalTitle').textContent = '馃搫 ' + (title || 'PDF Preview');
             document.getElementById('pdfIframe').src = url;
             document.getElementById('pdfModal').classList.add('active');
         }
@@ -1132,3 +1132,5 @@ ${escapeHtml(article.content || article.abstract || 'No content / 无内容')}
 
 </body>
 </html>
+
+

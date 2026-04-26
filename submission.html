@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit | 投稿 | HUM Journal</title>
+    <title>Submit | 鎶曠 | HUM Journal</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -23,12 +23,12 @@
         <div class="header-inner">
             <a href="index.html" class="logo"><span class="logo-main">HUM</span><span class="logo-sub">Journal</span></a>
             <nav class="nav">
-                <a href="index.html" class="nav-link">首页</a>
-                <a href="public.html" class="nav-link">大众刊</a>
-                <a href="academic.html" class="nav-link">专业刊</a>
-                <a href="about.html" class="nav-link">关于</a>
-                <a href="submission.html" class="nav-link active">投稿</a>
-                <a href="rules.html" class="nav-link">规则</a>
+                <a href="index.html" class="nav-link">棣栭〉</a>
+                <a href="public.html" class="nav-link">澶т紬鍒?/a>
+                <a href="academic.html" class="nav-link">涓撲笟鍒?/a>
+                <a href="about.html" class="nav-link">鍏充簬</a>
+                <a href="submission.html" class="nav-link active">鎶曠</a>
+                <a href="rules.html" class="nav-link">瑙勫垯</a>
             </nav>
             <a href="login.html" class="nav-link">Admin</a>
         </div>
@@ -36,66 +36,66 @@
 
     <section class="hero" style="padding: 3rem 0;">
         <h1 style="font-size: 3rem;">Submission</h1>
-        <p class="hero-subtitle">投稿</p>
+        <p class="hero-subtitle">鎶曠</p>
     </section>
 
     <section class="content-section">
         <div class="container" style="max-width: 900px;">
             <div style="background: #0A2342; padding: 1.5rem; margin-bottom: 2rem;">
-                <h3 style="color: white; margin-bottom: 0.5rem;">投稿方式 Submission Method</h3>
+                <h3 style="color: white; margin-bottom: 0.5rem;">鎶曠鏂瑰紡 Submission Method</h3>
                 <p style="color: white; opacity: 0.9; font-size: 0.9rem;">
-                    上传 PDF 文件 → 直接发布<br>
-                    Upload PDF → Publish directly
+                    涓婁紶 PDF 鏂囦欢 鈫?鐩存帴鍙戝竷<br>
+                    Upload PDF 鈫?Publish directly
                 </p>
             </div>
 
             <div id="messageBox" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;"></div>
 
             <form id="submissionForm" style="background: white; padding: 2rem; border: 1px solid #E5E5E5;">
-                <h3 style="margin-bottom: 1.5rem;">文章信息 Article Information</h3>
+                <h3 style="margin-bottom: 1.5rem;">鏂囩珷淇℃伅 Article Information</h3>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                     <div>
-                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">标题 Title *</label>
-                        <input type="text" id="articleTitle" required placeholder="Enter title / 输入标题" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">鏍囬 Title *</label>
+                        <input type="text" id="articleTitle" required placeholder="Enter title / 杈撳叆鏍囬" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
                     </div>
                     <div>
-                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">作者 Author *</label>
-                        <input type="text" id="articleAuthor" required placeholder="Enter name / 输入作者" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">浣滆€?Author *</label>
+                        <input type="text" id="articleAuthor" required placeholder="Enter name / 杈撳叆浣滆€? style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
                     </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">邮箱 Email *</label>
-                    <input type="email" id="articleEmail" required placeholder="For notifications / 接收通知" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">閭 Email *</label>
+                    <input type="email" id="articleEmail" required placeholder="For notifications / 鎺ユ敹閫氱煡" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">摘要 Abstract</label>
-                    <textarea id="articleAbstract" rows="3" placeholder="Enter abstract / 输入摘要" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; resize: vertical;"></textarea>
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">鎽樿 Abstract</label>
+                    <textarea id="articleAbstract" rows="3" placeholder="Enter abstract / 杈撳叆鎽樿" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; resize: vertical;"></textarea>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">关键词 Keywords</label>
-                    <input type="text" id="articleKeywords" placeholder="keyword1, keyword2 / 关键词1, 关键词2" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">鍏抽敭璇?Keywords</label>
+                    <input type="text" id="articleKeywords" placeholder="keyword1, keyword2 / 鍏抽敭璇?, 鍏抽敭璇?" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">板块 Section *</label>
+                    <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">鏉垮潡 Section *</label>
                     <select id="articleCategory" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
-                        <option value="public">HUM-Public 大众刊 (直接发布)</option>
-                        <option value="academic">HUM-Academic 专业刊 (需审核)</option>
+                        <option value="public">HUM-Public 澶т紬鍒?(鐩存帴鍙戝竷)</option>
+                        <option value="academic">HUM-Academic 涓撲笟鍒?(闇€瀹℃牳)</option>
                     </select>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
                     <label for="pdfFile" style="display: block; font-weight: 500; margin-bottom: 0.5rem; cursor: pointer;">
-                        论文文件 PDF File (.pdf) *
-                        <span style="font-weight: normal; font-size: 0.875rem; color: #666; margin-left: 0.5rem;">(推荐 / Recommended)</span>
+                        璁烘枃鏂囦欢 PDF File (.pdf) *
+                        <span style="font-weight: normal; font-size: 0.875rem; color: #666; margin-left: 0.5rem;">(鎺ㄨ崘 / Recommended)</span>
                     </label>
                     <div id="uploadBox" class="upload-box" style="cursor: pointer;" onclick="event.preventDefault(); document.getElementById('pdfFile').click()">
-                        <p id="uploadIcon" style="font-size: 3rem; margin-bottom: 0.5rem;">📄</p>
-                        <p id="uploadText" style="font-weight: 500;">点击或拖拽上传 PDF 文件</p>
+                        <p id="uploadIcon" style="font-size: 3rem; margin-bottom: 0.5rem;">馃搫</p>
+                        <p id="uploadText" style="font-weight: 500;">鐐瑰嚮鎴栨嫋鎷戒笂浼?PDF 鏂囦欢</p>
                         <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">Click or drag to upload PDF file</p>
                     </div>
                     <input type="file" id="pdfFile" accept=".pdf" onchange="handleFileSelect(this)" style="display: none;">
@@ -105,25 +105,25 @@
                         <div id="progressBar"><div class="progress"></div></div>
                     </div>
                     <div id="pdfPreview">
-                        <p style="font-weight: 500; margin-bottom: 0.5rem;">PDF 已选择</p>
+                        <p style="font-weight: 500; margin-bottom: 0.5rem;">PDF 宸查€夋嫨</p>
                     </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
                     <div style="display: flex; align-items: center;">
                         <input type="checkbox" id="agreeRules" required style="width: 18px; height: 18px; margin-right: 0.5rem;">
-                        <span>我已阅读并同意 <a href="rules.html" target="_blank">审核规则</a></span>
+                        <span>鎴戝凡闃呰骞跺悓鎰?<a href="rules.html" target="_blank">瀹℃牳瑙勫垯</a></span>
                     </div>
                 </div>
 
                 <button type="submit" id="submitBtn" style="width: 100%; padding: 1rem; background: #0A2342; color: white; border: none; font-size: 1rem; font-weight: 500; cursor: pointer;">
-                    提交投稿 Submit Article
+                    鎻愪氦鎶曠 Submit Article
                 </button>
             </form>
 
             <div style="margin-top: 2rem; padding: 1.5rem; border: 1px solid #E5E5E5; text-align: center;">
-                <p>备用投稿 / Alternative: <a href="mailto:yangll_0502@qq.com">yangll_0502@qq.com</a></p>
-                <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">格式 Format: [HUM-Public/HUM-Academic] Title - Author</p>
+                <p>澶囩敤鎶曠 / Alternative: <a href="mailto:yangll_0502@qq.com">yangll_0502@qq.com</a></p>
+                <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">鏍煎紡 Format: [HUM-Public/HUM-Academic] Title - Author</p>
             </div>
         </div>
     </section>
@@ -132,7 +132,7 @@
         <div class="container">
             <div class="footer-inner">
                 <div class="footer-logo">Humanity & Thought Journal</div>
-                <div class="footer-copyright">© 2026 Kyrgyz. All rights reserved.</div>
+                <div class="footer-copyright">漏 2026 Kyrgyz. All rights reserved.</div>
             </div>
         </div>
     </footer>
@@ -142,17 +142,17 @@
         'use strict';
 
         // ============================================================
-        // Supabase 配置 - 请替换为您的项目凭据
-        // 获取地址: Supabase Dashboard -> Settings -> API
+        // Supabase 閰嶇疆 - 璇锋浛鎹负鎮ㄧ殑椤圭洰鍑嵁
+        // 鑾峰彇鍦板潃: Supabase Dashboard -> Settings -> API
         // ============================================================
-        const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
+        const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
 
         let selectedFile = null;
         let uploadedUrl = null;
 
-        // 初始化：跳过 SDK，直接用 fetch
-        // 文件选择处理
+        // 鍒濆鍖栵細璺宠繃 SDK锛岀洿鎺ョ敤 fetch
+        // 鏂囦欢閫夋嫨澶勭悊
         function handleFileSelect(input) {
             console.log('[Upload] handleFileSelect called, files:', input.files);
             const file = input.files[0];
@@ -163,12 +163,12 @@
             }
 
             if (!file.name.endsWith('.pdf')) {
-                showMessage('请上传 PDF 文件 / Please upload PDF file', true);
+                showMessage('璇蜂笂浼?PDF 鏂囦欢 / Please upload PDF file', true);
                 return;
             }
 
             if (file.size > 50 * 1024 * 1024) {
-                showMessage('文件过大，最大 50MB', true);
+                showMessage('鏂囦欢杩囧ぇ锛屾渶澶?50MB', true);
                 return;
             }
 
@@ -182,8 +182,8 @@
             uploadBox.classList.add('processing');
             uploadBox.classList.remove('success', 'error');
             fileInfo.style.display = 'block';
-            fileName.textContent = '📄 ' + file.name + ' (' + formatSize(file.size) + ')';
-            fileStatus.textContent = '准备上传... / Ready...';
+            fileName.textContent = '馃搫 ' + file.name + ' (' + formatSize(file.size) + ')';
+            fileStatus.textContent = '鍑嗗涓婁紶... / Ready...';
             progressBar.style.display = 'block';
             progressBar.querySelector('.progress').style.width = '10%';
 
@@ -198,12 +198,12 @@
         }
 
         function showPdfPreview(file) {
-            // PDF 预览暂不显示，避免影响主流程
-            // 用户可在上传后的表单中查看文件信息
+            // PDF 棰勮鏆備笉鏄剧ず锛岄伩鍏嶅奖鍝嶄富娴佺▼
+            // 鐢ㄦ埛鍙湪涓婁紶鍚庣殑琛ㄥ崟涓煡鐪嬫枃浠朵俊鎭?
             document.getElementById('pdfPreview').style.display = 'none';
         }
 
-        // 上传到 Supabase Storage
+        // 涓婁紶鍒?Supabase Storage
         async function uploadFile(file) {
             const progressBar = document.getElementById('progressBar').querySelector('.progress');
             const title = document.getElementById('articleTitle').value.trim() || file.name.replace(/\.[^/.]+$/, '');
@@ -214,7 +214,7 @@
             const uploadUrl = `${SUPABASE_URL}/storage/v1/object/articles/${encodeURIComponent(fileName)}`;
 
             try {
-                document.getElementById('fileStatus').textContent = '上传中... / Uploading...';
+                document.getElementById('fileStatus').textContent = '涓婁紶涓?.. / Uploading...';
                 progressBar.style.width = '10%';
 
                 const response = await fetch(uploadUrl, {
@@ -242,24 +242,24 @@
                 console.log('[Upload] Success:', uploadedUrl);
 
                 progressBar.style.width = '85%';
-                document.getElementById('fileStatus').textContent = '完成... / Done...';
+                document.getElementById('fileStatus').textContent = '瀹屾垚... / Done...';
                 progressBar.style.width = '100%';
                 document.getElementById('uploadBox').classList.remove('processing');
                 document.getElementById('uploadBox').classList.add('success');
-                document.getElementById('uploadIcon').textContent = '✅';
-                document.getElementById('fileStatus').textContent = '上传成功！/ Upload successful!';
+                document.getElementById('uploadIcon').textContent = '鉁?;
+                document.getElementById('fileStatus').textContent = '涓婁紶鎴愬姛锛? Upload successful!';
 
             } catch (error) {
                 console.error('[Upload] Error:', error);
                 document.getElementById('uploadBox').classList.remove('processing');
                 document.getElementById('uploadBox').classList.add('error');
-                document.getElementById('uploadIcon').textContent = '❌';
-                document.getElementById('fileStatus').textContent = '上传失败: ' + error.message;
-                showMessage('❌ 上传失败: ' + error.message, true);
+                document.getElementById('uploadIcon').textContent = '鉂?;
+                document.getElementById('fileStatus').textContent = '涓婁紶澶辫触: ' + error.message;
+                showMessage('鉂?涓婁紶澶辫触: ' + error.message, true);
             }
         }
 
-        // 表单提交
+        // 琛ㄥ崟鎻愪氦
         document.getElementById('submissionForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -271,23 +271,23 @@
             const category = document.getElementById('articleCategory').value;
 
             if (!title || !author || !email) {
-                showMessage('请填写所有必填项 / Please fill all required fields', true);
+                showMessage('璇峰～鍐欐墍鏈夊繀濉」 / Please fill all required fields', true);
                 return;
             }
 
             if (!selectedFile && !uploadedUrl) {
-                showMessage('请上传 PDF 文件 / Please upload PDF file', true);
+                showMessage('璇蜂笂浼?PDF 鏂囦欢 / Please upload PDF file', true);
                 return;
             }
 
             if (!document.getElementById('agreeRules').checked) {
-                showMessage('请阅读并同意审核规则 / Please agree to rules', true);
+                showMessage('璇烽槄璇诲苟鍚屾剰瀹℃牳瑙勫垯 / Please agree to rules', true);
                 return;
             }
 
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.textContent = '提交中... / Submitting...';
+            submitBtn.textContent = '鎻愪氦涓?.. / Submitting...';
 
             const status = category === 'public' ? 'published' : 'pending';
 
@@ -313,8 +313,8 @@
 
                 showMessage(
                     category === 'public'
-                        ? '✅ 文章已发布！/ Article published!'
-                        : '✅ 已提交审核！/ Submitted for review!',
+                        ? '鉁?鏂囩珷宸插彂甯冿紒/ Article published!'
+                        : '鉁?宸叉彁浜ゅ鏍革紒/ Submitted for review!',
                     false
                 );
 
@@ -322,7 +322,7 @@
                     document.getElementById('submissionForm').reset();
                     resetUploadArea();
                     submitBtn.disabled = false;
-                    submitBtn.textContent = '提交投稿 Submit Article';
+                    submitBtn.textContent = '鎻愪氦鎶曠 Submit Article';
                 }, 3000);
 
             } catch (error) {
@@ -334,9 +334,9 @@
                 localArticles.push(article);
                 localStorage.setItem('hum_articles', JSON.stringify(localArticles));
 
-                showMessage('⚠️ 已保存到本地 / Saved locally', false);
+                showMessage('鈿狅笍 宸蹭繚瀛樺埌鏈湴 / Saved locally', false);
                 submitBtn.disabled = false;
-                submitBtn.textContent = '提交投稿 Submit Article';
+                submitBtn.textContent = '鎻愪氦鎶曠 Submit Article';
             }
         });
 
@@ -344,8 +344,8 @@
             selectedFile = null;
             uploadedUrl = null;
             document.getElementById('uploadBox').classList.remove('success', 'processing', 'error');
-            document.getElementById('uploadIcon').textContent = '📄';
-            document.getElementById('uploadText').textContent = '点击或拖拽上传 PDF 文件';
+            document.getElementById('uploadIcon').textContent = '馃搫';
+            document.getElementById('uploadText').textContent = '鐐瑰嚮鎴栨嫋鎷戒笂浼?PDF 鏂囦欢';
             document.getElementById('fileInfo').style.display = 'none';
             document.getElementById('pdfPreview').style.display = 'none';
         }
@@ -360,7 +360,7 @@
             if (!isError) setTimeout(() => { box.style.display = 'none'; }, 5000);
         }
 
-        // 拖拽上传
+        // 鎷栨嫿涓婁紶
         const uploadBox = document.getElementById('uploadBox');
         uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.style.borderColor = '#0A2342'; });
         uploadBox.addEventListener('dragleave', e => { e.preventDefault(); uploadBox.style.borderColor = '#E5E5E5'; });
@@ -379,3 +379,5 @@
 </script>
 </body>
 </html>
+
+

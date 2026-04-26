@@ -1,9 +1,9 @@
-// HUM Journal - Dynamic Database Integration
+﻿// HUM Journal - Dynamic Database Integration
 // Using Supabase for real-time cross-device article sync
 
 // Supabase configuration
-const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
+const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
 
 let supabaseClient = null;
 let useSupabase = false;
@@ -218,3 +218,4 @@ async function unpublishArticle(id) {
 
 // Initialize on load
 initDatabase();
+

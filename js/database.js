@@ -1,9 +1,9 @@
-// HUM Journal - Supabase Dynamic Backend
+﻿// HUM Journal - Supabase Dynamic Backend
 // This file handles all database operations with Supabase
 
 // Supabase configuration - using environment credentials
-const supabaseUrl = 'https://xbyywomrdepmbveideja.supabase.co'; // Placeholder - will be configured
-const supabaseAnonKey = 'sb_publishable_qzzc_9VfWz0yKf1mR4xL7sP2nQ5jH8gB'; // Placeholder - will be configured
+const supabaseUrl = 'https://gslggufgrtmdeyyyveay.supabase.co';
+const supabaseAnonKey = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
 
 // For now, we'll use a simple API-less approach that works without backend
 // This can be enhanced later with actual Supabase integration
@@ -109,3 +109,4 @@ class HUMDatabase {
 
 // Create global database instance
 window.humDB = new HUMDatabase();
+

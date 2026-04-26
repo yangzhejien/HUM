@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -24,7 +24,7 @@
             </nav>
             <div class="lang-toggle">
                 <span class="active" data-lang="en">EN</span>
-                <span data-lang="cn">中</span>
+                <span data-lang="cn">涓?/span>
             </div>
             <button class="mobile-menu-btn" aria-label="Menu">
                 <span></span>
@@ -40,7 +40,7 @@
             <p class="hero-subtitle animate-fade-in animate-delay-1">Humanity & Thought Journal</p>
             <div class="hero-slogan animate-fade-in animate-delay-2">
                 "Freedom of Thought, Rational Expression"<br>
-                <small style="font-size: 1rem; color: var(--color-text-secondary);">思想自由，理性表达</small>
+                <small style="font-size: 1rem; color: var(--color-text-secondary);">鎬濇兂鑷敱锛岀悊鎬ц〃杈?/small>
             </div>
         </div>
     </section>
@@ -58,15 +58,15 @@
     <section class="section-cards container">
         <div class="section-card public animate-fade-in">
             <div class="section-card-label">HUM-Public</div>
-            <h3 class="section-card-title">大众网刊</h3>
+            <h3 class="section-card-title">澶т紬缃戝垔</h3>
             <p class="section-card-desc">Open publication without barriers. Free expression of ideas and perspectives.</p>
-            <a href="introduction.html#public" class="section-card-link">Learn More →</a>
+            <a href="introduction.html#public" class="section-card-link">Learn More 鈫?/a>
         </div>
         <div class="section-card academic animate-fade-in animate-delay-1">
             <div class="section-card-label">HUM-Academic</div>
-            <h3 class="section-card-title">专业网刊</h3>
+            <h3 class="section-card-title">涓撲笟缃戝垔</h3>
             <p class="section-card-desc">Emphasis on logic and academic rigor. Peer-reviewed scholarly contributions.</p>
-            <a href="introduction.html#academic" class="section-card-link">Learn More →</a>
+            <a href="introduction.html#academic" class="section-card-link">Learn More 鈫?/a>
         </div>
     </section>
 
@@ -79,13 +79,13 @@
             <div id="articlesContainer">
                 <div class="intro-grid" id="publicArticles">
                     <div class="intro-block">
-                        <h3>HUM-Public <span style="font-size: 1rem; color: var(--color-text-secondary);">大众网刊</span></h3>
+                        <h3>HUM-Public <span style="font-size: 1rem; color: var(--color-text-secondary);">澶т紬缃戝垔</span></h3>
                         <div id="publicArticlesList">
                             <p style="color: var(--color-text-secondary);">Loading articles...</p>
                         </div>
                     </div>
                     <div class="intro-block">
-                        <h3>HUM-Academic <span style="font-size: 1rem; color: var(--color-text-secondary);">专业网刊</span></h3>
+                        <h3>HUM-Academic <span style="font-size: 1rem; color: var(--color-text-secondary);">涓撲笟缃戝垔</span></h3>
                         <div id="academicArticlesList">
                             <p style="color: var(--color-text-secondary);">Loading articles...</p>
                         </div>
@@ -105,15 +105,15 @@
                     <a href="about.html">About</a>
                     <a href="submission.html">Submit</a>
                 </div>
-                <div class="footer-copyright">© 2026 Kirk. All rights reserved.</div>
+                <div class="footer-copyright">漏 2026 Kirk. All rights reserved.</div>
             </div>
         </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
+        const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXZlYXkiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0ODc2OTIwMCwiZXhwIjoxOTY0MzQ1MjAwfQ.5Wq0ZjWq0ZjWq0ZjWq0ZjWq0ZjWq0ZjWq0ZjWq0ZjW';
 
         let supabaseClient = null;
         let supabaseReady = false;
@@ -213,9 +213,9 @@
                 modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 2rem;';
                 modal.innerHTML = `
                     <div style="background: white; max-width: 800px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 2rem; position: relative;">
-                        <button onclick="this.closest('#articleModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">×</button>
+                        <button onclick="this.closest('#articleModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">脳</button>
                         <span style="display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; background: ${article.category === 'public' ? '#DBEAFE' : '#E0E7FF'}; color: ${article.category === 'public' ? '#1E40AF' : '#3730A3'}; margin-bottom: 1rem;">
-                            ${article.category === 'public' ? 'HUM-Public 大众网刊' : 'HUM-Academic 专业网刊'}
+                            ${article.category === 'public' ? 'HUM-Public 澶т紬缃戝垔' : 'HUM-Academic 涓撲笟缃戝垔'}
                         </span>
                         <h2 style="margin-bottom: 0.5rem; font-size: 1.75rem;">${escapeHtml(article.title)}</h2>
                         <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">${escapeHtml(article.author)} | ${formatDate(article.created_at)}</p>
@@ -295,7 +295,7 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px;
-  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
+  padding-bottom: 16px; /* 8px 鍐呭闂磋窛 + 8px 鐢ㄤ簬榧犳爣绉诲姩鐨勯€忔槑鍖哄煙 */
   font-size: 12px;
   line-height: 17px;
   background-color: #fafafa;
@@ -305,7 +305,7 @@ body {
   color: #171717;
 }
 
-/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
+/* 鍒涘缓閫忔槑鐨勮繛鎺ュ尯鍩燂紝璁╅紶鏍囧彲浠ュ钩婊戠Щ鍔ㄥ埌 tooltip */
 .tooltip-content::after {
   content: '';
   position: absolute;
@@ -348,7 +348,7 @@ body {
   color: #000000;
 }
 
-/* 深色模式支持 */
+/* 娣辫壊妯″紡鏀寔 */
 @media (prefers-color-scheme: dark) {
   .trigger-content {
     background-color: transparent;
@@ -383,35 +383,35 @@ body {
   <div class="tooltip-container">
     <div class="trigger-content">
       <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
-        <span>© 2026 MiniMax</span>
+        <span>漏 2026 MiniMax</span>
       </a>
     </div>
     <div class="tooltip-content">
       <section class="info-section">
-        <span>上海稀宇科技有限公司</span>
+        <span>涓婃捣绋€瀹囩鎶€鏈夐檺鍏徃</span>
       </section>
 
       <section class="info-section">
         <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
           <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
-          <span class="underline-text">沪公网安备31010402010179号</span>
+          <span class="underline-text">娌叕缃戝畨澶?1010402010179鍙?/span>
         </a>
         <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
-          沪ICP备2023003282号-38
+          娌狪CP澶?023003282鍙?38
         </a>
       </section>
 
       <section class="info-section">
-        <span>模型名称：MiniMax</span>
-        <span>备案号：Shanghai-MiniMax-202505230046</span>
+        <span>妯″瀷鍚嶇О锛歁iniMax</span>
+        <span>澶囨鍙凤細Shanghai-MiniMax-202505230046</span>
       </section>
 
       <section class="info-section">
         <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
-          用户协议
+          鐢ㄦ埛鍗忚
         </a>
         <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
-          隐私政策
+          闅愮鏀跨瓥
         </a>
       </section>
     </div>
@@ -421,50 +421,50 @@ body {
 
 <script>
 /**
- * Iframe 元素高亮注入脚本
- * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ * Iframe 鍏冪礌楂樹寒娉ㄥ叆鑴氭湰
+ * 闇€瑕佸湪鐩爣缃戠珯涓紩鍏ユ鑴氭湰鏉ユ敮鎸佽法鍩?iframe 楂樹寒鍔熻兘
  *
- * 使用方法：
- * 1. 将此脚本添加到目标网站的 HTML 中
- * 2. 或通过浏览器扩展、用户脚本等方式注入
+ * 浣跨敤鏂规硶锛?
+ * 1. 灏嗘鑴氭湰娣诲姞鍒扮洰鏍囩綉绔欑殑 HTML 涓?
+ * 2. 鎴栭€氳繃娴忚鍣ㄦ墿灞曘€佺敤鎴疯剼鏈瓑鏂瑰紡娉ㄥ叆
  */
 
 (function () {
   "use strict";
 
-  // 检查是否在 iframe 中
+  // 妫€鏌ユ槸鍚﹀湪 iframe 涓?
   if (window.self === window.top) {
-    return; // 不在 iframe 中，不执行
+    return; // 涓嶅湪 iframe 涓紝涓嶆墽琛?
   }
 
-  // 检查是否已经初始化过
+  // 妫€鏌ユ槸鍚﹀凡缁忓垵濮嬪寲杩?
   if (window.__iframeHighlightInitialized) {
     return;
   }
   window.__iframeHighlightInitialized = true;
-  console.log("Iframe 高亮脚本已加载");
+  console.log("Iframe 楂樹寒鑴氭湰宸插姞杞?);
 
-  // 创建高亮覆盖层
+  // 鍒涘缓楂樹寒瑕嗙洊灞?
   var overlay = document.createElement("div");
   overlay.id = "iframe-highlight-overlay";
   overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
 
-  // 创建悬停高亮框（虚线边框）
+  // 鍒涘缓鎮仠楂樹寒妗嗭紙铏氱嚎杈规锛?
   var highlightBox = document.createElement("div");
   highlightBox.id = "iframe-highlight-box";
   highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
 
-  // 创建选中节点的常驻高亮框（实线边框）
+  // 鍒涘缓閫変腑鑺傜偣鐨勫父椹婚珮浜锛堝疄绾胯竟妗嗭級
   var selectedBox = document.createElement("div");
   selectedBox.id = "iframe-selected-box";
   selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
 
-  // 创建悬停标签显示
+  // 鍒涘缓鎮仠鏍囩鏄剧ず
   var tagLabel = document.createElement("div");
   tagLabel.id = "iframe-tag-label";
   tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
 
-  // 创建选中节点标签
+  // 鍒涘缓閫変腑鑺傜偣鏍囩
   var selectedLabel = document.createElement("div");
   selectedLabel.id = "iframe-selected-label";
   selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
@@ -474,11 +474,11 @@ body {
   overlay.appendChild(selectedLabel);
   document.body.appendChild(overlay);
 
-  // 存储当前选中的元素
+  // 瀛樺偍褰撳墠閫変腑鐨勫厓绱?
   var selectedElement = null;
   var highlightEnabled = false;
 
-  // 更新选中元素的高亮显示
+  // 鏇存柊閫変腑鍏冪礌鐨勯珮浜樉绀?
   function updateSelectedHighlight(element) {
     console.log("updateSelectedHighlight called with:", element);
     if (!element) {
@@ -492,28 +492,28 @@ body {
     var rect = element.getBoundingClientRect();
     console.log("Selected element rect:", rect);
 
-    // 更新选中高亮框位置
+    // 鏇存柊閫変腑楂樹寒妗嗕綅缃?
     selectedBox.style.display = "block";
     selectedBox.style.left = "".concat(rect.left - 2, "px");
     selectedBox.style.top = "".concat(rect.top - 2, "px");
     selectedBox.style.width = "".concat(rect.width + 4, "px");
     selectedBox.style.height = "".concat(rect.height + 4, "px");
 
-    // 更新选中标签位置和内容
+    // 鏇存柊閫変腑鏍囩浣嶇疆鍜屽唴瀹?
     selectedLabel.style.display = "block";
     selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
 
-    // 计算标签位置，确保不超出视窗
+    // 璁＄畻鏍囩浣嶇疆锛岀‘淇濅笉瓒呭嚭瑙嗙獥
     var labelTop = rect.top - 28;
     var labelLeft = rect.left;
 
-    // 如果标签会超出顶部，显示在元素下方
+    // 濡傛灉鏍囩浼氳秴鍑洪《閮紝鏄剧ず鍦ㄥ厓绱犱笅鏂?
     if (labelTop < 5) {
       labelTop = rect.bottom + 5;
     }
 
-    // 如果标签会超出右侧，向左调整
-    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    // 濡傛灉鏍囩浼氳秴鍑哄彸渚э紝鍚戝乏璋冩暣
+    var labelWidth = selectedLabel.offsetWidth || 100; // 棰勪及瀹藉害
     if (labelLeft + labelWidth > window.innerWidth - 10) {
       labelLeft = window.innerWidth - labelWidth - 10;
     }
@@ -532,19 +532,19 @@ body {
     var current = element;
     while (current !== document.documentElement) {
       var selector = '';
-      // 优先检查唯一ID
+      // 浼樺厛妫€鏌ュ敮涓€ID
       if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
         segments.unshift("#".concat(current.id));
-        break; // ID唯一，无需继续向上
+        break; // ID鍞竴锛屾棤闇€缁х画鍚戜笂
       }
 
-      // 生成类名选择器（取第一个有效类名）
+      // 鐢熸垚绫诲悕閫夋嫨鍣紙鍙栫涓€涓湁鏁堢被鍚嶏級
       var classes = Array.from(current.classList).filter(function (c) {
         return !c.startsWith('js-');
       });
       var className = classes.length > 0 ? ".".concat(classes[0]) : '';
 
-      // 生成位置索引（nth-child）
+      // 鐢熸垚浣嶇疆绱㈠紩锛坣th-child锛?
       var tag = current.tagName.toLowerCase();
       if (!className) {
         var siblings = Array.from(current.parentNode.children);
@@ -559,14 +559,14 @@ body {
       current = current.parentElement;
     }
 
-    // 处理根元素
+    // 澶勭悊鏍瑰厓绱?
     if (current === document.documentElement) {
       segments.unshift('html');
     }
     return segments.join(' > ');
   }
 
-  // 获取元素文本内容
+  // 鑾峰彇鍏冪礌鏂囨湰鍐呭
   function getElementText(element) {
     var _element$textContent;
     if (element.tagName === "INPUT") {
@@ -579,7 +579,7 @@ body {
     return text.length > 50 ? text.substring(0, 50) + "..." : text;
   }
 
-  // 获取元素属性信息
+  // 鑾峰彇鍏冪礌灞炴€т俊鎭?
   function getElementAttributes(element) {
     var attrs = {};
     for (var i = 0; i < element.attributes.length; i++) {
@@ -589,7 +589,7 @@ body {
     return attrs;
   }
 
-  // 鼠标悬停事件处理
+  // 榧犳爣鎮仠浜嬩欢澶勭悊
   function handleMouseOver(e) {
     if (!highlightEnabled) return;
     var target = e.target;
@@ -597,12 +597,12 @@ body {
       return;
     }
 
-    // 避免高亮 html 和 body 元素
+    // 閬垮厤楂樹寒 html 鍜?body 鍏冪礌
     if (target === document.documentElement || target === document.body) {
       return;
     }
 
-    // 如果是已选中的元素，不显示悬停高亮
+    // 濡傛灉鏄凡閫変腑鐨勫厓绱狅紝涓嶆樉绀烘偓鍋滈珮浜?
     if (target === selectedElement) {
       highlightBox.style.display = "none";
       tagLabel.style.display = "none";
@@ -613,34 +613,34 @@ body {
     var text = getElementText(target);
     var attributes = getElementAttributes(target);
 
-    // 更新悬停高亮框位置
+    // 鏇存柊鎮仠楂樹寒妗嗕綅缃?
     highlightBox.style.display = "block";
     highlightBox.style.left = "".concat(rect.left - 2, "px");
     highlightBox.style.top = "".concat(rect.top - 2, "px");
     highlightBox.style.width = "".concat(rect.width + 4, "px");
     highlightBox.style.height = "".concat(rect.height + 4, "px");
 
-    // 更新标签位置和内容
+    // 鏇存柊鏍囩浣嶇疆鍜屽唴瀹?
     tagLabel.style.display = "block";
     tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
 
-    // 计算标签位置，确保不超出视窗
+    // 璁＄畻鏍囩浣嶇疆锛岀‘淇濅笉瓒呭嚭瑙嗙獥
     var labelTop = rect.top - 22;
     var labelLeft = rect.left;
 
-    // 如果标签会超出顶部，显示在元素下方
+    // 濡傛灉鏍囩浼氳秴鍑洪《閮紝鏄剧ず鍦ㄥ厓绱犱笅鏂?
     if (labelTop < 0) {
       labelTop = rect.bottom + 5;
     }
 
-    // 如果标签会超出右侧，向左调整
+    // 濡傛灉鏍囩浼氳秴鍑哄彸渚э紝鍚戝乏璋冩暣
     if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
       labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
     }
     tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
     tagLabel.style.top = "".concat(labelTop, "px");
 
-    // 发送消息到父窗口
+    // 鍙戦€佹秷鎭埌鐖剁獥鍙?
     var elementInfo = {
       tagName: target.tagName.toLowerCase(),
       rect: {
@@ -667,16 +667,16 @@ body {
         source: "iframe-highlight-injector"
       }, "*");
     } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
+      console.warn("鏃犳硶鍙戦€佹秷鎭埌鐖剁獥鍙?", error);
     }
   }
 
-  // 鼠标离开事件处理
+  // 榧犳爣绂诲紑浜嬩欢澶勭悊
   function handleMouseOut(e) {
     if (!highlightEnabled) return;
     var relatedTarget = e.relatedTarget;
 
-    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    // 濡傛灉榧犳爣绉诲姩鍒伴珮浜浉鍏冲厓绱犱笂锛屼笉闅愯棌楂樹寒
     if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
       return;
     }
@@ -689,26 +689,26 @@ body {
         source: "iframe-highlight-injector"
       }, "*");
     } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
+      console.warn("鏃犳硶鍙戦€佹秷鎭埌鐖剁獥鍙?", error);
     }
   }
 
-  // 点击事件处理
+  // 鐐瑰嚮浜嬩欢澶勭悊
   function handleClick(e) {
     var target = e.target;
     if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
       return;
     }
 
-    // 避免处理 html 和 body 元素
+    // 閬垮厤澶勭悊 html 鍜?body 鍏冪礌
     if (target === document.documentElement || target === document.body) {
       return;
     }
 
-    // 检查是否是交互元素，这些元素需要保留默认行为
+    // 妫€鏌ユ槸鍚︽槸浜や簰鍏冪礌锛岃繖浜涘厓绱犻渶瑕佷繚鐣欓粯璁よ涓?
     var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
 
-    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    // 濡傛灉楂樹寒鍔熻兘鍚敤锛屽浜庨潪浜や簰鍏冪礌闃绘榛樿琛屼负鍜屼簨浠朵紶鎾?
     if (highlightEnabled) {
       e.preventDefault();
       e.stopPropagation();
@@ -723,10 +723,10 @@ body {
       rect: rect
     });
 
-    // 立即更新选中高亮
+    // 绔嬪嵆鏇存柊閫変腑楂樹寒
     updateSelectedHighlight(target);
 
-    // 隐藏悬停高亮，因为现在是选中状态
+    // 闅愯棌鎮仠楂樹寒锛屽洜涓虹幇鍦ㄦ槸閫変腑鐘舵€?
     highlightBox.style.display = "none";
     tagLabel.style.display = "none";
     var elementInfo = {
@@ -755,11 +755,11 @@ body {
         source: "iframe-highlight-injector"
       }, "*");
     } catch (error) {
-      console.warn("无法发送消息到父窗口:", error);
+      console.warn("鏃犳硶鍙戦€佹秷鎭埌鐖剁獥鍙?", error);
     }
   }
 
-  // 监听来自父窗口的消息
+  // 鐩戝惉鏉ヨ嚜鐖剁獥鍙ｇ殑娑堟伅
   function handleParentMessage(event) {
     console.log("Received message from parent:", event.data);
     if (event.data.type === "iframe-highlight-toggle") {
@@ -805,7 +805,7 @@ body {
     }
   }
 
-  // 启用高亮功能
+  // 鍚敤楂樹寒鍔熻兘
   function enableHighlight() {
     console.log("Enabling highlight");
     document.addEventListener("mouseover", handleMouseOver, true);
@@ -815,18 +815,18 @@ body {
     overlay.style.display = "block";
   }
 
-  // 禁用高亮功能
+  // 绂佺敤楂樹寒鍔熻兘
   function disableHighlight() {
     console.log("Disabling highlight");
     highlightEnabled = false;
-    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
-    // 这样可以保留选中状态的显示
+    // 淇濇寔浜嬩欢鐩戝惉鍣紝浣嗛€氳繃 highlightEnabled 鍙橀噺鎺у埗琛屼负
+    // 杩欐牱鍙互淇濈暀閫変腑鐘舵€佺殑鏄剧ず
     highlightBox.style.display = "none";
     tagLabel.style.display = "none";
-    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+    // 涓嶉殣钘?selectedBox 鍜?selectedLabel锛屼繚鐣欓€変腑鐘舵€?
   }
 
-  // 完全禁用高亮功能（移除所有监听器）
+  // 瀹屽叏绂佺敤楂樹寒鍔熻兘锛堢Щ闄ゆ墍鏈夌洃鍚櫒锛?
   function fullyDisableHighlight() {
     console.log("Fully disabling highlight");
     highlightEnabled = false;
@@ -840,11 +840,11 @@ body {
     selectedLabel.style.display = "none";
   }
 
-  // 添加事件监听
+  // 娣诲姞浜嬩欢鐩戝惉
   enableHighlight();
   window.addEventListener("message", handleParentMessage);
 
-  // 暴露全局函数供外部调用
+  // 鏆撮湶鍏ㄥ眬鍑芥暟渚涘閮ㄨ皟鐢?
   window.__iframeHighlightControl = {
     enable: enableHighlight,
     disable: disableHighlight,
@@ -856,7 +856,7 @@ body {
       return selectedElement;
     },
     updateSelected: updateSelectedHighlight,
-    // 通过消息发送开关控制
+    // 閫氳繃娑堟伅鍙戦€佸紑鍏虫帶鍒?
     sendToggleMessage: function sendToggleMessage(enabled) {
       window.parent.postMessage({
         type: 'iframe-highlight-status',
@@ -866,7 +866,7 @@ body {
     }
   };
 
-  // 通知父窗口脚本已加载
+  // 閫氱煡鐖剁獥鍙ｈ剼鏈凡鍔犺浇
   try {
     window.parent.postMessage({
       type: "iframe-highlight-ready",
@@ -878,10 +878,10 @@ body {
       source: "iframe-highlight-injector"
     }, "*");
   } catch (error) {
-    console.warn("无法发送就绪消息到父窗口:", error);
+    console.warn("鏃犳硶鍙戦€佸氨缁秷鎭埌鐖剁獥鍙?", error);
   }
 
-  // 清理函数
+  // 娓呯悊鍑芥暟
   window.__iframeHighlightCleanup = function () {
     fullyDisableHighlight();
     window.removeEventListener("message", handleParentMessage);
@@ -896,3 +896,4 @@ body {
 </script>
 </body>
 </html>
+

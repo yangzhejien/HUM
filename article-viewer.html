@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -204,7 +204,7 @@
 <body>
     <div class="viewer-container" id="viewerContainer">
         <div id="articleContent">
-            <div class="loading">加载中... Loading article...</div>
+            <div class="loading">鍔犺浇涓?.. Loading article...</div>
         </div>
     </div>
 
@@ -214,8 +214,8 @@
         'use strict';
 
         const CONFIG = {
-            SUPABASE_URL: 'https://xbyywomrdepmbveideja.supabase.co',
-            SUPABASE_KEY: 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY'
+            SUPABASE_URL: 'https://gslggufgrtmdeyyyveay.supabase.co',
+            SUPABASE_KEY: 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ'
         };
 
         // Get article ID from URL
@@ -224,7 +224,7 @@
 
         if (!articleId) {
             document.getElementById('articleContent').innerHTML =
-                '<div class="error-message">未找到文章ID Article ID not found.<br><a href="javascript:history.back()">返回 Return</a></div>';
+                '<div class="error-message">鏈壘鍒版枃绔營D Article ID not found.<br><a href="javascript:history.back()">杩斿洖 Return</a></div>';
             return;
         }
 
@@ -257,7 +257,7 @@
             } catch (err) {
                 console.error('Error:', err);
                 document.getElementById('articleContent').innerHTML =
-                    '<div class="error-message">无法加载文章 Unable to load article.<br><a href="javascript:history.back()">返回 Return</a></div>';
+                    '<div class="error-message">鏃犳硶鍔犺浇鏂囩珷 Unable to load article.<br><a href="javascript:history.back()">杩斿洖 Return</a></div>';
             }
         }
 
@@ -265,7 +265,7 @@
             if (!article) return;
 
             const categoryClass = article.category === 'public' ? 'public' : 'academic';
-            const categoryLabel = article.category === 'public' ? 'HUM-Public 大众刊' : 'HUM-Academic 专业刊';
+            const categoryLabel = article.category === 'public' ? 'HUM-Public 澶т紬鍒? : 'HUM-Academic 涓撲笟鍒?;
             const backUrl = article.category === 'public' ? 'public.html' : 'academic.html';
             const date = formatDate(article.created_at);
 
@@ -278,36 +278,36 @@
                 </div>
 
                 <div class="pre-publication-notice">
-                    <strong>⚠️ 预出版声明 | Pre-Publication Notice</strong><br>
-                    本文为预出版版本，待ISSN获批后转为正式出版。<br>
+                    <strong>鈿狅笍 棰勫嚭鐗堝０鏄?| Pre-Publication Notice</strong><br>
+                    鏈枃涓洪鍑虹増鐗堟湰锛屽緟ISSN鑾锋壒鍚庤浆涓烘寮忓嚭鐗堛€?br>
                     This is a pre-publication version. Upon ISSN approval, it will be converted to official publication.
                 </div>
 
                 <div class="viewer-frame" id="viewerFrame">
                     <div class="viewer-toolbar">
                         <div class="zoom-controls">
-                            <button class="zoom-btn" onclick="zoomOut()" title="缩小 Zoom Out">−</button>
+                            <button class="zoom-btn" onclick="zoomOut()" title="缂╁皬 Zoom Out">鈭?/button>
                             <span class="zoom-level" id="zoomLevel">${currentZoom}%</span>
-                            <button class="zoom-btn" onclick="zoomIn()" title="放大 Zoom In">+</button>
-                            <button class="zoom-btn" onclick="resetZoom()" title="重置 Reset" style="font-size: 0.75rem;">100%</button>
+                            <button class="zoom-btn" onclick="zoomIn()" title="鏀惧ぇ Zoom In">+</button>
+                            <button class="zoom-btn" onclick="resetZoom()" title="閲嶇疆 Reset" style="font-size: 0.75rem;">100%</button>
                         </div>
                         <div class="page-controls">
-                            <button class="page-btn" onclick="prevPage()">◀ 上一页</button>
-                            <span class="page-indicator">页面 Page 1</span>
-                            <button class="page-btn" onclick="nextPage()">下一页 ▶</button>
+                            <button class="page-btn" onclick="prevPage()">鈼€ 涓婁竴椤?/button>
+                            <span class="page-indicator">椤甸潰 Page 1</span>
+                            <button class="page-btn" onclick="nextPage()">涓嬩竴椤?鈻?/button>
                         </div>
-                        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()">鉀?鍏ㄥ睆 Fullscreen</button>
                     </div>
                     <div class="document-container" id="documentContainer">
                         <div class="document-content" id="documentContent" style="transform: scale(${currentZoom/100});">
-                            ${article.content ? article.content : '<p style="text-align: center; color: var(--color-text-secondary);">文章内容加载中... Loading article content...</p>'}
+                            ${article.content ? article.content : '<p style="text-align: center; color: var(--color-text-secondary);">鏂囩珷鍐呭鍔犺浇涓?.. Loading article content...</p>'}
                         </div>
                     </div>
                 </div>
 
                 <div class="article-footer">
-                    <p class="disclaimer">预出版版本｜仅用于学术参考<br>Pre-Publication Version | For Academic Reference Only</p>
-                    <a href="${backUrl}" class="back-link">← 返回列表 Back to List</a>
+                    <p class="disclaimer">棰勫嚭鐗堢増鏈綔浠呯敤浜庡鏈弬鑰?br>Pre-Publication Version | For Academic Reference Only</p>
+                    <a href="${backUrl}" class="back-link">鈫?杩斿洖鍒楄〃 Back to List</a>
                 </div>
             `;
         }
@@ -390,3 +390,5 @@
 
 </body>
 </html>
+
+

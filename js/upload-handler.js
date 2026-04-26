@@ -1,11 +1,11 @@
-/**
+﻿/**
  * HUM Journal - Word to PDF Upload Handler
  * Handles Word document conversion, PDF generation, and Supabase Storage upload
  */
 
 // Supabase configuration
-const SUPABASE_URL = 'https://xbyywomrdepmbveideja.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_qzzZ_W-xFtKdLwX_hZc4Xg_apsVnBoY';
+const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
 
 let supabase = null;
 
@@ -29,7 +29,7 @@ async function wordToPdf(file, articleTitle, author) {
             const text = result.value;
 
             if (!text || text.trim().length === 0) {
-                reject(new Error('无法提取 Word 内容 / Cannot extract Word content'));
+                reject(new Error('鏃犳硶鎻愬彇 Word 鍐呭 / Cannot extract Word content'));
                 return;
             }
 
@@ -123,7 +123,7 @@ async function uploadToStorage(file, fileName) {
     const client = await initSupabase();
 
     if (!client) {
-        throw new Error('Supabase 未初始化 / Supabase not initialized');
+        throw new Error('Supabase 鏈垵濮嬪寲 / Supabase not initialized');
     }
 
     // Generate unique file path
@@ -255,3 +255,4 @@ window.HUMUpload = {
     process: processWordUpload,
     getPreviewUrl: getPreviewUrl
 };
+
