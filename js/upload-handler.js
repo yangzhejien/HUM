@@ -1,15 +1,13 @@
-﻿/**
+/**
  * HUM Journal - Word to PDF Upload Handler
- * Handles Word document conversion, PDF generation, and Supabase Storage upload
+ * Converts Word to PDF and stores as base64 in Supabase articles table
  */
 
-// Supabase configuration
 const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXl2ZWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODQ0NzIsImV4cCI6MjA5Mjc2MDQ3Mn0.N4bpqRGmez2hxfyRDoW6YAaWeQGGJkhMd1v3N7NTKWs';
 
 let supabase = null;
 
-// Initialize Supabase
 async function initSupabase() {
     if (typeof window.supabase !== 'undefined' && !supabase) {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -17,11 +15,9 @@ async function initSupabase() {
     return supabase;
 }
 
-// Convert Word to PDF using mammoth + pdfmake
 async function wordToPdf(file, articleTitle, author) {
     return new Promise(async (resolve, reject) => {
         try {
-            // Read file as ArrayBuffer
             const arrayBuffer = await file.arrayBuffer();
 
             // Extract text from Word using mammoth
@@ -29,7 +25,7 @@ async function wordToPdf(file, articleTitle, author) {
             const text = result.value;
 
             if (!text || text.trim().length === 0) {
-                reject(new Error('鏃犳硶鎻愬彇 Word 鍐呭 / Cannot extract Word content'));
+                reject(new Error('Cannot extract Word content'));
                 return;
             }
 
@@ -38,7 +34,6 @@ async function wordToPdf(file, articleTitle, author) {
                 await loadPdfMake();
             }
 
-            // Create PDF document definition
             const docDefinition = {
                 pageSize: 'A4',
                 pageMargins: [60, 60, 60, 60],
@@ -49,64 +44,34 @@ async function wordToPdf(file, articleTitle, author) {
                     { text: text, style: 'body', margin: [0, 0, 0, 20] }
                 ],
                 styles: {
-                    title: {
-                        fontSize: 22,
-                        bold: true,
-                        alignment: 'center',
-                        margin: [0, 0, 0, 20]
-                    },
-                    author: {
-                        fontSize: 12,
-                        alignment: 'center',
-                        italics: true
-                    },
-                    heading: {
-                        fontSize: 14,
-                        bold: true
-                    },
-                    body: {
-                        fontSize: 11,
-                        lineHeight: 1.5,
-                        textAlign: 'justify'
-                    }
+                    title: { fontSize: 22, bold: true, alignment: 'center', margin: [0, 0, 0, 20] },
+                    author: { fontSize: 12, alignment: 'center', italics: true },
+                    heading: { fontSize: 14, bold: true },
+                    body: { fontSize: 11, lineHeight: 1.5, textAlign: 'justify' }
                 },
-                defaultStyle: {
-                    font: 'Helvetica'
-                }
+                defaultStyle: { font: 'Helvetica' }
             };
 
-            // Generate PDF
             const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-
             pdfDocGenerator.getBlob((blob) => {
-                // Convert blob to File object with .pdf extension
                 const pdfFile = new File([blob], file.name.replace('.docx', '.pdf'), {
                     type: 'application/pdf',
                     lastModified: new Date().getTime()
                 });
                 resolve(pdfFile);
             });
-
         } catch (error) {
-            console.error('Word to PDF conversion error:', error);
             reject(error);
         }
     });
 }
 
-// Load pdfmake library dynamically
 function loadPdfMake() {
     return new Promise((resolve, reject) => {
-        if (typeof pdfMake !== 'undefined') {
-            resolve();
-            return;
-        }
-
-        // Load pdfmake
+        if (typeof pdfMake !== 'undefined') { resolve(); return; }
         const pdfMakeScript = document.createElement('script');
         pdfMakeScript.src = 'https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/pdfmake.min.js';
         pdfMakeScript.onload = () => {
-            // Load fonts
             const pdfFontsScript = document.createElement('script');
             pdfFontsScript.src = 'https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/vfs_fonts.js';
             pdfFontsScript.onload = resolve;
@@ -118,141 +83,98 @@ function loadPdfMake() {
     });
 }
 
-// Upload file to Supabase Storage
-async function uploadToStorage(file, fileName) {
-    const client = await initSupabase();
+// Store PDF as base64 in articles table
+async function uploadToDatabase(pdfFile, articleTitle) {
+    // Convert file to base64
+    const base64 = await fileToBase64(pdfFile);
+    const fileName = pdfFile.name;
 
-    if (!client) {
-        throw new Error('Supabase 鏈垵濮嬪寲 / Supabase not initialized');
+    // Create a pending article record
+    const createRes = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'apikey': SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
+            title: articleTitle || 'Untitled',
+            author: 'Pending',
+            email: 'pending@pending.com',
+            category: 'Unknown',
+            status: 'pending',
+            content: 'File upload pending',
+            pdf_data: base64
+        })
+    });
+
+    if (!createRes.ok) {
+        const err = await createRes.text();
+        throw new Error('Failed to create article record: ' + err);
     }
 
-    // Generate unique file path
-    const timestamp = Date.now();
-    const randomStr = Math.random().toString(36).substring(2, 8);
-    const safeFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filePath = `${timestamp}_${randomStr}_${safeFileName}`;
+    const articles = await createRes.json();
+    const articleId = articles[0]?.id;
 
-    try {
-        // Upload file
-        const { data, error } = await client.storage
-            .from('articles')
-            .upload(filePath, file, {
-                cacheControl: '3600',
-                upsert: false,
-                contentType: file.type
-            });
-
-        if (error) {
-            console.error('Upload error:', error);
-            throw error;
-        }
-
-        // Get public URL
-        const { data: urlData } = client.storage
-            .from('articles')
-            .getPublicUrl(filePath);
-
-        return {
-            path: data.path,
-            url: urlData.publicUrl,
-            fileName: file.name
-        };
-
-    } catch (error) {
-        console.error('Storage upload error:', error);
-
-        // Fallback: Store as base64 in localStorage
-        return await saveToLocalStorage(file, fileName);
-    }
+    return {
+        path: `article/${articleId}`,
+        url: `${SUPABASE_URL}/rest/v1/articles?id=eq.${articleId}`,
+        fileName: fileName,
+        articleId: articleId
+    };
 }
 
-// Fallback: Save file to localStorage as base64
-async function saveToLocalStorage(file, fileName) {
+function fileToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => {
-            const data = {
-                name: fileName,
-                type: file.type,
-                data: reader.result,
-                timestamp: Date.now()
-            };
-
-            // Get existing files
-            const existingFiles = JSON.parse(localStorage.getItem('hum_pdf_files') || '[]');
-            existingFiles.push(data);
-
-            // Keep only last 10 files to avoid localStorage limit
-            if (existingFiles.length > 10) {
-                existingFiles.shift();
-            }
-
-            localStorage.setItem('hum_pdf_files', JSON.stringify(existingFiles));
-
-            // Return a blob URL as fallback
-            const blobUrl = URL.createObjectURL(file);
-            resolve({
-                path: `local/${fileName}`,
-                url: blobUrl,
-                fileName: fileName,
-                isLocal: true
-            });
-        };
+        reader.onload = () => resolve(reader.result);
         reader.onerror = reject;
         reader.readAsDataURL(file);
     });
 }
 
-// Full workflow: Word -> PDF -> Upload
+// Full workflow: Word -> PDF -> Database
 async function processWordUpload(file, articleTitle, author) {
     try {
-        // Step 1: Convert Word to PDF
         console.log('Converting Word to PDF...');
         const pdfFile = await wordToPdf(file, articleTitle, author);
         console.log('Word converted to PDF:', pdfFile.name);
 
-        // Step 2: Upload to Supabase Storage
-        console.log('Uploading PDF...');
-        const uploadResult = await uploadToStorage(pdfFile, pdfFile.name);
-        console.log('Upload complete:', uploadResult);
+        console.log('Storing PDF in database...');
+        const result = await uploadToDatabase(pdfFile, articleTitle);
+        console.log('Upload complete:', result);
 
-        return {
-            success: true,
-            pdfFile: pdfFile,
-            ...uploadResult
-        };
-
+        return { success: true, pdfFile: pdfFile, ...result };
     } catch (error) {
         console.error('Process error:', error);
-        return {
-            success: false,
-            error: error.message
-        };
+        return { success: false, error: error.message };
     }
 }
 
-// Get file preview URL (for PDF viewing)
-function getPreviewUrl(fileData) {
-    if (fileData.isLocal && fileData.data) {
-        // Convert base64 to blob URL
-        const byteCharacters = atob(fileData.data.split(',')[1]);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+function getPreviewUrl(articleId, pdfData) {
+    if (!pdfData) return null;
+    return pdfData; // pdfData is already a data URL
+}
+
+// For admin to preview PDF from articles table
+async function fetchArticlePdf(articleId) {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${articleId}&select=pdf_data,file_name`, {
+        headers: {
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'apikey': SUPABASE_ANON_KEY
         }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: fileData.type });
-        return URL.createObjectURL(blob);
-    }
-    return fileData.url;
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data[0]?.pdf_data || null;
 }
 
-// Export functions
 window.HUMUpload = {
     init: initSupabase,
     wordToPdf: wordToPdf,
-    uploadToStorage: uploadToStorage,
+    uploadToStorage: uploadToDatabase, // backward compat alias
     process: processWordUpload,
-    getPreviewUrl: getPreviewUrl
+    getPreviewUrl: getPreviewUrl,
+    fetchArticlePdf: fetchArticlePdf
 };
-

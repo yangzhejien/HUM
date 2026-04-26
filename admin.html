@@ -1,7 +1,630 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Admin Dashboard | HUM Journal< itle> <link rel="stylesheet" href="css tyle.css"> <style> .admin-container { min-height: 100vh; background: #F8F9FA; } .admin-header { background: #0A2342; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; } .admin-header h1 { color: white; font-size: 1.25rem; margin: 0; } .admin-header .logout-btn { color: white; text-decoration: none; padding: 0.5rem 1rem; border: 1px solid white; transition: all 0.2s; } .admin-header .logout-btn:hover { background: white; color: #0A2342; } .admin-content { padding: 2rem; max-width: 1400px; margin: 0 auto; } .admin-section { background: white; border: 1px solid #E5E5E5; padding: 2rem; margin-bottom: 2rem; } .admin-section h2 { font-size: 1.25rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #E5E5E5; } .form-group { margin-bottom: 1.5rem; } .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #111; } .form-input, .form-select, .form-textarea { width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 1rem; font-family: inherit; } .form-textarea { resize: vertical; min-height: 200px; line-height: 1.6; } .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #0A2342; } .upload-box { border: 2px dashed #E5E5E5; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: #FAFAFA; margin-bottom: 1rem; } .upload-box:hover { border-color: #0A2342; background: white; } .upload-box.dragover { border-color: #0A2342; background: rgba(10, 35, 66, 0.05); } .upload-box.has-file { border-color: #10B981; background: #D1FAE5; } .btn { padding: 0.75rem 1.5rem; border: none; cursor: pointer; font-size: 1rem; font-weight: 500; transition: all 0.2s; } .btn-primary { background: #0A2342; color: white; } .btn-primary:hover { background: #1E3A5F; } .btn-primary:disabled { background: #ccc; cursor: not-allowed; } .btn-secondary { background: #6B7280; color: white; } .btn-secondary:hover { background: #4B5563; } .btn-success { background: #10B981; color: white; } .btn-success:hover { background: #059669; } .btn-danger { background: #DC2626; color: white; } .btn-danger:hover { background: #B91C1C; } .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; } .articles-list { margin-top: 1rem; } .article-item { border: 1px solid #E5E5E5; padding: 1rem; margin-bottom: 1rem; } .article-item.expanded { border-color: #0A2342; box-shadow: 0 2px 8px rgba(0,0,0,0.1); } .article-item .article-header { display: flex; justify-content: space-between; align-items: flex-start; cursor: pointer; } .article-item .article-info { flex: 1; } .article-item .article-title { font-weight: 600; margin-bottom: 0.25rem; font-size: 1.1rem; } .article-item .article-meta { font-size: 0.875rem; color: #4A5568; } .article-item .article-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; } .article-item .article-content-preview { margin-top: 1rem; padding: 1rem; background: #F9FAFB; border: 1px solid #E5E5E5; max-height: 200px; overflow: hidden; position: relative; } .article-item .article-content-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, #F9FAFB); } .article-item.expanded .article-content-preview { max-height: none; overflow: auto; } .article-item.expanded .article-content-preview::after { display: none; } .category-tag { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 0; margin-left: 0.5rem; } .category-public { background: #DBEAFE; color: #1E40AF; } .category-academic { background: #E0E7FF; color: #3730A3; } .status-tag { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.5rem; } .status-published { background: #D1FAE5; color: #065F46; } .status-unpublished { background: #FEE2E2; color: #991B1B; } .status-pending { background: #FEF3C7; color: #92400E; } .empty-state { text-align: center; padding: 3rem; color: #4A5568; } .success-msg { background: #D1FAE5; border: 1px solid #10B981; color: #065F46; padding: 1rem; margin-bottom: 1rem; display: none; } .error-msg { background: #FEE2E2; border: 1px solid #DC2626; color: #991B1B; padding: 1rem; margin-bottom: 1rem; display: none; } .info-box { background: #EFF6FF; border: 1px solid #3B82F6; color: #1E40AF; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.875rem; } .info-box strong { display: block; margin-bottom: 0.25rem; } .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; } .stat-card { background: white; border: 1px solid #E5E5E5; padding: 1.5rem; text-align: center; } .stat-card .stat-number { font-size: 2rem; font-weight: 700; color: #0A2342; } .stat-card .stat-label { color: #6B7280; font-size: 0.875rem; } .expand-btn { background: none; border: none; cursor: pointer; font-size: 1.5rem; padding: 0.25rem 0.5rem; color: #0A2342; } .expand-btn:hover { background: #E5E7EB; } /* PDF Preview Modal */ .pdf-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; } .pdf-modal.active { display: flex; } .pdf-modal-content { width: 90%; height: 90%; background: white; border-radius: 8px; position: relative; display: flex; flex-direction: column; } .pdf-modal-header { background: #0A2342; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; } .pdf-modal-header h3 { margin: 0; font-size: 1rem; } .pdf-modal-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0 0.5rem; } .pdf-modal-close:hover { opacity: 0.8; } .pdf-modal-body { flex: 1; overflow: hidden; } .pdf-modal-body iframe { width: 100%; height: 100%; border: none; } .pdf-preview-btn { background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; border-radius: 4px; margin-left: 0.5rem; } .pdf-preview-btn:hover { background: #2563EB; } .file-link { color: #3B82F6; text-decoration: none; cursor: pointer; } .file-link:hover { text-decoration: underline; } < tyle>
-< ead>
-<body> <div class="admin-container"> <header class="admin-header"> <div> <h1>HUM Journal Admin / < 1> <span id="adminInfo" style="font-size: 0.875rem; opacity: 0.8;">< pan> < iv> <div> <a href="index.html" class="logout-btn" style="margin-right: 0.5rem;">Home< > <a href="login.html" class="logout-btn" onclick="logout()">Logout / €? > < iv> < eader> <div class="admin-content"> <!-- Messages --> <div class="success-msg" id="successMsg">< iv> <div class="error-msg" id="errorMsg">< iv> <!-- Statistics --> <div class="stats-grid"> <div class="stat-card"> <div class="stat-number" id="statTotal">0< iv> <div class="stat-label">Total Articles / ? iv> < iv> <div class="stat-card"> <div class="stat-number" id="statPublished">0< iv> <div class="stat-label">Published / ? iv> < iv> <div class="stat-card"> <div class="stat-number" id="statPending">0< iv> <div class="stat-label">Pending / ? iv> < iv> <div class="stat-card"> <div class="stat-number" id="statPublic">0< iv> <div class="stat-label">Public / т? iv> < iv> <div class="stat-card"> <div class="stat-number" id="statAcademic">0< iv> <div class="stat-label">Academic / ? iv> < iv> < iv> <!-- Add Article Section --> <div class="admin-section"> <h2 id="formTitle">Add New Article / ? 2> <div class="info-box"> <strong>  Submission Rules:< trong> <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;"> <li>HUM-Publicぇ?strong>< trong> | Direct publish after upload< i> <li>HUM-Academic?strong>? trong> | Goes to pending review< i> <li>℃"" | Click "Approve" to publish after review< i> < l> < iv> <form id="articleForm"> <input type="hidden" id="articleId"> <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"> <div class="form-group"> <label class="form-label" for="title">Title /  *< abel> <input type="text" id="title" class="form-input" required placeholder="Enter article title"> < iv> <div class="form-group"> <label class="form-label" for="author">Author / €?*< abel> <input type="text" id="author" class="form-input" required placeholder="Enter author name"> < iv> < iv> <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"> <div class="form-group"> <label class="form-label" for="email">Email / < abel> <input type="email" id="email" class="form-input" placeholder="Author's email"> < iv> <div class="form-group"> <label class="form-label" for="category">Category / *< abel> <select id="category" class="form-select" required> <option value="public">HUM-Public / т? ption> <option value="academic">HUM-Academic / ? ption> < elect> < iv> < iv> <div class="form-group"> <label class="form-label" for="abstract">Abstract / < abel> <input type="text" id="abstract" class="form-input" placeholder="Enter article abstract"> < iv> <div class="form-group"> <label class="form-label" for="keywords">Keywords / ? abel> <input type="text" id="keywords" class="form-input" placeholder="Enter keywords, separated by commas"> < iv> <div class="form-group"> <label class="form-label" for="content">Content /  *< abel> <textarea id="content" class="form-textarea" required placeholder="Enter article content">< extarea> < iv> <div class="form-group"> <label class="form-label">Word Document ord. (.docx) - Optional< abel> <div class="upload-box" id="uploadBox" onclick="document.getElementById('wordFile').click()"> <p id="uploadText"> Click or drag to upload Word document (.docx)< > <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">ord. < > <input type="file" id="wordFile" style="display: none;" accept=".docx" onchange="handleFileSelect(this)"> < iv> <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;"> Note: Upload Word document. Content will be extracted for display.<br> ord. ず? < > < iv> <div style="display: flex; gap: 1rem;"> <button type="submit" class="btn btn-primary" id="submitBtn">Save Article / < utton> <button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;" onclick="cancelEdit()">Cancel / < utton> <button type="button" class="btn btn-success" id="publishBtn" style="display: none;" onclick="publishCurrentArticle()">Publish / < utton> < iv> < orm> < iv> <!-- Articles List Section --> <div class="admin-section"> <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"> <h2 style="margin: 0; border: none; padding: 0;">Articles / 〃 <span id="articleCount">< pan>< 2> <div style="display: flex; gap: 0.5rem;"> <button class="btn btn-sm" style="background: #E5E7EB;" onclick="filterArticles('all')" id="filterAll">All / ㄩ< utton> <button class="btn btn-sm" style="background: #D1FAE5;" onclick="filterArticles('published')" id="filterPublished">Published / ? utton> <button class="btn btn-sm" style="background: #FEF3C7;" onclick="filterArticles('pending')" id="filterPending">Pending / ? utton> <button class="btn btn-sm" style="background: #FEE2E2;" onclick="filterArticles('unpublished')" id="filterUnpublished">Unpublished / ? utton> <button class="btn btn-sm" style="background: #DBEAFE;" onclick="filterArticles('public')" id="filterPublic">Public / т< utton> <button class="btn btn-sm" style="background: #E0E7FF;" onclick="filterArticles('academic')" id="filterAcademic">Academic / < utton> <button class="btn btn-sm" style="background: #F3F4F6;" onclick="refreshArticles()"> Refresh< utton> < iv> < iv> <div class="articles-list" id="articlesList"> <div class="empty-state">Loading... / ?..< iv> < iv> < iv> < iv> < iv> <!-- PDF Preview Modal --> <div class="pdf-modal" id="pdfModal"> <div class="pdf-modal-content"> <div class="pdf-modal-header"> <h3 id="pdfModalTitle">PDF Preview DF < 3> <button class="pdf-modal-close" onclick="closePdfModal()">&times;< utton> < iv> <div class="pdf-modal-body"> <iframe id="pdfIframe" src="">< frame> < iv> < iv> < iv> <!-- Mammoth.js for Word document parsing --> <script src="https:/ dn.jsdelivr.net pm ammoth@1.6.0 ammoth.browser.min.js">< cript> <script src="https:/ dn.jsdelivr.net pm/@supabase upabase-js@2">< cript> <script src="js ang.js">< cript> <script> / upabase const SUPABASE_URL = 'https:/ slggufgrtmdeyyyveay.supabase.co'; const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ'; let supabase = null; let allArticles = []; let currentFilter = 'all'; let selectedFile = null; let editingId = null; let useLocalMode = false; // €ュ﹀ function isConfigured() { return SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY' && SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.startsWith('eyJ'); } / heck login status if (!sessionStorage.getItem('adminLoggedIn')) { window.location.href = 'login.html'; } / et admin role const adminRole = sessionStorage.getItem('adminRole'); const adminName = sessionStorage.getItem('adminName'); const adminEmail = sessionStorage.getItem('adminEmail'); const isAdmin = adminRole === 'admin'; / isplay admin info document.getElementById('adminInfo').textContent = `${adminName} (${adminEmail})`; / nitialize Supabase async function initSupabase() { if (!isConfigured()) { console.warn('?Supabase '); showError(' Supabase '); loadArticlesFromLocal(); return; } try { if (typeof window.supabase !== 'undefined') { supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); console.log('Supabase client initialized'); await testConnection(); await loadArticles(); } else { console.log('Supabase SDK not loaded, using localStorage only'); loadArticlesFromLocal(); } } catch (error) { console.error('Supabase init error:', error); if (error.message.includes('signature') || error.message.includes('JWT')) { showError('Supabase €?API '); } loadArticlesFromLocal(); } } async function testConnection() { try { const { data, error } = await supabase.storage.listBuckets(); if (error) { console.error('Storage error:', error); if (error.message.includes('signature')) { showError('Supabase €?API '); useLocalMode = true; } return; } console.log('?Supabase connected, buckets:', data.map(b => b.name)); } catch (error) { console.error('Connection test error:', error); } } / oad articles via Supabase REST API (no JWT signature needed) async function loadArticles() { try { const anonKey = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ'; const resp = await fetch( 'https:/ slggufgrtmdeyyyveay.supabase.co est 1 rticles?select=*&order=created_at.desc', { headers: { apikey: anonKey, Authorization: 'Bearer ' + anonKey } } ); if (!resp.ok) { const errText = await resp.text(); console.error('REST error', resp.status, errText); throw new Error('REST ' + resp.status); } const data = await resp.json(); allArticles = Array.isArray(data) ? data : []; console.log('[Admin] Got articles via REST:', allArticles.length, JSON.stringify(allArticles)); } catch (error) { console.error('Load articles error:', error); showError('Load failed: ' + error.message); } / lso load from localStorage and merge const localArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]'); if (localArticles.length > allArticles.length) { allArticles = localArticles; } / emove duplicates const seen = new Set(); allArticles = allArticles.filter(article => { if (seen.has(article.id)) return false; seen.add(article.id); return true; }); updateStats(); renderArticles(); } / oad from localStorage only function loadArticlesFromLocal() { allArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]'); updateStats(); renderArticles(); } / efresh articles async function refreshArticles() { showSuccess('Refreshing... / ?..'); await loadArticles(); } / pdate statistics function updateStats() { document.getElementById('statTotal').textContent = allArticles.length; document.getElementById('statPublished').textContent = allArticles.filter(a => a.status === 'published').length; document.getElementById('statPending').textContent = allArticles.filter(a => a.status === 'pending').length; document.getElementById('statPublic').textContent = allArticles.filter(a => a.category === 'public').length; document.getElementById('statAcademic').textContent = allArticles.filter(a => a.category === 'academic').length; } / ilter articles function filterArticles(filter) { currentFilter = filter; / pdate filter buttons ['All', 'Published', 'Pending', 'Unpublished', 'Public', 'Academic'].forEach(f => { const btn = document.getElementById('filter' + f); if (btn) { btn.style.outline = f.toLowerCase() === filter ? '2px solid #0A2342' : 'none'; } }); renderArticles(); } / andle file selection function handleFileSelect(input) { const file = input.files[0]; if (file && file.name.endsWith('.docx')) { selectedFile = file; document.getElementById('uploadBox').classList.add('has-file'); document.getElementById('uploadText').textContent = ' ' + file.name; / xtract content extractWordContent(file); } } / xtract content from Word document async function extractWordContent(file) { try { const arrayBuffer = await file.arrayBuffer(); const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer }); const content = result.value; if (content && content.trim()) { document.getElementById('content').value = content.trim(); showSuccess('Word content extracted! ord'); } else { showError('Cannot extract content from Word file ord'); } } catch (error) { console.error('Word extraction error:', error); showError('Word extraction failed: ' + error.message); } } / rag and drop support const uploadBox = document.getElementById('uploadBox'); uploadBox.addEventListener('dragover', function(e) { e.preventDefault(); this.classList.add('dragover'); }); uploadBox.addEventListener('dragleave', function(e) { e.preventDefault(); this.classList.remove('dragover'); }); uploadBox.addEventListener('drop', function(e) { e.preventDefault(); this.classList.remove('dragover'); const file = e.dataTransfer.files[0]; if (file && file.name.endsWith('.docx')) { document.getElementById('wordFile').files = e.dataTransfer.files; handleFileSelect(document.getElementById('wordFile')); } }); / ender articles list function renderArticles() { let articles = [...allArticles]; / pply filter if (currentFilter === 'published') { articles = articles.filter(a => a.status === 'published'); } else if (currentFilter === 'pending') { articles = articles.filter(a => a.status === 'pending'); } else if (currentFilter === 'unpublished') { articles = articles.filter(a => a.status === 'unpublished'); } else if (currentFilter === 'public') { articles = articles.filter(a => a.category === 'public'); } else if (currentFilter === 'academic') { articles = articles.filter(a => a.category === 'academic'); } document.getElementById('articleCount').textContent = `(${articles.length})`; if (articles.length === 0) { document.getElementById('articlesList').innerHTML = '<div class="empty-state">No articles found. / ?br><br>Submit from: <a href="submission.html">submission.html< >< iv>'; return; } / ort by date articles.sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date)); const html = articles.map(article => { const statusClass = article.status === 'published' ? 'status-published' : article.status === 'pending' ? 'status-pending' : 'status-unpublished'; const statusLabel = article.status === 'published' ? 'Published / ? : article.status === 'pending' ? 'Pending / ? : 'Unpublished / ?; const categoryClass = article.category === 'public' ? 'category-public' : 'category-academic'; const categoryLabel = article.category === 'public' ? 'Public т' : 'Academic '; const date = new Date(article.created_at || article.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }); const contentPreview = (article.content || '').substring(0, 300); const isEditing = editingId === article.id; return ` <div class="article-item ${isEditing ? 'expanded' : ''}" id="article-${article.id}"> <div class="article-header"> <div class="article-info"> <div class="article-title"> ${escapeHtml(article.title)} <span class="category-tag ${categoryClass}">${categoryLabel}< pan> <span class="status-tag ${statusClass}">${statusLabel}< pan> < iv> <div class="article-meta"> ${escapeHtml(article.author)} ${article.email ? `(${escapeHtml(article.email)})` : ''} | ${date} ${article.keywords ? `<br>?${escapeHtml(article.keywords)}` : ''} ${article.file_name ? `<br> ${escapeHtml(article.file_name)}` : ''} < iv> < iv> <button class="expand-btn" onclick="toggleArticle('${article.id}')"> ${isEditing ? '? : '?} < utton> < iv> ${isEditing ? ` <div class="article-content-preview" style="max-height: none; white-space: pre-wrap;">
-${escapeHtml(article.content || article.abstract || 'No content / ?)} < iv> <div class="article-actions" style="margin-top: 1rem;"> <button class="btn btn-secondary btn-sm" onclick="editArticle('${article.id}')"> Edit / < utton> ${isAdmin ? ` ${article.status !== 'published' ? ` <button class="btn btn-success btn-sm" onclick="publishArticle('${article.id}')">?Publish / < utton> ` : ` <button class="btn btn-sm" style="background: #F59E0B; color: white;" onclick="unpublishArticle('${article.id}')"> Unpublish / ょ< utton> `} <button class="btn btn-danger btn-sm" onclick="deleteArticle('${article.id}')">?Delete / < utton> ` : ''} ${article.file_url ? ` <button class="pdf-preview-btn" onclick="previewPdf('${escapeHtml(article.file_url)}', '${escapeHtml(article.title)}')"> Preview PDF /  PDF< utton> ` : ''} < iv> ` : ''} < iv> `; }).join(''); document.getElementById('articlesList').innerHTML = html; } / oggle article expansion function toggleArticle(id) { editingId = editingId === id ? null : id; renderArticles(); } / dit article function editArticle(id) { const article = allArticles.find(a => a.id == id || a.id === id); if (article) { document.getElementById('articleId').value = article.id; document.getElementById('title').value = article.title || ''; document.getElementById('author').value = article.author || ''; document.getElementById('email').value = article.email || ''; document.getElementById('abstract').value = article.abstract || ''; document.getElementById('keywords').value = article.keywords || ''; document.getElementById('category').value = article.category || 'public'; document.getElementById('content').value = article.content || ''; document.getElementById('formTitle').textContent = 'Edit Article / '; document.getElementById('submitBtn').textContent = 'Update / '; document.getElementById('cancelBtn').style.display = 'inline-block'; document.getElementById('publishBtn').style.display = article.status !== 'published' ? 'inline-block' : 'none'; window.scrollTo(0, 0); } } / ublish current article async function publishCurrentArticle() { const id = document.getElementById('articleId').value; if (id) { await publishArticle(id); } } / ancel edit function cancelEdit() { document.getElementById('articleForm').reset(); document.getElementById('articleId').value = ''; document.getElementById('formTitle').textContent = 'Add New Article / ?; document.getElementById('submitBtn').textContent = 'Save Article / '; document.getElementById('cancelBtn').style.display = 'none'; document.getElementById('publishBtn').style.display = 'none'; selectedFile = null; document.getElementById('uploadBox').classList.remove('has-file'); document.getElementById('uploadText').textContent = ' Click or drag to upload Word document (.docx)'; } / orm submission document.getElementById('articleForm').addEventListener('submit', async function(e) { e.preventDefault(); const id = document.getElementById('articleId').value; const title = document.getElementById('title').value.trim(); const author = document.getElementById('author').value.trim(); const email = document.getElementById('email').value.trim(); const abstract = document.getElementById('abstract').value.trim(); const keywords = document.getElementById('keywords').value.trim(); const category = document.getElementById('category').value; const content = document.getElementById('content').value.trim(); if (!title || !author || !content) { showError('Please fill required fields / 」'); return; } const status = category === 'public' ? 'published' : 'pending'; const submitBtn = document.getElementById('submitBtn'); submitBtn.disabled = true; submitBtn.textContent = 'Saving... / ?..'; const article = { title, author, email, abstract, keywords, category, content, status, file_name: selectedFile ? selectedFile.name : null, updated_at: new Date().toISOString() }; try { if (id) { / pdate existing article.updated_at = new Date().toISOString(); / ry Supabase update if (supabase) { await supabase .from('articles') .update(article) .eq('id', parseInt(id)); } / pdate local const index = allArticles.findIndex(a => a.id == id || a.id === id); if (index !== -1) { allArticles[index] = { ...allArticles[index], ...article }; } showSuccess('Article updated! / '); } else { / reate new article.created_at = new Date().toISOString(); article.date = new Date().toISOString(); article.id = Date.now().toString(); / ry Supabase insert if (supabase) { const { data, error } = await supabase .from('articles') .insert([article]) .select() .single(); if (data) article.id = data.id.toString(); } allArticles.unshift(article); showSuccess(category === 'public' ? 'Article created and published! / ? : 'Article created and sent for review! / ℃?); } / ave to localStorage localStorage.setItem('hum_articles', JSON.stringify(allArticles)); updateStats(); renderArticles(); cancelEdit(); } catch (error) { console.error('Save error:', error); showError('Save failed: ' + error.message); } submitBtn.disabled = false; submitBtn.textContent = id ? 'Update / ' : 'Save Article / '; }); / ublish article async function publishArticle(id) { if (!isAdmin) { showError('Only admin can publish! / ュ'); return; } try { const article = allArticles.find(a => a.id == id || a.id === id); if (article) { article.status = 'published'; article.published_at = new Date().toISOString(); article.updated_at = new Date().toISOString(); / ry Supabase if (supabase) { await supabase .from('articles') .update({ status: 'published', updated_at: article.updated_at }) .eq('id', parseInt(id)); } localStorage.setItem('hum_articles', JSON.stringify(allArticles)); updateStats(); renderArticles(); showSuccess('Article published! / '); } } catch (error) { console.error('Publish error:', error); showError('Publish failed: ' + error.message); } } / npublish article async function unpublishArticle(id) { if (!isAdmin) { showError('Only admin can unpublish! / ユ'); return; } if (!confirm('Unpublish this article? / ?)) return; try { const article = allArticles.find(a => a.id == id || a.id === id); if (article) { article.status = 'unpublished'; article.updated_at = new Date().toISOString(); if (supabase) { await supabase .from('articles') .update({ status: 'unpublished', updated_at: article.updated_at }) .eq('id', parseInt(id)); } localStorage.setItem('hum_articles', JSON.stringify(allArticles)); updateStats(); renderArticles(); showSuccess('Article unpublished! / '); } } catch (error) { console.error('Unpublish error:', error); showError('Unpublish failed: ' + error.message); } } / elete article async function deleteArticle(id) { if (!isAdmin) { showError('Only admin can delete! / ュわ'); return; } if (!confirm('Delete this article? This cannot be undone. / ゆ€?)) return; try { if (supabase) { await supabase .from('articles') .delete() .eq('id', parseInt(id)); } allArticles = allArticles.filter(a => a.id != id && a.id !== id); localStorage.setItem('hum_articles', JSON.stringify(allArticles)); updateStats(); renderArticles(); showSuccess('Article deleted! / わ'); } catch (error) { console.error('Delete error:', error); showError('Delete failed: ' + error.message); } } / how success message function showSuccess(msg) { const el = document.getElementById('successMsg'); el.textContent = msg; el.style.display = 'block'; document.getElementById('errorMsg').style.display = 'none'; setTimeout(() => { el.style.display = 'none'; }, 5000); } / how error message function showError(msg) { const el = document.getElementById('errorMsg'); el.textContent = msg; el.style.display = 'block'; document.getElementById('successMsg').style.display = 'none'; setTimeout(() => { el.style.display = 'none'; }, 8000); } / ogout function logout() { sessionStorage.removeItem('adminLoggedIn'); sessionStorage.removeItem('adminEmail'); sessionStorage.removeItem('adminRole'); sessionStorage.removeItem('adminName'); window.location.href = 'login.html'; } / elper functions function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; } / DF Preview Functions function previewPdf(url, title) { if (!url) { showError('No PDF file available / ℃ PDF '); return; } document.getElementById('pdfModalTitle').textContent = ' ' + (title || 'PDF Preview'); document.getElementById('pdfIframe').src = url; document.getElementById('pdfModal').classList.add('active'); } function closePdfModal() { document.getElementById('pdfModal').classList.remove('active'); document.getElementById('pdfIframe').src = ''; } / lose modal on Escape key document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closePdfModal(); } }); / lose modal on background click document.getElementById('pdfModal').addEventListener('click', function(e) { if (e.target === this) { closePdfModal(); } }); / nitialize < ody>
-< tml> 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | HUM Journal</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.admin-container { min-height: 100vh; background: #F8F9FA; }
+.admin-header { background: #0A2342; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+.admin-header h1 { color: white; font-size: 1.25rem; margin: 0; }
+.admin-header .logout-btn { color: white; text-decoration: none; padding: 0.5rem 1rem; border: 1px solid white; transition: all 0.2s; }
+.admin-header .logout-btn:hover { background: white; color: #0A2342; }
+.admin-content { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+.admin-section { background: white; border: 1px solid #E5E5E5; padding: 2rem; margin-bottom: 2rem; }
+.admin-section h2 { font-size: 1.25rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #E5E5E5; }
+.form-group { margin-bottom: 1.5rem; }
+.form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #111; }
+.form-input, .form-select, .form-textarea { width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 1rem; font-family: inherit; }
+.form-textarea { resize: vertical; min-height: 200px; line-height: 1.6; }
+.form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #0A2342; }
+.upload-box { border: 2px dashed #E5E5E5; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: #FAFAFA; margin-bottom: 1rem; }
+.upload-box:hover { border-color: #0A2342; background: white; }
+.upload-box.has-file { border-color: #10B981; background: #D1FAE5; }
+.btn { padding: 0.75rem 1.5rem; border: none; cursor: pointer; font-size: 1rem; font-weight: 500; transition: all 0.2s; }
+.btn-primary { background: #0A2342; color: white; }
+.btn-primary:hover { background: #1E3A5F; }
+.btn-primary:disabled { background: #ccc; cursor: not-allowed; }
+.btn-secondary { background: #6B7280; color: white; }
+.btn-secondary:hover { background: #4B5563; }
+.btn-success { background: #10B981; color: white; }
+.btn-success:hover { background: #059669; }
+.btn-danger { background: #DC2626; color: white; }
+.btn-danger:hover { background: #B91C1C; }
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
+.articles-list { margin-top: 1rem; }
+.article-item { border: 1px solid #E5E5E5; padding: 1rem; margin-bottom: 1rem; }
+.article-item.expanded { border-color: #0A2342; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.article-item .article-header { display: flex; justify-content: space-between; align-items: flex-start; cursor: pointer; }
+.article-item .article-info { flex: 1; }
+.article-item .article-title { font-weight: 600; margin-bottom: 0.25rem; font-size: 1.1rem; }
+.article-item .article-meta { font-size: 0.875rem; color: #4A5568; }
+.article-item .article-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+.article-item .article-content-preview { margin-top: 1rem; padding: 1rem; background: #F9FAFB; border: 1px solid #E5E5E5; max-height: 200px; overflow: hidden; position: relative; }
+.article-item .article-content-preview::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, #F9FAFB); }
+.article-item.expanded .article-content-preview { max-height: none; overflow: auto; }
+.article-item.expanded .article-content-preview::after { display: none; }
+.category-tag { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; border-radius: 0; margin-left: 0.5rem; }
+.category-public { background: #DBEAFE; color: #1E40AF; }
+.category-academic { background: #E0E7FF; color: #3730A3; }
+.status-tag { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-left: 0.5rem; }
+.status-published { background: #D1FAE5; color: #065F46; }
+.status-pending { background: #FEF3C7; color: #92400E; }
+.status-unpublished { background: #FEE2E2; color: #991B1B; }
+.empty-state { text-align: center; padding: 3rem; color: #4A5568; }
+.success-msg { background: #D1FAE5; border: 1px solid #10B981; color: #065F46; padding: 1rem; margin-bottom: 1rem; display: none; }
+.error-msg { background: #FEE2E2; border: 1px solid #DC2626; color: #991B1B; padding: 1rem; margin-bottom: 1rem; display: none; }
+.info-box { background: #EFF6FF; border: 1px solid #3B82F6; color: #1E40AF; padding: 1rem; margin-bottom: 1.5rem; font-size: 0.875rem; }
+.info-box strong { display: block; margin-bottom: 0.25rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: white; border: 1px solid #E5E5E5; padding: 1.5rem; text-align: center; }
+.stat-card .stat-number { font-size: 2rem; font-weight: 700; color: #0A2342; }
+.stat-card .stat-label { color: #6B7280; font-size: 0.875rem; }
+.expand-btn { background: none; border: none; cursor: pointer; font-size: 1.5rem; padding: 0.25rem 0.5rem; color: #0A2342; }
+.expand-btn:hover { background: #E5E7EB; }
+.pdf-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1000; justify-content: center; align-items: center; }
+.pdf-modal.active { display: flex; }
+.pdf-modal-content { width: 90%; height: 90%; background: white; border-radius: 8px; position: relative; display: flex; flex-direction: column; }
+.pdf-modal-header { background: #0A2342; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+.pdf-modal-header h3 { margin: 0; font-size: 1rem; }
+.pdf-modal-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 0 0.5rem; }
+.pdf-modal-body { flex: 1; overflow: hidden; }
+.pdf-modal-body iframe, .pdf-modal-body embed { width: 100%; height: 100%; border: none; }
+.pdf-preview-btn { background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; border-radius: 4px; margin-left: 0.5rem; }
+.pdf-preview-btn:hover { background: #2563EB; }
+</style>
+</head>
+<body>
+<div class="admin-container">
+<header class="admin-header">
+<div>
+<h1>HUM Journal Admin</h1>
+<span id="adminInfo" style="font-size: 0.875rem; opacity: 0.8;"></span>
+</div>
+<div>
+<a href="index.html" class="logout-btn" style="margin-right: 0.5rem;">Home</a>
+<a href="login.html" class="logout-btn" onclick="logout()">Logout</a>
+</div>
+</header>
+
+<div class="admin-content">
+<div class="success-msg" id="successMsg"></div>
+<div class="error-msg" id="errorMsg"></div>
+
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-number" id="statTotal">0</div><div class="stat-label">Total Articles</div></div>
+<div class="stat-card"><div class="stat-number" id="statPublished">0</div><div class="stat-label">Published</div></div>
+<div class="stat-card"><div class="stat-number" id="statPending">0</div><div class="stat-label">Pending</div></div>
+<div class="stat-card"><div class="stat-number" id="statPublic">0</div><div class="stat-label">Public</div></div>
+<div class="stat-card"><div class="stat-number" id="statAcademic">0</div><div class="stat-label">Academic</div></div>
+</div>
+
+<!-- Add / Edit Article Section -->
+<div class="admin-section">
+<h2 id="formTitle">Add New Article</h2>
+<div class="info-box">
+<strong>Submission Rules:</strong>
+<ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
+<li>HUM-Public | Direct publish after upload</li>
+<li>HUM-Academic | Goes to pending review</li>
+<li>Pending articles | Click "Approve" to publish after review</li>
+</ul>
+</div>
+<form id="articleForm">
+<input type="hidden" id="articleId">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+<div class="form-group">
+<label class="form-label" for="title">Title *</label>
+<input type="text" id="title" class="form-input" required placeholder="Enter article title">
+</div>
+<div class="form-group">
+<label class="form-label" for="author">Author *</label>
+<input type="text" id="author" class="form-input" required placeholder="Enter author name">
+</div>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+<div class="form-group">
+<label class="form-label" for="email">Email</label>
+<input type="email" id="email" class="form-input" placeholder="Author email">
+</div>
+<div class="form-group">
+<label class="form-label" for="category">Category *</label>
+<select id="category" class="form-select" required>
+<option value="public">HUM-Public</option>
+<option value="academic">HUM-Academic</option>
+</select>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="abstract">Abstract</label>
+<input type="text" id="abstract" class="form-input" placeholder="Enter abstract">
+</div>
+<div class="form-group">
+<label class="form-label" for="keywords">Keywords</label>
+<input type="text" id="keywords" class="form-input" placeholder="keyword1, keyword2">
+</div>
+<div class="form-group">
+<label class="form-label" for="content">Content *</label>
+<textarea id="content" class="form-textarea" required placeholder="Enter article content"></textarea>
+</div>
+<div class="form-group">
+<label class="form-label">Word Document (.docx) - Optional</label>
+<div class="upload-box" id="uploadBox">
+<p id="uploadText">Click or drag to upload Word document (.docx)</p>
+</div>
+<input type="file" id="wordFile" style="display: none;" accept=".docx" onchange="handleFileSelect(this)">
+<p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">Content will be extracted automatically for display.</p>
+</div>
+<div style="display: flex; gap: 1rem;">
+<button type="submit" class="btn btn-primary" id="submitBtn">Save Article</button>
+<button type="button" class="btn btn-secondary" id="cancelBtn" style="display: none;" onclick="cancelEdit()">Cancel</button>
+<button type="button" class="btn btn-success" id="publishBtn" style="display: none;" onclick="publishCurrentArticle()">Approve & Publish</button>
+</div>
+</form>
+</div>
+
+<!-- Articles List Section -->
+<div class="admin-section">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+<h2 style="margin: 0; border: none; padding: 0;">Articles <span id="articleCount"></span></h2>
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+<button class="btn btn-sm" style="background: #E5E7EB;" onclick="filterArticles('all')" id="filterAll">All</button>
+<button class="btn btn-sm" style="background: #D1FAE5;" onclick="filterArticles('published')" id="filterPublished">Published</button>
+<button class="btn btn-sm" style="background: #FEF3C7;" onclick="filterArticles('pending')" id="filterPending">Pending</button>
+<button class="btn btn-sm" style="background: #FEE2E2;" onclick="filterArticles('unpublished')" id="filterUnpublished">Unpublished</button>
+<button class="btn btn-sm" style="background: #DBEAFE;" onclick="filterArticles('public')" id="filterPublic">Public</button>
+<button class="btn btn-sm" style="background: #E0E7FF;" onclick="filterArticles('academic')" id="filterAcademic">Academic</button>
+<button class="btn btn-sm" style="background: #F3F4F6;" onclick="refreshArticles()">Refresh</button>
+</div>
+</div>
+<div class="articles-list" id="articlesList">
+<div class="empty-state">Loading...</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PDF Preview Modal -->
+<div class="pdf-modal" id="pdfModal">
+<div class="pdf-modal-content">
+<div class="pdf-modal-header">
+<h3 id="pdfModalTitle">PDF Preview</h3>
+<button class="pdf-modal-close" onclick="closePdfModal()">&times;</button>
+</div>
+<div class="pdf-modal-body" id="pdfModalBody">
+<embed id="pdfEmbed" type="application/pdf" style="width:100%;height:100%;border:none;display:none;">
+<p id="pdfLoading" style="padding:2rem;text-align:center;">Loading PDF...</p>
+<p id="pdfError" style="padding:2rem;text-align:center;color:#DC2626;display:none;">Failed to load PDF.</p>
+</div>
+</div>
+</div>
+
+<!-- Mammoth.js for Word parsing -->
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<!-- No Supabase SDK needed - using REST API only -->
+
+<script>
+(function() {
+'use strict';
+
+const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXl2ZWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODQ0NzIsImV4cCI6MjA5Mjc2MDQ3Mn0.N4bpqRGmez2hxfyRDoW6YAaWeQGGJkhMd1v3N7NTKWs';
+
+let allArticles = [];
+let currentFilter = 'all';
+let selectedFile = null;
+let editingId = null;
+
+// Check login
+if (!sessionStorage.getItem('adminLoggedIn')) {
+  window.location.href = 'login.html';
+}
+
+const adminRole = sessionStorage.getItem('adminRole');
+const adminName = sessionStorage.getItem('adminName');
+const adminEmail = sessionStorage.getItem('adminEmail');
+const isAdmin = adminRole === 'admin';
+
+document.getElementById('adminInfo').textContent = `${adminName} (${adminEmail})`;
+
+// Load articles via REST API
+async function loadArticles() {
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?select=*&order=created_at.desc`, {
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    allArticles = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Load articles error:', error);
+    // Fallback to localStorage
+    allArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]');
+  }
+
+  const localArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]');
+  // Merge, preferring Supabase data
+  localArticles.forEach(local => {
+    if (!allArticles.find(a => a.id == local.id || a.id === local.id)) {
+      allArticles.push(local);
+    }
+  });
+
+  // Remove duplicates
+  const seen = new Set();
+  allArticles = allArticles.filter(a => {
+    if (seen.has(a.id)) return false;
+    seen.add(a.id);
+    return true;
+  });
+
+  updateStats();
+  renderArticles();
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = allArticles.length;
+  document.getElementById('statPublished').textContent = allArticles.filter(a => a.status === 'published').length;
+  document.getElementById('statPending').textContent = allArticles.filter(a => a.status === 'pending').length;
+  document.getElementById('statPublic').textContent = allArticles.filter(a => a.category === 'public').length;
+  document.getElementById('statAcademic').textContent = allArticles.filter(a => a.category === 'academic').length;
+}
+
+function filterArticles(filter) {
+  currentFilter = filter;
+  renderArticles();
+}
+
+async function refreshArticles() {
+  showSuccess('Refreshing...');
+  await loadArticles();
+}
+
+// Word file handling
+window.handleFileSelect = function(input) {
+  const file = input.files[0];
+  if (!file || !file.name.endsWith('.docx')) {
+    showError('Please upload a .docx file');
+    return;
+  }
+  selectedFile = file;
+  document.getElementById('uploadBox').classList.add('has-file');
+  document.getElementById('uploadText').textContent = '\u2713 ' + file.name;
+
+  mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() }).then(result => {
+    if (result.value && result.value.trim()) {
+      document.getElementById('content').value = result.value.trim();
+      showSuccess('Word content extracted!');
+    } else {
+      showError('Cannot extract content from Word file');
+    }
+  }).catch(err => {
+    showError('Word extraction failed: ' + err.message);
+  });
+};
+
+const uploadBox = document.getElementById('uploadBox');
+uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('dragover'); });
+uploadBox.addEventListener('dragleave', e => { e.preventDefault(); uploadBox.classList.remove('dragover'); });
+uploadBox.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadBox.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) { document.getElementById('wordFile').files = e.dataTransfer.files; window.handleFileSelect(document.getElementById('wordFile')); }
+});
+uploadBox.addEventListener('click', () => document.getElementById('wordFile').click());
+
+function renderArticles() {
+  let articles = [...allArticles];
+  if (currentFilter === 'published') articles = articles.filter(a => a.status === 'published');
+  else if (currentFilter === 'pending') articles = articles.filter(a => a.status === 'pending');
+  else if (currentFilter === 'unpublished') articles = articles.filter(a => a.status === 'unpublished');
+  else if (currentFilter === 'public') articles = articles.filter(a => a.category === 'public');
+  else if (currentFilter === 'academic') articles = articles.filter(a => a.category === 'academic');
+
+  articles.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  document.getElementById('articleCount').textContent = `(${articles.length})`;
+
+  if (articles.length === 0) {
+    document.getElementById('articlesList').innerHTML =
+      '<div class="empty-state">No articles found.<br><br><a href="submission.html">Go to Submission</a></div>';
+    return;
+  }
+
+  const html = articles.map(a => {
+    const isEditing = editingId == a.id || editingId === a.id;
+    const sc = a.status === 'published' ? 'status-published' : a.status === 'pending' ? 'status-pending' : 'status-unpublished';
+    const sl = a.status === 'published' ? 'Published' : a.status === 'pending' ? 'Pending' : 'Unpublished';
+    const cc = a.category === 'public' ? 'category-public' : 'category-academic';
+    const cl = a.category === 'public' ? 'Public' : 'Academic';
+    const date = new Date(a.created_at || 0).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    const hasPdf = a.pdf_data && a.pdf_data.startsWith('data:');
+    const previewBtn = hasPdf
+      ? `<button class="pdf-preview-btn" onclick="previewPdfData('${a.id}', '${escapeHtml(a.title)}')">Preview PDF</button>`
+      : a.file_url
+      ? `<button class="pdf-preview-btn" onclick="previewPdfUrl('${escapeHtml(a.file_url)}', '${escapeHtml(a.title)}')">Preview PDF</button>`
+      : '';
+
+    return `<div class="article-item ${isEditing ? 'expanded' : ''}" id="article-${a.id}">
+  <div class="article-header" onclick="toggleArticle('${a.id}')">
+    <div class="article-info">
+      <div class="article-title">${escapeHtml(a.title)} <span class="category-tag ${cc}">${cl}</span> <span class="status-tag ${sc}">${sl}</span></div>
+      <div class="article-meta">${escapeHtml(a.author)}${a.email ? ` (${escapeHtml(a.email)})` : ''} | ${date}${a.keywords ? `<br>Tags: ${escapeHtml(a.keywords)}` : ''}</div>
+    </div>
+    <button class="expand-btn">${isEditing ? '\u2212' : '\u002B'}</button>
+  </div>
+  ${isEditing ? `
+  <div class="article-content-preview" style="max-height:none;white-space:pre-wrap;">${escapeHtml(a.content || a.abstract || 'No content')}</div>
+  <div class="article-actions" style="margin-top:1rem;">
+    <button class="btn btn-secondary btn-sm" onclick="editArticle('${a.id}')">Edit</button>
+    ${isAdmin && a.status !== 'published' ? `<button class="btn btn-success btn-sm" onclick="publishArticle('${a.id}')">Approve & Publish</button>` : ''}
+    ${isAdmin && a.status === 'published' ? `<button class="btn btn-sm" style="background:#F59E0B;color:white;" onclick="unpublishArticle('${a.id}')">Unpublish</button>` : ''}
+    ${previewBtn}
+    ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}')">Delete</button>` : ''}
+  </div>` : ''}
+</div>`;
+  }).join('');
+
+  document.getElementById('articlesList').innerHTML = html;
+}
+
+function toggleArticle(id) {
+  editingId = editingId == id || editingId === id ? null : id;
+  renderArticles();
+}
+
+function editArticle(id) {
+  const a = allArticles.find(x => x.id == id || x.id === id);
+  if (!a) return;
+  document.getElementById('articleId').value = a.id;
+  document.getElementById('title').value = a.title || '';
+  document.getElementById('author').value = a.author || '';
+  document.getElementById('email').value = a.email || '';
+  document.getElementById('abstract').value = a.abstract || '';
+  document.getElementById('keywords').value = a.keywords || '';
+  document.getElementById('category').value = a.category || 'public';
+  document.getElementById('content').value = a.content || '';
+  document.getElementById('formTitle').textContent = 'Edit Article';
+  document.getElementById('submitBtn').textContent = 'Update Article';
+  document.getElementById('cancelBtn').style.display = 'inline-block';
+  document.getElementById('publishBtn').style.display = a.status !== 'published' ? 'inline-block' : 'none';
+  window.scrollTo(0, 0);
+}
+
+function cancelEdit() {
+  document.getElementById('articleForm').reset();
+  document.getElementById('articleId').value = '';
+  document.getElementById('formTitle').textContent = 'Add New Article';
+  document.getElementById('submitBtn').textContent = 'Save Article';
+  document.getElementById('cancelBtn').style.display = 'none';
+  document.getElementById('publishBtn').style.display = 'none';
+  selectedFile = null;
+  document.getElementById('uploadBox').classList.remove('has-file');
+  document.getElementById('uploadText').textContent = 'Click or drag to upload Word document (.docx)';
+}
+
+async function publishCurrentArticle() {
+  const id = document.getElementById('articleId').value;
+  if (id) await publishArticle(id);
+}
+
+document.getElementById('articleForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const id = document.getElementById('articleId').value;
+  const title = document.getElementById('title').value.trim();
+  const author = document.getElementById('author').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const abstract = document.getElementById('abstract').value.trim();
+  const keywords = document.getElementById('keywords').value.trim();
+  const category = document.getElementById('category').value;
+  const content = document.getElementById('content').value.trim();
+
+  if (!title || !author || !content) { showError('Please fill all required fields'); return; }
+
+  const status = category === 'public' ? 'published' : 'pending';
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving...';
+
+  const payload = { title, author, email, abstract, keywords, category, content, status };
+
+  try {
+    if (id) {
+      // Update
+      payload.updated_at = new Date().toISOString();
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Update failed');
+      const updated = await res.json();
+      const idx = allArticles.findIndex(a => a.id == id || a.id === id);
+      if (idx !== -1) allArticles[idx] = { ...allArticles[idx], ...payload };
+      showSuccess('Article updated!');
+    } else {
+      // Insert
+      payload.created_at = new Date().toISOString();
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Insert failed');
+      const created = await res.json();
+      if (created && created[0]) allArticles.unshift(created[0]);
+      showSuccess(category === 'public' ? 'Article created and published!' : 'Article submitted for review!');
+    }
+    // Save to localStorage too
+    localStorage.setItem('hum_articles', JSON.stringify(allArticles));
+    updateStats();
+    renderArticles();
+    cancelEdit();
+  } catch (error) {
+    console.error('Save error:', error);
+    showError('Save failed: ' + error.message);
+  }
+  submitBtn.disabled = false;
+  submitBtn.textContent = id ? 'Update Article' : 'Save Article';
+});
+
+async function publishArticle(id) {
+  if (!isAdmin) { showError('Admin access required'); return; }
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: 'published', updated_at: new Date().toISOString() })
+    });
+    if (!res.ok) throw new Error('Publish failed');
+    const idx = allArticles.findIndex(a => a.id == id || a.id === id);
+    if (idx !== -1) { allArticles[idx].status = 'published'; allArticles[idx].updated_at = new Date().toISOString(); }
+    localStorage.setItem('hum_articles', JSON.stringify(allArticles));
+    updateStats();
+    renderArticles();
+    showSuccess('Article published!');
+  } catch (error) {
+    showError('Publish failed: ' + error.message);
+  }
+}
+
+async function unpublishArticle(id) {
+  if (!isAdmin) { showError('Admin access required'); return; }
+  if (!confirm('Unpublish this article?')) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: 'unpublished', updated_at: new Date().toISOString() })
+    });
+    const idx = allArticles.findIndex(a => a.id == id || a.id === id);
+    if (idx !== -1) allArticles[idx].status = 'unpublished';
+    localStorage.setItem('hum_articles', JSON.stringify(allArticles));
+    updateStats();
+    renderArticles();
+    showSuccess('Article unpublished!');
+  } catch (error) {
+    showError('Unpublish failed: ' + error.message);
+  }
+}
+
+async function deleteArticle(id) {
+  if (!isAdmin) { showError('Admin access required'); return; }
+  if (!confirm('Delete this article? This cannot be undone.')) return;
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY
+      }
+    });
+    allArticles = allArticles.filter(a => a.id != id && a.id !== id);
+    localStorage.setItem('hum_articles', JSON.stringify(allArticles));
+    updateStats();
+    renderArticles();
+    showSuccess('Article deleted!');
+  } catch (error) {
+    showError('Delete failed: ' + error.message);
+  }
+}
+
+function showSuccess(msg) {
+  const el = document.getElementById('successMsg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('errorMsg').style.display = 'none';
+  setTimeout(() => el.style.display = 'none', 5000);
+}
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg; el.style.display = 'block';
+  document.getElementById('successMsg').style.display = 'none';
+  setTimeout(() => el.style.display = 'none', 8000);
+}
+
+function logout() {
+  ['adminLoggedIn','adminEmail','adminRole','adminName'].forEach(k => sessionStorage.removeItem(k));
+  window.location.href = 'login.html';
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+// PDF Preview - from base64 data in articles table
+async function previewPdfData(articleId, title) {
+  const article = allArticles.find(a => a.id == articleId || a.id === articleId);
+  if (!article || !article.pdf_data) {
+    showError('No PDF data available');
+    return;
+  }
+  const modal = document.getElementById('pdfModal');
+  document.getElementById('pdfModalTitle').textContent = title || 'PDF Preview';
+  document.getElementById('pdfEmbed').style.display = 'none';
+  document.getElementById('pdfLoading').style.display = 'block';
+  document.getElementById('pdfError').style.display = 'none';
+  modal.classList.add('active');
+
+  // Use iframe with data URL
+  const embed = document.getElementById('pdfEmbed');
+  embed.src = article.pdf_data;
+  embed.onload = () => {
+    document.getElementById('pdfLoading').style.display = 'none';
+    embed.style.display = 'block';
+  };
+  embed.onerror = () => {
+    document.getElementById('pdfLoading').style.display = 'none';
+    document.getElementById('pdfError').style.display = 'block';
+  };
+}
+
+function previewPdfUrl(url, title) {
+  const modal = document.getElementById('pdfModal');
+  document.getElementById('pdfModalTitle').textContent = title || 'PDF Preview';
+  const embed = document.getElementById('pdfEmbed');
+  embed.src = url;
+  embed.style.display = 'block';
+  document.getElementById('pdfLoading').style.display = 'none';
+  document.getElementById('pdfError').style.display = 'none';
+  modal.classList.add('active');
+}
+
+function closePdfModal() {
+  document.getElementById('pdfModal').classList.remove('active');
+  document.getElementById('pdfEmbed').src = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePdfModal(); });
+document.getElementById('pdfModal').addEventListener('click', e => { if (e.target === document.getElementById('pdfModal')) closePdfModal(); });
+
+// Init
+loadArticles();
+})();
+</script>
+</body>
+</html>

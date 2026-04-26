@@ -1,8 +1,348 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Submit |  | HUM Journal< itle> <link rel="stylesheet" href="css tyle.css"> <style> body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; } .upload-box { border: 2px dashed #E5E5E5; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: #FAFAFA; } .upload-box:hover { border-color: #0A2342; background: rgba(10,35,66,0.05); } .upload-box.processing { border-color: #3B82F6; background: #EFF6FF; } .upload-box.success { border-color: #10B981; background: #D1FAE5; } .upload-box.error { border-color: #DC2626; background: #FEE2E2; } label a { color: #0A2342; text-decoration: underline; } #progressBar { width: 100%; height: 8px; background: #E5E7EB; margin-top: 1rem; border-radius: 4px; overflow: hidden; display: none; } #progressBar .progress { height: 100%; background: #10B981; width: 0%; transition: width 0.3s; } #pdfPreview { display: none; margin-top: 1rem; padding: 1rem; background: #F3F4F6; border: 1px solid #E5E7EB; } < tyle>
-< ead>
-<body> <header class="header"> <div class="header-inner"> <a href="index.html" class="logo"><span class="logo-main">HUM< pan><span class="logo-sub">Journal< pan>< > <nav class="nav"> <a href="index.html" class="nav-link">〉< > <a href="public.html" class="nav-link">т? > <a href="academic.html" class="nav-link">? > <a href="about.html" class="nav-link">< > <a href="submission.html" class="nav-link active">< > <a href="rules.html" class="nav-link">< > < av> <a href="login.html" class="nav-link">Admin< > < iv> < eader> <section class="hero" style="padding: 3rem 0;"> <h1 style="font-size: 3rem;">Submission< 1> <p class="hero-subtitle">< > < ection> <section class="content-section"> <div class="container" style="max-width: 900px;"> <div style="background: #0A2342; padding: 1.5rem; margin-bottom: 2rem;"> <h3 style="color: white; margin-bottom: 0.5rem;"> Submission Method< 3> <p style="color: white; opacity: 0.9; font-size: 0.9rem;"> PDF ?<br> Upload PDF ?Publish directly < > < iv> <div id="messageBox" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">< iv> <form id="submissionForm" style="background: white; padding: 2rem; border: 1px solid #E5E5E5;"> <h3 style="margin-bottom: 1.5rem;">℃ Article Information< 3> <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;"> <div> <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;"> Title *< abel> <input type="text" id="articleTitle" required placeholder="Enter title / " style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;"> < iv> <div> <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">€?Author *< abel> <input type="text" id="articleAuthor" required placeholder="Enter name / €? style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;"> < iv> < iv> <div style="margin-bottom: 1.5rem;"> <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;"> Email *< abel> <input type="email" id="articleEmail" required placeholder="For notifications / ユ" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;"> < iv> <div style="margin-bottom: 1.5rem;"> <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;"> Abstract< abel> <textarea id="articleAbstract" rows="3" placeholder="Enter abstract / " style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; resize: vertical;">< extarea> < iv> <div style="margin-bottom: 1.5rem;"> <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">?Keywords< abel> <input type="text" id="articleKeywords" placeholder="keyword1, keyword2 / ?, ?" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;"> < iv> <div style="margin-bottom: 1.5rem;"> <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;"> Section *< abel> <select id="articleCategory" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;"> <option value="public">HUM-Public т?()< ption> <option value="academic">HUM-Academic ?(€℃)< ption> < elect> < iv> <div style="margin-bottom: 1.5rem;"> <label for="pdfFile" style="display: block; font-weight: 500; margin-bottom: 0.5rem; cursor: pointer;"> PDF File (.pdf) * <span style="font-weight: normal; font-size: 0.875rem; color: #666; margin-left: 0.5rem;">( ecommended)< pan> < abel> <div id="uploadBox" class="upload-box" style="cursor: pointer;" onclick="event.preventDefault(); document.getElementById('pdfFile').click()"> <p id="uploadIcon" style="font-size: 3rem; margin-bottom: 0.5rem;">< > <p id="uploadText" style="font-weight: 500;">?PDF < > <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">Click or drag to upload PDF file< > < iv> <input type="file" id="pdfFile" accept=".pdf" onchange="handleFileSelect(this)" style="display: none;"> <div id="fileInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: #D1FAE5; border: 1px solid #10B981;"> <p id="fileName" style="font-weight: 500;">< > <p id="fileStatus" style="font-size: 0.875rem; color: #065F46; margin-top: 0.5rem;">< > <div id="progressBar"><div class="progress">< iv>< iv> < iv> <div id="pdfPreview"> <p style="font-weight: 500; margin-bottom: 0.5rem;">PDF €< > < iv> < iv> <div style="margin-bottom: 1.5rem;"> <div style="display: flex; align-items: center;"> <input type="checkbox" id="agreeRules" required style="width: 18px; height: 18px; margin-right: 0.5rem;"> <span>?<a href="rules.html" target="_blank">℃< >< pan> < iv> < iv> <button type="submit" id="submitBtn" style="width: 100%; padding: 1rem; background: #0A2342; color: white; border: none; font-size: 1rem; font-weight: 500; cursor: pointer;">  Submit Article < utton> < orm> <div style="margin-top: 2rem; padding: 1.5rem; border: 1px solid #E5E5E5; text-align: center;"> <p> lternative: <a href="mailto:yangll_0502@qq.com">yangll_0502@qq.com< >< > <p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;"> Format: [HUM-Public UM-Academic] Title - Author< > < iv> < iv> < ection> <footer class="footer"> <div class="container"> <div class="footer-inner"> <div class="footer-logo">Humanity & Thought & Thought Journal< iv> <div class="footer-copyright"> 2026 Kyrgyz. All rights reserved.< iv> < iv> < iv> < ooter> <script> (function() { 'use strict'; // ============================================================ / pabase -  // : Supabase Dashboard -> Settings -> API // ============================================================ const SUPABASE_URL = 'https: / lggufgrtmdeyyyveay.supabase.co'; const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ'; let selectedFile = null; let uploadedUrl = null; //  SDKョ fetch / ndow.handleFileSelect = function(input) { console.log('[Upload] handleFileSelect called, files:', input.files); const file = input.files[0]; console.log('[Upload] Selected file:', file); if (!file) { console.log('[Upload] No file selected, exit'); return; } if (!file.name.endsWith('.pdf')) { showMessage('?PDF lease upload PDF file', true); return; } if (file.size > 50 * 1024 * 1024) { showMessage('ぇ?50MB', true); return; } selectedFile = file; const uploadBox = document.getElementById('uploadBox'); const fileInfo = document.getElementById('fileInfo'); const fileName = document.getElementById('fileName'); const fileStatus = document.getElementById('fileStatus'); const progressBar = document.getElementById('progressBar'); uploadBox.classList.add('processing'); uploadBox.classList.remove('success', 'error'); fileInfo.style.display = 'block'; fileName.textContent = ' ' + file.name + ' (' + formatSize(file.size) + ')'; fileStatus.textContent = '... eady...'; progressBar.style.display = 'block'; progressBar.querySelector('.progress').style.width = '10%'; console.log('[Upload] UI updated, starting upload...'); uploadFile(file); } function formatSize(bytes) { if (bytes < 1024) return bytes + ' B'; if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'; return (bytes / (1024 * 1024)).toFixed(1) + ' MB'; } function showPdfPreview(file) { / F ず▼ // ? document.getElementById('pdfPreview').style.display = 'none'; } // ?Supabase Storage async function uploadFile(file) { const progressBar = document.getElementById('progressBar').querySelector('.progress'); const title = document.getElementById('articleTitle').value.trim() || file.name.replace(/\.[^/.]+$/, ''); const safeName = title.replace(/[^a-zA-Z0-9] , '_').substring(0, 50); const timestamp = Date.now(); const randomStr = Math.random().toString(36).substring(2, 8); const fileName = `${safeName}_${timestamp}_${randomStr}.pdf`; const uploadUrl = `${SUPABASE_URL} torage 1 bject rticles/${encodeURIComponent(fileName)}`; try { document.getElementById('fileStatus').textContent = '?.. ploading...'; progressBar.style.width = '10%'; const response = await fetch(uploadUrl, { method: 'POST', headers: { 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'apikey': SUPABASE_ANON_KEY, 'Content-Type': file.type || 'application df', 'x-upsert': 'false' }, body: file }); console.log('[Upload] HTTP status:', response.status); const text = await response.text(); console.log('[Upload] Response:', text.substring(0, 200)); if (!response.ok) { let msg = `HTTP ${response.status}`; try { msg = JSON.parse(text).message || msg; } catch {} throw new Error(msg); } uploadedUrl = `${SUPABASE_URL} torage 1 bject ublic rticles/${fileName}`; console.log('[Upload] Success:', uploadedUrl); progressBar.style.width = '85%'; document.getElementById('fileStatus').textContent = '... one...'; progressBar.style.width = '100%'; document.getElementById('uploadBox').classList.remove('processing'); document.getElementById('uploadBox').classList.add('success'); document.getElementById('uploadIcon').textContent = '?; document.getElementById('fileStatus').textContent = '? Upload successful!'; } catch (error) { console.error('[Upload] Error:', error); document.getElementById('uploadBox').classList.remove('processing'); document.getElementById('uploadBox').classList.add('error'); document.getElementById('uploadIcon').textContent = '?; document.getElementById('fileStatus').textContent = ': ' + error.message; showMessage('?: ' + error.message, true); } } / cument.getElementById('submissionForm').addEventListener('submit', async function(e) { e.preventDefault(); const title = document.getElementById('articleTitle').value.trim(); const author = document.getElementById('articleAuthor').value.trim(); const email = document.getElementById('articleEmail').value.trim(); const abstract = document.getElementById('articleAbstract').value.trim(); const keywords = document.getElementById('articleKeywords').value.trim(); const category = document.getElementById('articleCategory').value; if (!title || !author || !email) { showMessage('」 lease fill all required fields', true); return; } if (!selectedFile && !uploadedUrl) { showMessage('?PDF lease upload PDF file', true); return; } if (!document.getElementById('agreeRules').checked) { showMessage('℃ lease agree to rules', true); return; } const submitBtn = document.getElementById('submitBtn'); submitBtn.disabled = true; submitBtn.textContent = '?.. ubmitting...'; const status = category === 'public' ? 'published' : 'pending'; const article = { title, author, email, abstract, keywords, category, status, file_url: uploadedUrl || '', file_name: selectedFile ? selectedFile.name : 'document.pdf', content: abstract || 'PDF file: ' + (uploadedUrl || 'local file'), created_at: new Date().toISOString() }; try { const localArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]'); article.id = article.id || Date.now().toString(); localArticles.push(article); localStorage.setItem('hum_articles', JSON.stringify(localArticles)); showMessage( category === 'public' ? '? rticle published!' : '?ゅ ubmitted for review!', false ); setTimeout(() => { document.getElementById('submissionForm').reset(); resetUploadArea(); submitBtn.disabled = false; submitBtn.textContent = ' Submit Article'; }, 3000); } catch (error) { console.error('Submit error:', error); const localArticles = JSON.parse(localStorage.getItem('hum_articles') || '[]'); article.id = Date.now().toString(); article.file_path = 'local/' + article.id; localArticles.push(article); localStorage.setItem('hum_articles', JSON.stringify(localArticles)); showMessage('  aved locally', false); submitBtn.disabled = false; submitBtn.textContent = ' Submit Article'; } }); function resetUploadArea() { selectedFile = null; uploadedUrl = null; document.getElementById('uploadBox').classList.remove('success', 'processing', 'error'); document.getElementById('uploadIcon').textContent = ''; document.getElementById('uploadText').textContent = '?PDF '; document.getElementById('fileInfo').style.display = 'none'; document.getElementById('pdfPreview').style.display = 'none'; } function showMessage(msg, isError) { const box = document.getElementById('messageBox'); box.textContent = msg; box.style.display = 'block'; box.style.background = isError ? '#FEE2E2' : '#D1FAE5'; box.style.borderColor = isError ? '#DC2626' : '#10B981'; box.style.color = isError ? '#991B1B' : '#065F46'; if (!isError) setTimeout(() => { box.style.display = 'none'; }, 5000); } / nst uploadBox = document.getElementById('uploadBox'); uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.style.borderColor = '#0A2342'; }); uploadBox.addEventListener('dragleave', e => { e.preventDefault(); uploadBox.style.borderColor = '#E5E5E5'; }); uploadBox.addEventListener('drop', e => { e.preventDefault(); uploadBox.style.borderColor = '#E5E5E5'; const file = e.dataTransfer.files[0]; if (file) { document.getElementById('pdfFile').files = e.dataTransfer.files; handleFileSelect(document.getElementById('pdfFile')); } }); uploadBox.addEventListener('click', () => document.getElementById('pdfFile').click()); })();
-< cript>
-< ody>
-< tml> 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit | HUM Journal</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+.upload-box { border: 2px dashed #E5E5E5; padding: 2rem; text-align: center; cursor: pointer; transition: all 0.3s; background: #FAFAFA; }
+.upload-box:hover { border-color: #0A2342; background: rgba(10,35,66,0.05); }
+.upload-box.processing { border-color: #3B82F6; background: #EFF6FF; }
+.upload-box.success { border-color: #10B981; background: #D1FAE5; }
+.upload-box.error { border-color: #DC2626; background: #FEE2E2; }
+label a { color: #0A2342; text-decoration: underline; }
+#progressBar { width: 100%; height: 8px; background: #E5E7EB; margin-top: 1rem; border-radius: 4px; overflow: hidden; display: none; }
+#progressBar .progress { height: 100%; background: #10B981; width: 0%; transition: width 0.3s; }
+</style>
+</head>
+<body>
+<header class="header">
+<div class="header-inner">
+<a href="index.html" class="logo"><span class="logo-main">HUM</span><span class="logo-sub">Journal</span></a>
+<nav class="nav">
+<a href="index.html" class="nav-link">Home</a>
+<a href="public.html" class="nav-link">Public</a>
+<a href="academic.html" class="nav-link">Academic</a>
+<a href="about.html" class="nav-link">About</a>
+<a href="submission.html" class="nav-link active">Submit</a>
+<a href="rules.html" class="nav-link">Rules</a>
+<a href="login.html" class="nav-link">Admin</a>
+</nav>
+</div>
+</header>
+
+<section class="hero" style="padding: 3rem 0;">
+<h1 style="font-size: 3rem;">Submit Article</h1>
+<p class="hero-subtitle">Share your research with the world</p>
+</section>
+
+<section class="content-section">
+<div class="container" style="max-width: 900px;">
+<div style="background: #0A2342; padding: 1.5rem; margin-bottom: 2rem;">
+<h3 style="color: white; margin-bottom: 0.5rem;">Submission Guidelines</h3>
+<p style="color: white; opacity: 0.9; font-size: 0.9rem;">
+Upload your PDF file. For HUM-Academic articles, submissions go to review first.<br>
+For HUM-Public articles, they are published directly.
+</p>
+</div>
+
+<div id="messageBox" style="display: none; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;"></div>
+
+<form id="submissionForm" style="background: white; padding: 2rem; border: 1px solid #E5E5E5;">
+<h3 style="margin-bottom: 1.5rem;">Article Information</h3>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+<div>
+<label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Title *</label>
+<input type="text" id="articleTitle" required placeholder="Enter article title" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+</div>
+<div>
+<label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Author *</label>
+<input type="text" id="articleAuthor" required placeholder="Enter author name" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+</div>
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Email *</label>
+<input type="email" id="articleEmail" required placeholder="For notification purposes" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Abstract</label>
+<textarea id="articleAbstract" rows="3" placeholder="Enter abstract" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; resize: vertical;"></textarea>
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Keywords</label>
+<input type="text" id="articleKeywords" placeholder="keyword1, keyword2" style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Section *</label>
+<select id="articleCategory" required style="width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5;">
+<option value="public">HUM-Public (Direct publish)</option>
+<option value="academic">HUM-Academic (Review required)</option>
+</select>
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<label for="pdfFile" style="display: block; font-weight: 500; margin-bottom: 0.5rem; cursor: pointer;">
+PDF File (.pdf) *
+<span style="font-weight: normal; font-size: 0.875rem; color: #666; margin-left: 0.5rem;">(max 50MB)</span>
+</label>
+<div id="uploadBox" class="upload-box">
+<p id="uploadIcon" style="font-size: 3rem; margin-bottom: 0.5rem;">&#128196;</p>
+<p id="uploadText" style="font-weight: 500;">Upload PDF</p>
+<p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">Click or drag to upload PDF file</p>
+</div>
+<input type="file" id="pdfFile" accept=".pdf" style="display: none;">
+<div id="fileInfo" style="display: none; margin-top: 1rem; padding: 1rem; background: #D1FAE5; border: 1px solid #10B981;">
+<p id="fileName" style="font-weight: 500;"></p>
+<p id="fileStatus" style="font-size: 0.875rem; color: #065F46; margin-top: 0.5rem;"></p>
+</div>
+<div id="progressBar"><div class="progress"></div></div>
+</div>
+
+<div style="margin-bottom: 1.5rem;">
+<div style="display: flex; align-items: center;">
+<input type="checkbox" id="agreeRules" required style="width: 18px; height: 18px; margin-right: 0.5rem;">
+<span>I agree to the <a href="rules.html" target="_blank">submission rules</a></span>
+</div>
+</div>
+
+<button type="submit" id="submitBtn" style="width: 100%; padding: 1rem; background: #0A2342; color: white; border: none; font-size: 1rem; font-weight: 500; cursor: pointer;">Submit Article</button>
+</form>
+
+<div style="margin-top: 2rem; padding: 1.5rem; border: 1px solid #E5E5E5; text-align: center;">
+<p>Alternative: <a href="mailto:yangll_0502@qq.com">yangll_0502@qq.com</a></p>
+<p style="font-size: 0.875rem; color: #666; margin-top: 0.5rem;">Format: [HUM-Public / HUM-Academic] Title - Author</p>
+</div>
+</div>
+</section>
+
+<footer class="footer">
+<div class="container">
+<div class="footer-inner">
+<div class="footer-logo">Humanity & Thought Journal</div>
+<div class="footer-copyright">&copy; 2026 HUM Journal. All rights reserved.</div>
+</div>
+</div>
+</footer>
+
+<script>
+(function() {
+'use strict';
+
+const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXl2ZWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODQ0NzIsImV4cCI6MjA5Mjc2MDQ3Mn0.N4bpqRGmez2hxfyRDoW6YAaWeQGGJkhMd1v3N7NTKWs';
+
+let selectedFile = null;
+let uploadedArticleId = null;
+let pdfDataCache = null;
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function setProgress(pct) {
+  const bar = document.getElementById('progressBar');
+  bar.style.display = 'block';
+  bar.querySelector('.progress').style.width = pct + '%';
+}
+
+window.handleFileSelect = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  if (!file.name.endsWith('.pdf')) {
+    showMessage('Please upload a PDF file', true);
+    return;
+  }
+  if (file.size > 50 * 1024 * 1024) {
+    showMessage('File size must be under 50MB', true);
+    return;
+  }
+
+  selectedFile = file;
+  pdfDataCache = null;
+
+  document.getElementById('uploadBox').classList.add('processing');
+  document.getElementById('uploadBox').classList.remove('success', 'error');
+  document.getElementById('fileInfo').style.display = 'block';
+  document.getElementById('fileName').textContent = file.name + ' (' + formatSize(file.size) + ')';
+  document.getElementById('fileStatus').textContent = 'Reading file...';
+  setProgress(10);
+
+  // Read file as base64
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    pdfDataCache = e.target.result;
+    document.getElementById('fileStatus').textContent = 'Ready to submit';
+    setProgress(100);
+    document.getElementById('uploadBox').classList.remove('processing');
+    document.getElementById('uploadBox').classList.add('success');
+    document.getElementById('uploadIcon').textContent = '\u2713';
+    document.getElementById('uploadText').textContent = file.name;
+  };
+  reader.onerror = function() {
+    document.getElementById('uploadBox').classList.remove('processing');
+    document.getElementById('uploadBox').classList.add('error');
+    document.getElementById('fileStatus').textContent = 'Error reading file';
+    showMessage('Error reading file', true);
+  };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('submissionForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const title = document.getElementById('articleTitle').value.trim();
+  const author = document.getElementById('articleAuthor').value.trim();
+  const email = document.getElementById('articleEmail').value.trim();
+  const abstract = document.getElementById('articleAbstract').value.trim();
+  const keywords = document.getElementById('articleKeywords').value.trim();
+  const category = document.getElementById('articleCategory').value;
+
+  if (!title || !author || !email) {
+    showMessage('Please fill all required fields', true);
+    return;
+  }
+  if (!selectedFile) {
+    showMessage('Please upload a PDF file', true);
+    return;
+  }
+  if (!document.getElementById('agreeRules').checked) {
+    showMessage('Please agree to the submission rules', true);
+    return;
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting...';
+  setProgress(0);
+
+  const status = category === 'public' ? 'published' : 'pending';
+
+  try {
+    // Step 1: Convert PDF to base64 if not already done
+    setProgress(30);
+    if (!pdfDataCache) {
+      pdfDataCache = await fileToBase64(selectedFile);
+    }
+
+    setProgress(50);
+
+    // Step 2: Save article with PDF data to Supabase
+    const body = JSON.stringify({
+      title,
+      author,
+      email,
+      abstract,
+      keywords,
+      category,
+      status,
+      content: abstract || 'PDF file submitted',
+      pdf_data: pdfDataCache,
+      file_url: ''
+    });
+
+    setProgress(60);
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: body
+    });
+
+    setProgress(80);
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('Supabase error: ' + errText);
+    }
+
+    const articles = await res.json();
+    uploadedArticleId = articles[0]?.id;
+
+    setProgress(100);
+    showMessage(
+      category === 'public'
+        ? 'Article published successfully!'
+        : 'Article submitted for review!',
+      false
+    );
+
+    setTimeout(() => {
+      document.getElementById('submissionForm').reset();
+      resetUploadArea();
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Article';
+    }, 3000);
+
+  } catch (error) {
+    console.error('Submit error:', error);
+    showMessage('Submit failed: ' + error.message, true);
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Article';
+  }
+});
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function resetUploadArea() {
+  selectedFile = null;
+  uploadedArticleId = null;
+  pdfDataCache = null;
+  document.getElementById('uploadBox').classList.remove('success', 'processing', 'error');
+  document.getElementById('uploadIcon').textContent = '\u{1F4C4}';
+  document.getElementById('uploadText').textContent = 'Upload PDF';
+  document.getElementById('fileInfo').style.display = 'none';
+  document.getElementById('progressBar').style.display = 'none';
+  document.getElementById('progressBar').querySelector('.progress').style.width = '0%';
+  document.getElementById('pdfFile').value = '';
+}
+
+function showMessage(msg, isError) {
+  const box = document.getElementById('messageBox');
+  box.textContent = msg;
+  box.style.display = 'block';
+  box.style.background = isError ? '#FEE2E2' : '#D1FAE5';
+  box.style.borderColor = isError ? '#DC2626' : '#10B981';
+  box.style.color = isError ? '#991B1B' : '#065F46';
+  if (!isError) setTimeout(() => { box.style.display = 'none'; }, 5000);
+}
+
+// Drag & drop
+const uploadBox = document.getElementById('uploadBox');
+uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.style.borderColor = '#0A2342'; });
+uploadBox.addEventListener('dragleave', e => { e.preventDefault(); uploadBox.style.borderColor = '#E5E5E5'; });
+uploadBox.addEventListener('drop', e => {
+  e.preventDefault();
+  uploadBox.style.borderColor = '#E5E5E5';
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    document.getElementById('pdfFile').files = e.dataTransfer.files;
+    handleFileSelect(document.getElementById('pdfFile'));
+  }
+});
+uploadBox.addEventListener('click', () => document.getElementById('pdfFile').click());
+})();
+</script>
+</body>
+</html>
