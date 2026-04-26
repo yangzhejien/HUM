@@ -609,28 +609,25 @@
             }
         }
 
-        // Load articles from Supabase
+        // Load articles via Supabase REST API (no JWT signature needed)
         async function loadArticles() {
             try {
-                if (supabase && !useLocalMode) {
-                    const { data, error } = await supabase
-                        .from('articles')
-                        .select('*')
-                        .order('created_at', { ascending: false });
-
-                    if (error) {
-                        console.error('Load error:', error);
-                        throw error;
-                    }
-                    allArticles = data || [];
-                    console.log('Loaded', allArticles.length, 'articles from Supabase');
+                const anonKey = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ';
+                const resp = await fetch(
+                    'https://gslggufgrtmdeyyyveay.supabase.co/rest/v1/articles?select=*&order=created_at.desc',
+                    { headers: { apikey: anonKey, Authorization: 'Bearer ' + anonKey } }
+                );
+                if (!resp.ok) {
+                    const errText = await resp.text();
+                    console.error('REST error', resp.status, errText);
+                    throw new Error('REST ' + resp.status);
                 }
+                const data = await resp.json();
+                allArticles = Array.isArray(data) ? data : [];
+                console.log('[Admin] Got articles via REST:', allArticles.length, JSON.stringify(allArticles));
             } catch (error) {
                 console.error('Load articles error:', error);
-                if (error.message.includes('signature')) {
-                    showError('Supabase 鍑嵁鏃犳晥');
-                    useLocalMode = true;
-                }
+                showError('Load failed: ' + error.message);
             }
 
             // Also load from localStorage and merge
