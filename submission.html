@@ -153,7 +153,7 @@
 
         // 鍒濆鍖栵細璺宠繃 SDK锛岀洿鎺ョ敤 fetch
         // 鏂囦欢閫夋嫨澶勭悊
-        function handleFileSelect(input) {
+        window.handleFileSelect = function(input) {
             console.log('[Upload] handleFileSelect called, files:', input.files);
             const file = input.files[0];
             console.log('[Upload] Selected file:', file);
@@ -379,5 +379,6 @@
 </script>
 </body>
 </html>
+
 
 
