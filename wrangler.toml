@@ -1,0 +1,4 @@
+# Cloudflare Pages - disable HTML processing that corrupts tags
+name = "hum-journal"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "."
