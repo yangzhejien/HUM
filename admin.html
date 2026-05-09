@@ -516,7 +516,6 @@ async function deleteArticle(id) {
     await fetch(`${API_BASE}/articles/${id}`, {
       method: 'DELETE'
     });
-    });
     allArticles = allArticles.filter(a => a.id != id && a.id !== id);
     localStorage.setItem('hum_articles', JSON.stringify(allArticles));
     updateStats();
