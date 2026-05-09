@@ -1,183 +1,582 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Article Viewer | HUM Journal</title>
-<link rel="stylesheet" href="css/style.css">
-<style>
-body { background: #F5F5F5; }
-.viewer-container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
-.article-header { background: white; padding: 2rem; margin-bottom: 1rem; border: 1px solid var(--color-border); }
-.article-category { display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.75rem; font-weight: 500; margin-bottom: 1rem; }
-.article-category.public { background: #DBEAFE; color: #1E40AF; }
-.article-category.academic { background: #E0E7FF; color: #3730A3; }
-.article-title { font-size: 2rem; margin-bottom: 0.5rem; line-height: 1.3; }
-.article-meta { color: var(--color-text-secondary); margin-bottom: 1rem; }
-.pre-publication-notice { background: #FEF3C7; border: 1px solid #F59E0B; padding: 1rem; margin-bottom: 1rem; font-size: 0.875rem; }
-.pre-publication-notice strong { color: #92400E; }
-.viewer-frame { background: white; border: 1px solid var(--color-border); min-height: 600px; position: relative; }
-.viewer-toolbar { background: #FAFAFA; border-bottom: 1px solid var(--color-border); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
-.zoom-controls, .page-controls { display: flex; align-items: center; gap: 0.5rem; }
-.zoom-btn, .page-btn, .fullscreen-btn { border: 1px solid var(--color-border); background: white; cursor: pointer; font-size: 0.875rem; padding: 0.5rem 1rem; }
-.zoom-btn { padding: 0.5rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
-.zoom-btn:hover, .page-btn:hover, .fullscreen-btn:hover { background: #E5E5E5; }
-.zoom-level { min-width: 50px; text-align: center; font-size: 0.875rem; }
-.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.page-indicator { font-size: 0.875rem; }
-.document-container { padding: 2rem; background: white; min-height: 500px; overflow: auto; }
-.document-content { max-width: 800px; margin: 0 auto; line-height: 1.8; font-size: 1rem; }
-.article-footer { background: white; padding: 1rem 2rem; margin-top: 1rem; border: 1px solid var(--color-border); text-align: center; }
-.disclaimer { font-size: 0.875rem; color: var(--color-text-secondary); }
-.back-link { display: inline-block; margin-top: 1rem; color: var(--color-primary); }
-.loading, .error-message { text-align: center; padding: 3rem; }
-.error-message { color: #DC2626; }
-.fullscreen-mode { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; background: white; overflow: auto; }
-.fullscreen-mode .viewer-container { max-width: 100%; margin: 0; padding: 1rem; }
-.fullscreen-mode .viewer-toolbar { position: sticky; top: 0; z-index: 10; }
-.fullscreen-mode .document-container { max-height: calc(100vh - 150px); overflow: auto; }
-.pdf-download-btn { display: inline-block; padding: 0.5rem 1rem; background: #3B82F6; color: white; text-decoration: none; font-size: 0.875rem; border-radius: 4px; margin-top: 1rem; }
-.pdf-download-btn:hover { background: #2563EB; }
-@media (max-width: 768px) { .viewer-toolbar { flex-direction: column; } }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Viewer | Humanity & Thought Journal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #F5F5F5;
+        }
+        .viewer-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .article-header {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--color-border);
+        }
+        .article-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+        .article-category.public {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+        .article-category.academic {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+        .article-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .article-meta {
+            color: var(--color-text-secondary);
+            margin-bottom: 1rem;
+        }
+        .pre-publication-notice {
+            background: #FEF3C7;
+            border: 1px solid #F59E0B;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+        .pre-publication-notice strong {
+            color: #92400E;
+        }
+        .viewer-frame {
+            background: white;
+            border: 1px solid var(--color-border);
+            min-height: 600px;
+            position: relative;
+        }
+        .viewer-toolbar {
+            background: #FAFAFA;
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .zoom-btn:hover {
+            background: #E5E5E5;
+        }
+        .zoom-level {
+            min-width: 50px;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        .page-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .page-btn:hover {
+            background: #E5E5E5;
+        }
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-indicator {
+            font-size: 0.875rem;
+        }
+        .fullscreen-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .fullscreen-btn:hover {
+            background: #E5E5E5;
+        }
+        .document-container {
+            padding: 2rem;
+            background: white;
+            min-height: 500px;
+            overflow: auto;
+        }
+        .document-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-size: 1rem;
+            transform-origin: top center;
+            transition: transform 0.2s ease;
+        }
+        .article-footer {
+            background: white;
+            padding: 1rem 2rem;
+            margin-top: 1rem;
+            border: 1px solid var(--color-border);
+            text-align: center;
+        }
+        .disclaimer {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--color-primary);
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-text-secondary);
+        }
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            color: #DC2626;
+        }
+        .fullscreen-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: white;
+            overflow: auto;
+        }
+        .fullscreen-mode .viewer-container {
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem;
+        }
+        .fullscreen-mode .viewer-toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .fullscreen-mode .document-container {
+            max-height: calc(100vh - 150px);
+            overflow: auto;
+        }
+        @media (max-width: 768px) {
+            .viewer-toolbar {
+                flex-direction: column;
+            }
+            .zoom-controls, .page-controls {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="viewer-container" id="viewerContainer">
-<div id="articleContent"><div class="loading">Loading article...</div></div>
-</div>
+    <div class="viewer-container" id="viewerContainer">
+        <div id="articleContent">
+            <div class="loading">加载中... Loading article...</div>
+        </div>
+    </div>
 
-<script>
-(function() {
-'use strict';
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    (function() {
+        'use strict';
 
-const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXl2ZWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODQ0NzIsImV4cCI6MjA5Mjc2MDQ3Mn0.N4bpqRGmez2hxfyRDoW6YAaWeQGGJkhMd1v3N7NTKWs';
+        const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
 
-// Get article ID from URL
-const urlParams = new URLSearchParams(window.location.search);
-const articleId = urlParams.get('id');
+        // Get article ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get('id');
 
-if (!articleId) {
-  document.getElementById('articleContent').innerHTML =
-    '<div class="error-message">Article ID not found in URL.<br><a href="javascript:history.back()">Go Back</a></div>';
-  return;
+        if (!articleId) {
+            document.getElementById('articleContent').innerHTML =
+                '<div class="error-message">未找到文章ID Article ID not found.<br><a href="javascript:history.back()">返回 Return</a></div>';
+            return;
+        }
+
+        let article = null;
+        let currentZoom = 100;
+
+        async function fetchArticle() {
+            try {
+                const res = await fetch(`${API_BASE}/articles/${articleId}`);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                article = data;
+                renderArticle();
+
+            } catch (err) {
+                console.error('Error:', err);
+                document.getElementById('articleContent').innerHTML =
+                    '<div class="error-message">无法加载文章 Unable to load article.<br><a href="javascript:history.back()">返回 Return</a></div>';
+            }
+        }
+
+        function renderArticle() {
+            if (!article) return;
+
+            const categoryClass = article.category === 'public' ? 'public' : 'academic';
+            const categoryLabel = article.category === 'public' ? 'HUM-Public 大众刊' : 'HUM-Academic 专业刊';
+            const backUrl = article.category === 'public' ? 'public.html' : 'academic.html';
+            const date = formatDate(article.created_at);
+            
+            // Check if article has PDF file
+            const hasPdf = article.file_url && (article.file_url.endsWith('.pdf') || article.file_name?.endsWith('.pdf'));
+            const pdfUrl = article.file_url || '';
+
+            document.getElementById('articleContent').innerHTML = `
+                <div class="article-header">
+                    <span class="article-category ${categoryClass}">${categoryLabel}</span>
+                    <h1 class="article-title">${escapeHtml(article.title)}</h1>
+                    <p class="article-meta">${escapeHtml(article.author || 'Anonymous')} | ${date}</p>
+                    ${article.abstract ? '<p style="color: var(--color-text-secondary); line-height: 1.6;">' + escapeHtml(article.abstract) + '</p>' : ''}
+                    ${hasPdf ? `<p style="margin-top: 0.5rem;"><a href="${escapeHtml(pdfUrl)}" target="_blank" style="color: #1E40AF; text-decoration: none;">📄 下载 PDF / Download PDF</a></p>` : ''}
+                </div>
+
+                <div class="pre-publication-notice">
+                    <strong>⚠️ 预出版声明 | Pre-Publication Notice</strong><br>
+                    本文为预出版版本，待ISSN获批后转为正式出版。<br>
+                    This is a pre-publication version. Upon ISSN approval, it will be converted to official publication.
+                </div>
+
+                ${hasPdf ? `
+                <!-- PDF Viewer -->
+                <div class="viewer-frame" id="viewerFrame" style="min-height: 800px;">
+                    <div class="viewer-toolbar">
+                        <div style="font-size: 0.875rem; color: var(--color-text-secondary);">
+                            📄 PDF 预览 / PDF Preview
+                        </div>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
+                    </div>
+                    <div class="document-container" id="documentContainer" style="padding: 0; height: 750px;">
+                        <iframe src="${escapeHtml(pdfUrl)}" style="width: 100%; height: 100%; border: none;" type="application/pdf"></iframe>
+                    </div>
+                </div>
+                ` : `
+                <!-- Text Content Viewer -->
+                <div class="viewer-frame" id="viewerFrame">
+                    <div class="viewer-toolbar">
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" onclick="zoomOut()" title="缩小 Zoom Out">−</button>
+                            <span class="zoom-level" id="zoomLevel">${currentZoom}%</span>
+                            <button class="zoom-btn" onclick="zoomIn()" title="放大 Zoom In">+</button>
+                            <button class="zoom-btn" onclick="resetZoom()" title="重置 Reset" style="font-size: 0.75rem;">100%</button>
+                        </div>
+                        <div class="page-controls">
+                            <button class="page-btn" onclick="prevPage()">◀ 上一页</button>
+                            <span class="page-indicator">页面 Page 1</span>
+                            <button class="page-btn" onclick="nextPage()">下一页 ▶</button>
+                        </div>
+                        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
+                    </div>
+                    <div class="document-container" id="documentContainer">
+                        <div class="document-content" id="documentContent" style="transform: scale(${currentZoom/100});">
+                            ${article.content ? article.content : '<p style="text-align: center; color: var(--color-text-secondary);">文章内容加载中... Loading article content...</p>'}
+                        </div>
+                    </div>
+                </div>
+                `}
+
+                <div class="article-footer">
+                    <p class="disclaimer">预出版版本｜仅用于学术参考<br>Pre-Publication Version | For Academic Reference Only</p>
+                    <a href="${backUrl}" class="back-link">← 返回列表 Back to List</a>
+                </div>
+            `;
+        }
+
+        function zoomIn() {
+            if (currentZoom < 200) {
+                currentZoom += 10;
+                updateZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > 50) {
+                currentZoom -= 10;
+                updateZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 100;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+            document.getElementById('documentContent').style.transform = `scale(${currentZoom/100})`;
+        }
+
+        function prevPage() {
+            // Simple page navigation - scroll up
+            window.scrollBy(0, -500);
+        }
+
+        function nextPage() {
+            // Simple page navigation - scroll down
+            window.scrollBy(0, 500);
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('viewerContainer');
+            const isFullscreen = container.classList.contains('fullscreen-mode');
+
+            if (isFullscreen) {
+                container.classList.remove('fullscreen-mode');
+                document.body.classList.remove('fullscreen-mode');
+            } else {
+                container.classList.add('fullscreen-mode');
+                document.body.classList.add('fullscreen-mode');
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === '+' || e.key === '=') {
+                zoomIn();
+            } else if (e.key === '-') {
+                zoomOut();
+            } else if (e.key === '0') {
+                resetZoom();
+            } else if (e.key === 'Escape') {
+                const container = document.getElementById('viewerContainer');
+                if (container.classList.contains('fullscreen-mode')) {
+                    toggleFullscreen();
+                }
+            }
+        });
+
+        init();
+    })();
+    </script>
+
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-let article = null;
-let currentZoom = 100;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
 
-async function fetchArticle() {
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/articles?id=eq.${articleId}&select=*`,
-      {
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'apikey': SUPABASE_ANON_KEY
-        }
-      }
-    );
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (!data || data.length === 0) throw new Error('Article not found');
-    article = data[0];
-    renderArticle();
-  } catch (err) {
-    console.error('Error loading article:', err);
-    document.getElementById('articleContent').innerHTML =
-      '<div class="error-message">Failed to load article.<br><a href="javascript:history.back()">Go Back</a></div>';
+.inland-security-footer {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 0;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.trigger-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.minimax-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 300;
+  color: #adadad;
+  text-decoration: none;
+}
+
+.minimax-link:visited {
+  color: #adadad;
+}
+
+.minimax-link:hover {
+  color: #666666;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
+  font-size: 12px;
+  line-height: 17px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #171717;
+}
+
+/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: flex;
+}
+
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.beian-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #171717;
+}
+
+.beian-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+.underline-text {
+  color: #171717;
+  text-decoration: underline;
+}
+
+.underline-text:hover {
+  color: #000000;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .trigger-content {
+    background-color: transparent;
+  }
+
+  .minimax-link,
+  .minimax-link:visited {
+    color: #666666;
+  }
+
+  .minimax-link:hover {
+    color: #adadad;
+  }
+
+  .tooltip-content {
+    background-color: #262626;
+    color: #ededed;
+  }
+
+  .beian-link,
+  .underline-text {
+    color: #ededed;
+  }
+
+  .underline-text:hover {
+    color: #ffffff;
   }
 }
 
-function renderArticle() {
-  if (!article) return;
-
-  const isPublic = article.category === 'public';
-  const backUrl = isPublic ? 'public.html' : 'academic.html';
-  const date = formatDate(article.created_at);
-
-  const pdfBtn = article.pdf_data
-    ? `<button class="pdf-download-btn" onclick="downloadPdf()">Download PDF</button>`
-    : article.file_url
-    ? `<a href="${article.file_url}" class="pdf-download-btn" target="_blank" download>Download PDF</a>`
-    : '';
-
-  document.getElementById('articleContent').innerHTML = `
-<div class="article-header">
-  <span class="article-category ${isPublic ? 'public' : 'academic'}">${isPublic ? 'HUM-Public' : 'HUM-Academic'}</span>
-  <h1 class="article-title">${escapeHtml(article.title)}</h1>
-  <p class="article-meta">${escapeHtml(article.author || 'Anonymous')} | ${date}</p>
-  ${article.abstract ? `<p style="color:var(--color-text-secondary);line-height:1.6;">${escapeHtml(article.abstract)}</p>` : ''}
-  ${pdfBtn}
-</div>
-
-<div class="viewer-frame">
-  <div class="viewer-toolbar">
-    <div class="zoom-controls">
-      <button class="zoom-btn" onclick="zoomOut()" title="Zoom Out">&#8722;</button>
-      <span class="zoom-level" id="zoomLevel">${currentZoom}%</span>
-      <button class="zoom-btn" onclick="zoomIn()" title="Zoom In">+</button>
-      <button class="zoom-btn" onclick="resetZoom()" title="Reset" style="font-size:0.75rem;">100%</button>
+</style>
+<div class="inland-security-footer">
+  <div class="tooltip-container">
+    <div class="trigger-content">
+      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
+        <span></span>
+      </a>
     </div>
-    <button class="fullscreen-btn" onclick="toggleFullscreen()">Fullscreen</button>
-  </div>
-  <div class="document-container">
-    <div class="document-content" id="documentContent" style="transform:scale(${currentZoom/100});transform-origin:top center;">
-      ${article.content ? article.content.replace(/\n/g, '<br>') : '<p style="text-align:center;color:var(--color-text-secondary);">Loading content...</p>'}
+    <div class="tooltip-content">
+      <section class="info-section">
+        <span>上海稀宇科技有限公司</span>
+      </section>
+
+      <section class="info-section">
+        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
+          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
+          <span class="underline-text">沪公网安备31010402010179号</span>
+        </a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
+          沪ICP备2023003282号-38
+        </a>
+      </section>
+
+      <section class="info-section"></section>
+
+      <section class="info-section">
+        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
+          用户协议
+        </a>
+        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
+          隐私政策
+        </a>
+      </section>
     </div>
   </div>
 </div>
 
-<div class="article-footer">
-  <p class="disclaimer">Pre-Publication Version | For Academic Reference Only</p>
-  <a href="${backUrl}" class="back-link">&larr; Back to List</a>
-</div>`;
-}
-
-function downloadPdf() {
-  if (!article || !article.pdf_data) return;
-  const link = document.createElement('a');
-  link.href = article.pdf_data;
-  link.download = (article.title || 'article') + '.pdf';
-  link.click();
-}
-
-function zoomIn() {
-  if (currentZoom < 200) { currentZoom += 10; updateZoom(); }
-}
-function zoomOut() {
-  if (currentZoom > 50) { currentZoom -= 10; updateZoom(); }
-}
-function resetZoom() {
-  currentZoom = 100; updateZoom();
-}
-function updateZoom() {
-  document.getElementById('zoomLevel').textContent = currentZoom + '%';
-  document.getElementById('documentContent').style.transform = `scale(${currentZoom/100})`;
-}
-function toggleFullscreen() {
-  const container = document.getElementById('viewerContainer');
-  container.classList.toggle('fullscreen-mode');
-}
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-document.addEventListener('keydown', function(e) {
-  if (e.key === '+' || e.key === '=') zoomIn();
-  else if (e.key === '-') zoomOut();
-  else if (e.key === '0') resetZoom();
-  else if (e.key === 'Escape') toggleFullscreen();
-});
-
-fetchArticle();
-})();
-</script>
 </body>
 </html>

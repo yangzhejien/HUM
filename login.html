@@ -1,7 +1,528 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
-<head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Admin Login | HUM Journal</title> <link rel="stylesheet" href="css/style.css"> <style> .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #F8F9FA; padding: 2rem; } .login-box { background: white; padding: 3rem; border: 1px solid #E5E5E5; max-width: 400px; width: 100%; } .login-title { font-size: 1.5rem; margin-bottom: 0.5rem; color: #0A2342; } .login-subtitle { color: #4A5568; margin-bottom: 2rem; font-size: 0.875rem; } .form-group { margin-bottom: 1.5rem; } .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #111; } .form-input { width: 100%; padding: 0.75rem; border: 1px solid #E5E5E5; font-size: 1rem; font-family: inherit; } .form-input:focus { outline: none; border-color: #0A2342; } .btn { padding: 0.75rem 1.5rem; border: none; cursor: pointer; font-size: 1rem; font-weight: 500; transition: all 0.2s; width: 100%; } .btn-primary { background: #0A2342; color: white; } .btn-primary:hover { background: #1E3A5F; } .btn-primary:disabled { background: #ccc; cursor: not-allowed; } .error-msg { color: #DC2626; font-size: 0.875rem; margin-top: 0.5rem; display: none; padding: 0.75rem; background: #FEE2E2; border: 1px solid #FECACA; } .back-link { display: block; text-align: center; margin-top: 1rem; color: #4A5568; text-decoration: none; } .back-link:hover { color: #0A2342; } < tyle>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | HUM Journal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F8F9FA;
+            padding: 2rem;
+        }
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border: 1px solid #E5E5E5;
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #0A2342;
+        }
+        .login-subtitle {
+            color: #4A5568;
+            margin-bottom: 2rem;
+            font-size: 0.875rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #111;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #E5E5E5;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #0A2342;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .btn-primary {
+            background: #0A2342;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1E3A5F;
+        }
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .error-msg {
+            color: #DC2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+            padding: 0.75rem;
+            background: #FEE2E2;
+            border: 1px solid #FECACA;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+            color: #4A5568;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #0A2342;
+        }
+        .admin-info {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E5E5;
+        }
+        .admin-info strong {
+            color: #0A2342;
+        }
+    </style>
 </head>
-<body> <div class="login-container" id="admin-login"> <div class="login-box"> <h1 class="login-title">HUM Journal< 1> <p class="login-subtitle">Admin Login / ? > <form id="loginForm"> <div class="form-group"> <label class="form-label" for="email">Email< abel> <input type="email" id="email" class="form-input" placeholder="Enter your email" required> </div> <div class="form-group"> <label class="form-label" for="password">Password / < abel> <input type="password" id="password" class="form-input" placeholder="Enter your password" required> </div> <div class="error-msg" id="loginError"></div> <button type="submit" class="btn btn-primary" id="submitBtn">Login / < utton> < orm> <a href="index.html" class="back-link">?Back to Home / 〉< > </div> </div> <script> / upabase config const SUPABASE_URL = 'https:/ slggufgrtmdeyyyveay.supabase.co'; const SUPABASE_ANON_KEY = 'sb_publishable_9aToFofHZaM9crNMcCpaAQ_xGpm2MBJ'; const HASH_SALT = 'hum_salt_v1'; / ate limiting const MAX_LOGIN_ATTEMPTS = 5; const LOCKOUT_DURATION = 15 * 60 * 1000; function getLoginAttempts() { try { return JSON.parse(localStorage.getItem('login_attempts') || '{}'); } catch { return {}; } } function recordFailedAttempt() { const attempts = getLoginAttempts(); const now = Date.now(); if (!attempts.lockedUntil) attempts.lockedUntil = 0; if (!attempts.count) attempts.count = 0; if (attempts.lockedUntil > now) return true; attempts.count++; if (attempts.count >= MAX_LOGIN_ATTEMPTS) { attempts.lockedUntil = now + LOCKOUT_DURATION; attempts.count = 0; } localStorage.setItem('login_attempts', JSON.stringify(attempts)); return attempts.lockedUntil > now; } function clearLoginAttempts() { localStorage.removeItem('login_attempts'); } function getLockoutRemaining() { const attempts = getLoginAttempts(); if (attempts.lockedUntil && attempts.lockedUntil > Date.now()) { return Math.ceil((attempts.lockedUntil - Date.now()) / 1000); } return 0; } / HA-256 hash (Web Crypto API) async function hashPassword(password) { const data = HASH_SALT + password; const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(data)); return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join(''); } / uery Supabase admins table async function verifyLogin(email, passwordHash) { const resp = await fetch( `${SUPABASE_URL} est 1 dmins?email=eq.${encodeURIComponent(email)}&password_hash=eq.sha256$${HASH_SALT}$${passwordHash}&select=*`, { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } } ); if (!resp.ok) throw new Error('Query failed'); const data = await resp.json(); return data.length > 0 ? data[0] : null; } const loginForm = document.getElementById('loginForm'); const emailInput = document.getElementById('email'); const passwordInput = document.getElementById('password'); const loginError = document.getElementById('loginError'); const submitBtn = document.getElementById('submitBtn'); loginForm.addEventListener('submit', async function(e) { e.preventDefault(); loginError.style.display = 'none'; if (recordFailedAttempt()) { const remaining = getLockoutRemaining(); showError(' ' + remaining + ' ?); return; } const email = emailInput.value.trim().toLowerCase(); const password = passwordInput.value; if (!email || !password) { showError('ラ?); return; } submitBtn.disabled = true; submitBtn.textContent = 'Verifying...'; try { const passwordHash = await hashPassword(password); const admin = await verifyLogin(email, passwordHash); if (admin) { clearLoginAttempts(); sessionStorage.setItem('adminLoggedIn', 'true'); sessionStorage.setItem('adminEmail', admin.email); sessionStorage.setItem('adminRole', admin.role); sessionStorage.setItem('adminName', admin.name); window.location.href = 'admin.html'; } else { showError('﹀€?); } } catch (err) { console.error('[Login]', err); showError('◢€?); } finally { submitBtn.disabled = false; submitBtn.textContent = 'Login / '; } }); function showError(msg) { loginError.textContent = msg; loginError.style.display = 'block'; } emailInput.addEventListener('input', function() { loginError.style.display = 'none'; }); passwordInput.addEventListener('input', function() { loginError.style.display = 'none'; }); < cript>
+<body>
+    <div class="login-container" id="admin-login">
+        <div class="login-box">
+            <h1 class="login-title">HUM Journal</h1>
+            <p class="login-subtitle">Admin Login / 管理员登录</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">Username / 用户名</label>
+                    <input type="text" id="email" class="form-input" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password / 密码</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+
+                <div class="error-msg" id="loginError"></div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">Login / 登录</button>
+            </form>
+
+            <a href="index.html" class="back-link">← Back to Home / 返回首页</a>
+
+            <div class="admin-info">
+                <strong>Admin Accounts:</strong><br>
+                主编: Orion<br>
+                编辑: Lyra
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Security Configuration
+        const MAX_LOGIN_ATTEMPTS = 5;
+        const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
+        const REQUEST_LIMIT = 10; // Max requests per second
+        const REQUEST_WINDOW = 1000; // 1 second window
+
+        // Admin accounts configuration - supports multiple passwords per account
+        const ADMIN_ACCOUNTS = {
+            'yangll_0502@qq.com': {
+                passwords: ['HUM@Orion_2026!', 'K3p#xZ9$qL7', 'V8s&2mP#wR5'],
+                role: 'admin',
+                name: '主编/审核',
+                displayName: 'Orion'
+            },
+            'dmh12345676@qq.com': {
+                passwords: ['HUM@Lyra_2026!', 'T4g#7sN$pM2', 'X6d&9fB#vC1'],
+                role: 'editor',
+                name: '编辑/排版',
+                displayName: 'Lyra'
+            }
+        };
+
+        // Helper function to get client IP (simulated - in production would need backend)
+        function getClientIP() {
+            return 'client_' + Math.random().toString(36).substring(7);
+        }
+
+        // Login attempt tracking
+        function getLoginAttempts() {
+            const attempts = localStorage.getItem('login_attempts');
+            return attempts ? JSON.parse(attempts) : {};
+        }
+
+        function recordFailedAttempt(ip) {
+            const attempts = getLoginAttempts();
+            const now = Date.now();
+
+            if (!attempts[ip]) {
+                attempts[ip] = { count: 0, lockedUntil: 0 };
+            }
+
+            // Check if still locked
+            if (attempts[ip].lockedUntil > now) {
+                return true;
+            }
+
+            attempts[ip].count++;
+
+            // Lock after MAX_LOGIN_ATTEMPTS failures
+            if (attempts[ip].count >= MAX_LOGIN_ATTEMPTS) {
+                attempts[ip].lockedUntil = now + LOCKOUT_DURATION;
+                attempts[ip].count = 0;
+            }
+
+            localStorage.setItem('login_attempts', JSON.stringify(attempts));
+            return attempts[ip].lockedUntil > now;
+        }
+
+        function clearLoginAttempts(ip) {
+            const attempts = getLoginAttempts();
+            if (attempts[ip]) {
+                delete attempts[ip];
+                localStorage.setItem('login_attempts', JSON.stringify(attempts));
+            }
+        }
+
+        function getLockoutTimeRemaining(ip) {
+            const attempts = getLoginAttempts();
+            if (attempts[ip] && attempts[ip].lockedUntil > Date.now()) {
+                return Math.ceil((attempts[ip].lockedUntil - Date.now()) / 1000);
+            }
+            return 0;
+        }
+
+        // Request rate limiting
+        function getRequestCounts() {
+            const counts = localStorage.getItem('request_counts');
+            return counts ? JSON.parse(counts) : {};
+        }
+
+        function checkRateLimit(ip) {
+            const counts = getRequestCounts();
+            const now = Date.now();
+
+            // Clean old entries
+            if (!counts[ip]) {
+                counts[ip] = { count: 0, windowStart: now };
+            }
+
+            // Reset if window has passed
+            if (now - counts[ip].windowStart > REQUEST_WINDOW) {
+                counts[ip] = { count: 0, windowStart: now };
+            }
+
+            counts[ip].count++;
+            localStorage.setItem('request_counts', JSON.stringify(counts));
+
+            return counts[ip].count <= REQUEST_LIMIT;
+        }
+
+        // Operation logging
+        function logOperation(action, details) {
+            const logs = JSON.parse(localStorage.getItem('operation_logs') || '[]');
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                action: action,
+                adminEmail: sessionStorage.getItem('adminEmail') || 'unknown',
+                adminName: sessionStorage.getItem('adminName') || 'unknown',
+                details: details,
+                ip: getClientIP()
+            };
+            logs.unshift(logEntry);
+            // Keep only last 1000 entries
+            if (logs.length > 1000) logs.pop();
+            localStorage.setItem('operation_logs', JSON.stringify(logs));
+        }
+
+        // Login logging
+        function logLoginAttempt(email, success) {
+            const logs = JSON.parse(localStorage.getItem('login_logs') || '[]');
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                email: email,
+                success: success,
+                ip: getClientIP()
+            };
+            logs.unshift(logEntry);
+            // Keep only last 1000 entries
+            if (logs.length > 1000) logs.pop();
+            localStorage.setItem('login_logs', JSON.stringify(logs));
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const loginError = document.getElementById('loginError');
+        const submitBtn = document.getElementById('submitBtn');
+        const clientIP = getClientIP();
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Check rate limit
+            if (!checkRateLimit(clientIP)) {
+                showError('请求过于频繁，请稍后再试。');
+                return;
+            }
+
+            // Check if locked out
+            if (recordFailedAttempt(clientIP)) {
+                const remaining = getLockoutTimeRemaining(clientIP);
+                showError(`登录尝试过多，请 ${remaining} 秒后重试。`);
+                return;
+            }
+
+            const email = emailInput.value.toLowerCase().trim();
+            const password = passwordInput.value;
+
+            // Sanitize input to prevent XSS
+            const sanitizedEmail = email.replace(/[<>\"\'%;()&+]/g, '');
+
+            // Check if email is allowed
+            if (!ADMIN_ACCOUNTS[sanitizedEmail]) {
+                logLoginAttempt(sanitizedEmail, false);
+                showError('账号或密码错误。');
+                return;
+            }
+
+            // Verify password (check if password is in the allowed list)
+            if (!ADMIN_ACCOUNTS[sanitizedEmail].passwords.includes(password)) {
+                logLoginAttempt(sanitizedEmail, false);
+                showError('账号或密码错误。');
+                return;
+            }
+
+            // Login success - clear failed attempts and store session
+            clearLoginAttempts(clientIP);
+            logLoginAttempt(sanitizedEmail, true);
+
+            sessionStorage.setItem('adminLoggedIn', 'true');
+            sessionStorage.setItem('adminEmail', sanitizedEmail);
+            sessionStorage.setItem('adminRole', ADMIN_ACCOUNTS[sanitizedEmail].role);
+            sessionStorage.setItem('adminName', ADMIN_ACCOUNTS[sanitizedEmail].name);
+
+            window.location.href = 'admin.html';
+        });
+
+        function showError(msg) {
+            loginError.textContent = msg;
+            loginError.style.display = 'block';
+        }
+
+        // Clear error when typing
+        emailInput.addEventListener('input', function() {
+            loginError.style.display = 'none';
+        });
+
+        passwordInput.addEventListener('input', function() {
+            loginError.style.display = 'none';
+        });
+
+        // Expose logOperation for admin page to use
+        window.logOperation = logOperation;
+    </script>
+
+
+<style>
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.inland-security-footer {
+  position: fixed;
+  z-index: 10;
+  bottom: 0;
+  right: 0;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.trigger-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.minimax-link {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 300;
+  color: #adadad;
+  text-decoration: none;
+}
+
+.minimax-link:visited {
+  color: #adadad;
+}
+
+.minimax-link:hover {
+  color: #666666;
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
+  font-size: 12px;
+  line-height: 17px;
+  background-color: #fafafa;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #171717;
+}
+
+/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+  height: 16px;
+}
+
+.tooltip-container:hover .tooltip-content {
+  display: flex;
+}
+
+.info-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.beian-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #171717;
+}
+
+.beian-icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 2px;
+}
+
+.underline-text {
+  color: #171717;
+  text-decoration: underline;
+}
+
+.underline-text:hover {
+  color: #000000;
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+  .trigger-content {
+    background-color: transparent;
+  }
+
+  .minimax-link,
+  .minimax-link:visited {
+    color: #666666;
+  }
+
+  .minimax-link:hover {
+    color: #adadad;
+  }
+
+  .tooltip-content {
+    background-color: #262626;
+    color: #ededed;
+  }
+
+  .beian-link,
+  .underline-text {
+    color: #ededed;
+  }
+
+  .underline-text:hover {
+    color: #ffffff;
+  }
+}
+
+</style>
+<div class="inland-security-footer">
+  <div class="tooltip-container">
+    <div class="trigger-content">
+      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
+        <span></span>
+      </a>
+    </div>
+    <div class="tooltip-content">
+      <section class="info-section">
+        <span>上海稀宇科技有限公司</span>
+      </section>
+
+      <section class="info-section">
+        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
+          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
+          <span class="underline-text">沪公网安备31010402010179号</span>
+        </a>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
+          沪ICP备2023003282号-38
+        </a>
+      </section>
+
+      <section class="info-section"></section>
+
+      <section class="info-section">
+        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
+          用户协议
+        </a>
+        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
+          隐私政策
+        </a>
+      </section>
+    </div>
+  </div>
+</div>
+
 </body>
-</html> 
+</html>

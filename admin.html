@@ -208,8 +208,7 @@
 (function() {
 'use strict';
 
-const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXl2ZWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODQ0NzIsImV4cCI6MjA5Mjc2MDQ3Mn0.N4bpqRGmez2hxfyRDoW6YAaWeQGGJkhMd1v3N7NTKWs';
+const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
 
 let allArticles = [];
 let currentFilter = 'all';
@@ -231,12 +230,7 @@ document.getElementById('adminInfo').textContent = `${adminName} (${adminEmail})
 // Load articles via REST API
 async function loadArticles() {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?select=*&order=created_at.desc`, {
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'apikey': SUPABASE_ANON_KEY
-      }
-    });
+    const res = await fetch(`${API_BASE}/articles`);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     allArticles = Array.isArray(data) ? data : [];
@@ -285,7 +279,7 @@ async function refreshArticles() {
 }
 
 // Word file handling
-window.handleFileSelect = function(input) {
+window.handleFileSelect = async function(input) {
   const file = input.files[0];
   if (!file || !file.name.endsWith('.docx')) {
     showError('Please upload a .docx file');
@@ -436,14 +430,9 @@ document.getElementById('articleForm').addEventListener('submit', async function
     if (id) {
       // Update
       payload.updated_at = new Date().toISOString();
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+      const res = await fetch(`${API_BASE}/articles/${id}`, {
         method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'apikey': SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('Update failed');
@@ -453,20 +442,18 @@ document.getElementById('articleForm').addEventListener('submit', async function
       showSuccess('Article updated!');
     } else {
       // Insert
-      payload.created_at = new Date().toISOString();
-      const res = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
+      const res = await fetch(`${API_BASE}/articles`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-          'apikey': SUPABASE_ANON_KEY,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('Insert failed');
       const created = await res.json();
-      if (created && created[0]) allArticles.unshift(created[0]);
+      // D1 API returns { id: x, success: true } - add new id to payload
+      if (created && created.id) {
+        payload.id = created.id;
+        allArticles.unshift(payload);
+      }
       showSuccess(category === 'public' ? 'Article created and published!' : 'Article submitted for review!');
     }
     // Save to localStorage too
@@ -485,13 +472,9 @@ document.getElementById('articleForm').addEventListener('submit', async function
 async function publishArticle(id) {
   if (!isAdmin) { showError('Admin access required'); return; }
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+    const res = await fetch(`${API_BASE}/articles/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'apikey': SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'published', updated_at: new Date().toISOString() })
     });
     if (!res.ok) throw new Error('Publish failed');
@@ -510,13 +493,9 @@ async function unpublishArticle(id) {
   if (!isAdmin) { showError('Admin access required'); return; }
   if (!confirm('Unpublish this article?')) return;
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
+    await fetch(`${API_BASE}/articles/${id}`, {
       method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'apikey': SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'unpublished', updated_at: new Date().toISOString() })
     });
     const idx = allArticles.findIndex(a => a.id == id || a.id === id);
@@ -534,12 +513,9 @@ async function deleteArticle(id) {
   if (!isAdmin) { showError('Admin access required'); return; }
   if (!confirm('Delete this article? This cannot be undone.')) return;
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'apikey': SUPABASE_ANON_KEY
-      }
+    await fetch(`${API_BASE}/articles/${id}`, {
+      method: 'DELETE'
+    });
     });
     allArticles = allArticles.filter(a => a.id != id && a.id !== id);
     localStorage.setItem('hum_articles', JSON.stringify(allArticles));

@@ -1,899 +1,117 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="zh">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HUM Journal | Humanity & Thought Journal</title>
-    <meta name="description" content="HUM Journal - A platform for free thought and rational expression.">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - 页面未找到</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background: #f8f9fa;
+      min-height: 100vh;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      background: white;
+      padding: 3rem 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .error-code {
+      font-size: 6rem;
+      font-weight: 700;
+      color: #6c757d;
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .error-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 1rem;
+    }
+
+    .error-description {
+      font-size: 1rem;
+      color: #6c757d;
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+      border: 1px solid #dee2e6;
+      background: #f8f9fa;
+      color: #495057;
+    }
+
+    .btn:hover {
+      background: #e9ecef;
+      border-color: #adb5bd;
+    }
+
+    .btn:focus {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+
+    /* 移动端优化 */
+    @media (max-width: 480px) {
+      .container {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+      }
+
+      .error-code {
+        font-size: 4rem;
+      }
+
+      .error-title {
+        font-size: 1.25rem;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 200px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <header class="header">
-        <div class="header-inner">
-            <a href="index.html" class="logo">
-                <span class="logo-main">HUM</span>
-                <span class="logo-sub">Journal</span>
-            </a>
-            <nav class="nav">
-                <a href="index.html" class="nav-link active">Home</a>
-                <a href="about.html" class="nav-link">About</a>
-                <a href="introduction.html" class="nav-link">Journal</a>
-                <a href="submission.html" class="nav-link">Submit</a>
-                <a href="review.html" class="nav-link">Review</a>
-                <a href="login.html" class="nav-link">Admin</a>
-            </nav>
-            <div class="lang-toggle">
-                <span class="active" data-lang="en">EN</span>
-                <span data-lang="cn">涓?/span>
-            </div>
-            <button class="mobile-menu-btn" aria-label="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </header>
-
-    <section class="hero">
-        <div class="container">
-            <h1 class="hero-title animate-fade-in">HUM JOURNAL</h1>
-            <p class="hero-subtitle animate-fade-in animate-delay-1">Humanity & Thought Journal</p>
-            <div class="hero-slogan animate-fade-in animate-delay-2">
-                "Freedom of Thought, Rational Expression"<br>
-                <small style="font-size: 1rem; color: var(--color-text-secondary);">鎬濇兂鑷敱锛岀悊鎬ц〃杈?/small>
-            </div>
-        </div>
-    </section>
-
-    <section class="content-section">
-        <div class="container">
-            <div class="section-header">
-                <h2>Our Mission</h2>
-                <p>Creating a platform where ideas can flow freely and expression follows reason.</p>
-                <div class="divider"></div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-cards container">
-        <div class="section-card public animate-fade-in">
-            <div class="section-card-label">HUM-Public</div>
-            <h3 class="section-card-title">澶т紬缃戝垔</h3>
-            <p class="section-card-desc">Open publication without barriers. Free expression of ideas and perspectives.</p>
-            <a href="introduction.html#public" class="section-card-link">Learn More 鈫?/a>
-        </div>
-        <div class="section-card academic animate-fade-in animate-delay-1">
-            <div class="section-card-label">HUM-Academic</div>
-            <h3 class="section-card-title">涓撲笟缃戝垔</h3>
-            <p class="section-card-desc">Emphasis on logic and academic rigor. Peer-reviewed scholarly contributions.</p>
-            <a href="introduction.html#academic" class="section-card-link">Learn More 鈫?/a>
-        </div>
-    </section>
-
-    <section class="content-section" id="articles">
-        <div class="container">
-            <div class="section-header">
-                <h2>Latest Articles</h2>
-                <div class="divider"></div>
-            </div>
-            <div id="articlesContainer">
-                <div class="intro-grid" id="publicArticles">
-                    <div class="intro-block">
-                        <h3>HUM-Public <span style="font-size: 1rem; color: var(--color-text-secondary);">澶т紬缃戝垔</span></h3>
-                        <div id="publicArticlesList">
-                            <p style="color: var(--color-text-secondary);">Loading articles...</p>
-                        </div>
-                    </div>
-                    <div class="intro-block">
-                        <h3>HUM-Academic <span style="font-size: 1rem; color: var(--color-text-secondary);">涓撲笟缃戝垔</span></h3>
-                        <div id="academicArticlesList">
-                            <p style="color: var(--color-text-secondary);">Loading articles...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-inner">
-                <div class="footer-logo">HUM Journal</div>
-                <div class="footer-slogan">"Freedom of Thought, Rational Expression"</div>
-                <div class="footer-links">
-                    <a href="index.html">Home</a>
-                    <a href="about.html">About</a>
-                    <a href="submission.html">Submit</a>
-                </div>
-                <div class="footer-copyright">漏 2026 Kirk. All rights reserved.</div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXZlYXkiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTY0ODc2OTIwMCwiZXhwIjoxOTY0MzQ1MjAwfQ.5Wq0ZjWq0ZjWq0ZjWq0ZjWq0ZjWq0ZjWq0ZjWq0ZjW';
-
-        let supabaseClient = null;
-        let supabaseReady = false;
-
-        if (typeof supabase !== 'undefined') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            supabaseReady = true;
-        }
-    </script>
-    <script src="js/main.js"></script>
-    <script>
-        async function getArticles() {
-            if (supabaseReady && supabaseClient) {
-                try {
-                    const { data, error } = await supabaseClient
-                        .from('articles')
-                        .select('*')
-                        .eq('status', 'published')
-                        .order('created_at', { ascending: false });
-                    if (error) return [];
-                    return data || [];
-                } catch (e) {
-                    return [];
-                }
-            }
-            return [];
-        }
-
-        function formatDate(dateStr) {
-            if (!dateStr) return '';
-            return new Date(dateStr).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        async function renderArticles() {
-            let articles = await getArticles();
-            articles.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-            const publicArticles = articles.filter(a => a.category === 'public');
-            const academicArticles = articles.filter(a => a.category === 'academic');
-
-            const publicListEl = document.getElementById('publicArticlesList');
-            const academicListEl = document.getElementById('academicArticlesList');
-
-            if (publicArticles.length > 0) {
-                publicListEl.innerHTML = publicArticles.map(article => `
-                    <div style="padding: 1rem 0; border-bottom: 1px solid var(--color-border);">
-                        <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">
-                            <a href="#" style="color: var(--color-primary);" onclick="showArticle(${article.id}); return false;">
-                                ${escapeHtml(article.title)}
-                            </a>
-                        </h4>
-                        <p style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
-                            ${escapeHtml(article.author)} | ${formatDate(article.created_at)}
-                        </p>
-                        <p style="font-size: 0.9rem; color: var(--color-text-secondary);">
-                            ${escapeHtml(article.content ? article.content.substring(0, 150) : '')}${article.content && article.content.length > 150 ? '...' : ''}
-                        </p>
-                    </div>
-                `).join('');
-            } else {
-                publicListEl.innerHTML = '<p style="color: var(--color-text-secondary);">No articles yet.</p>';
-            }
-
-            if (academicArticles.length > 0) {
-                academicListEl.innerHTML = academicArticles.map(article => `
-                    <div style="padding: 1rem 0; border-bottom: 1px solid var(--color-border);">
-                        <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">
-                            <a href="#" style="color: var(--color-primary);" onclick="showArticle(${article.id}); return false;">
-                                ${escapeHtml(article.title)}
-                            </a>
-                        </h4>
-                        <p style="font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 0.5rem;">
-                            ${escapeHtml(article.author)} | ${formatDate(article.created_at)}
-                        </p>
-                        <p style="font-size: 0.9rem; color: var(--color-text-secondary);">
-                            ${escapeHtml(article.content ? article.content.substring(0, 150) : '')}${article.content && article.content.length > 150 ? '...' : ''}
-                        </p>
-                    </div>
-                `).join('');
-            } else {
-                academicListEl.innerHTML = '<p style="color: var(--color-text-secondary);">No articles yet.</p>';
-            }
-        }
-
-        async function showArticle(id) {
-            const articles = await getArticles();
-            const article = articles.find(a => a.id == id);
-            if (article) {
-                const modal = document.createElement('div');
-                modal.id = 'articleModal';
-                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 2rem;';
-                modal.innerHTML = `
-                    <div style="background: white; max-width: 800px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 2rem; position: relative;">
-                        <button onclick="this.closest('#articleModal').remove()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer;">脳</button>
-                        <span style="display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.75rem; background: ${article.category === 'public' ? '#DBEAFE' : '#E0E7FF'}; color: ${article.category === 'public' ? '#1E40AF' : '#3730A3'}; margin-bottom: 1rem;">
-                            ${article.category === 'public' ? 'HUM-Public 澶т紬缃戝垔' : 'HUM-Academic 涓撲笟缃戝垔'}
-                        </span>
-                        <h2 style="margin-bottom: 0.5rem; font-size: 1.75rem;">${escapeHtml(article.title)}</h2>
-                        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">${escapeHtml(article.author)} | ${formatDate(article.created_at)}</p>
-                        <div style="white-space: pre-wrap; line-height: 1.8;">${escapeHtml(article.content || '')}</div>
-                    </div>
-                `;
-                document.body.appendChild(modal);
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) modal.remove();
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', renderArticles);
-    </script>
-
-<style>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-.inland-security-footer {
-  position: fixed;
-  z-index: 10;
-  bottom: 0;
-  right: 0;
-  width: fit-content;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.tooltip-container {
-  position: relative;
-}
-
-.trigger-content {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background-color: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.minimax-link {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 300;
-  color: #adadad;
-  text-decoration: none;
-}
-
-.minimax-link:visited {
-  color: #adadad;
-}
-
-.minimax-link:hover {
-  color: #666666;
-}
-
-.tooltip-content {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  padding-bottom: 16px; /* 8px 鍐呭闂磋窛 + 8px 鐢ㄤ簬榧犳爣绉诲姩鐨勯€忔槑鍖哄煙 */
-  font-size: 12px;
-  line-height: 17px;
-  background-color: #fafafa;
-  border-radius: 12px;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: #171717;
-}
-
-/* 鍒涘缓閫忔槑鐨勮繛鎺ュ尯鍩燂紝璁╅紶鏍囧彲浠ュ钩婊戠Щ鍔ㄥ埌 tooltip */
-.tooltip-content::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  right: 0;
-  height: 16px;
-}
-
-.tooltip-container:hover .tooltip-content {
-  display: flex;
-}
-
-.info-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
-.beian-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #171717;
-}
-
-.beian-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 2px;
-}
-
-.underline-text {
-  color: #171717;
-  text-decoration: underline;
-}
-
-.underline-text:hover {
-  color: #000000;
-}
-
-/* 娣辫壊妯″紡鏀寔 */
-@media (prefers-color-scheme: dark) {
-  .trigger-content {
-    background-color: transparent;
-  }
-
-  .minimax-link,
-  .minimax-link:visited {
-    color: #666666;
-  }
-
-  .minimax-link:hover {
-    color: #adadad;
-  }
-
-  .tooltip-content {
-    background-color: #262626;
-    color: #ededed;
-  }
-
-  .beian-link,
-  .underline-text {
-    color: #ededed;
-  }
-
-  .underline-text:hover {
-    color: #ffffff;
-  }
-}
-
-</style>
-<div class="inland-security-footer">
-  <div class="tooltip-container">
-    <div class="trigger-content">
-      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
-        <span>漏 2026 MiniMax</span>
-      </a>
-    </div>
-    <div class="tooltip-content">
-      <section class="info-section">
-        <span>涓婃捣绋€瀹囩鎶€鏈夐檺鍏徃</span>
-      </section>
-
-      <section class="info-section">
-        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
-          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
-          <span class="underline-text">娌叕缃戝畨澶?1010402010179鍙?/span>
-        </a>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
-          娌狪CP澶?023003282鍙?38
-        </a>
-      </section>
-
-      <section class="info-section">
-        <span>妯″瀷鍚嶇О锛歁iniMax</span>
-        <span>澶囨鍙凤細Shanghai-MiniMax-202505230046</span>
-      </section>
-
-      <section class="info-section">
-        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
-          鐢ㄦ埛鍗忚
-        </a>
-        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
-          闅愮鏀跨瓥
-        </a>
-      </section>
-    </div>
+  <div class="container">
+    <div class="error-code">404</div>
+    <h1 class="error-title">页面未找到</h1>
+    <p class="error-description">
+      您要查找的页面不存在或已被移动。
+    </p>
+    <a href="javascript:history.back()" class="btn" role="button">
+      返回
+    </a>
   </div>
-</div>
-
-
-<script>
-/**
- * Iframe 鍏冪礌楂樹寒娉ㄥ叆鑴氭湰
- * 闇€瑕佸湪鐩爣缃戠珯涓紩鍏ユ鑴氭湰鏉ユ敮鎸佽法鍩?iframe 楂樹寒鍔熻兘
- *
- * 浣跨敤鏂规硶锛?
- * 1. 灏嗘鑴氭湰娣诲姞鍒扮洰鏍囩綉绔欑殑 HTML 涓?
- * 2. 鎴栭€氳繃娴忚鍣ㄦ墿灞曘€佺敤鎴疯剼鏈瓑鏂瑰紡娉ㄥ叆
- */
-
-(function () {
-  "use strict";
-
-  // 妫€鏌ユ槸鍚﹀湪 iframe 涓?
-  if (window.self === window.top) {
-    return; // 涓嶅湪 iframe 涓紝涓嶆墽琛?
-  }
-
-  // 妫€鏌ユ槸鍚﹀凡缁忓垵濮嬪寲杩?
-  if (window.__iframeHighlightInitialized) {
-    return;
-  }
-  window.__iframeHighlightInitialized = true;
-  console.log("Iframe 楂樹寒鑴氭湰宸插姞杞?);
-
-  // 鍒涘缓楂樹寒瑕嗙洊灞?
-  var overlay = document.createElement("div");
-  overlay.id = "iframe-highlight-overlay";
-  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
-
-  // 鍒涘缓鎮仠楂樹寒妗嗭紙铏氱嚎杈规锛?
-  var highlightBox = document.createElement("div");
-  highlightBox.id = "iframe-highlight-box";
-  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
-
-  // 鍒涘缓閫変腑鑺傜偣鐨勫父椹婚珮浜锛堝疄绾胯竟妗嗭級
-  var selectedBox = document.createElement("div");
-  selectedBox.id = "iframe-selected-box";
-  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
-
-  // 鍒涘缓鎮仠鏍囩鏄剧ず
-  var tagLabel = document.createElement("div");
-  tagLabel.id = "iframe-tag-label";
-  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
-
-  // 鍒涘缓閫変腑鑺傜偣鏍囩
-  var selectedLabel = document.createElement("div");
-  selectedLabel.id = "iframe-selected-label";
-  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
-  overlay.appendChild(highlightBox);
-  overlay.appendChild(selectedBox);
-  overlay.appendChild(tagLabel);
-  overlay.appendChild(selectedLabel);
-  document.body.appendChild(overlay);
-
-  // 瀛樺偍褰撳墠閫変腑鐨勫厓绱?
-  var selectedElement = null;
-  var highlightEnabled = false;
-
-  // 鏇存柊閫変腑鍏冪礌鐨勯珮浜樉绀?
-  function updateSelectedHighlight(element) {
-    console.log("updateSelectedHighlight called with:", element);
-    if (!element) {
-      selectedBox.style.display = "none";
-      selectedLabel.style.display = "none";
-      selectedElement = null;
-      console.log("Cleared selected highlight");
-      return;
-    }
-    selectedElement = element;
-    var rect = element.getBoundingClientRect();
-    console.log("Selected element rect:", rect);
-
-    // 鏇存柊閫変腑楂樹寒妗嗕綅缃?
-    selectedBox.style.display = "block";
-    selectedBox.style.left = "".concat(rect.left - 2, "px");
-    selectedBox.style.top = "".concat(rect.top - 2, "px");
-    selectedBox.style.width = "".concat(rect.width + 4, "px");
-    selectedBox.style.height = "".concat(rect.height + 4, "px");
-
-    // 鏇存柊閫変腑鏍囩浣嶇疆鍜屽唴瀹?
-    selectedLabel.style.display = "block";
-    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
-
-    // 璁＄畻鏍囩浣嶇疆锛岀‘淇濅笉瓒呭嚭瑙嗙獥
-    var labelTop = rect.top - 28;
-    var labelLeft = rect.left;
-
-    // 濡傛灉鏍囩浼氳秴鍑洪《閮紝鏄剧ず鍦ㄥ厓绱犱笅鏂?
-    if (labelTop < 5) {
-      labelTop = rect.bottom + 5;
-    }
-
-    // 濡傛灉鏍囩浼氳秴鍑哄彸渚э紝鍚戝乏璋冩暣
-    var labelWidth = selectedLabel.offsetWidth || 100; // 棰勪及瀹藉害
-    if (labelLeft + labelWidth > window.innerWidth - 10) {
-      labelLeft = window.innerWidth - labelWidth - 10;
-    }
-    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
-    selectedLabel.style.top = "".concat(labelTop, "px");
-    console.log("Selected highlight positioned at:", {
-      left: selectedBox.style.left,
-      top: selectedBox.style.top,
-      width: selectedBox.style.width,
-      height: selectedBox.style.height
-    });
-  }
-  function getElementSelector(element) {
-    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
-    var segments = [];
-    var current = element;
-    while (current !== document.documentElement) {
-      var selector = '';
-      // 浼樺厛妫€鏌ュ敮涓€ID
-      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
-        segments.unshift("#".concat(current.id));
-        break; // ID鍞竴锛屾棤闇€缁х画鍚戜笂
-      }
-
-      // 鐢熸垚绫诲悕閫夋嫨鍣紙鍙栫涓€涓湁鏁堢被鍚嶏級
-      var classes = Array.from(current.classList).filter(function (c) {
-        return !c.startsWith('js-');
-      });
-      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
-
-      // 鐢熸垚浣嶇疆绱㈠紩锛坣th-child锛?
-      var tag = current.tagName.toLowerCase();
-      if (!className) {
-        var siblings = Array.from(current.parentNode.children);
-        var index = siblings.findIndex(function (el) {
-          return el === current;
-        }) + 1;
-        selector = "".concat(tag, ":nth-child(").concat(index, ")");
-      } else {
-        selector = className;
-      }
-      segments.unshift(selector);
-      current = current.parentElement;
-    }
-
-    // 澶勭悊鏍瑰厓绱?
-    if (current === document.documentElement) {
-      segments.unshift('html');
-    }
-    return segments.join(' > ');
-  }
-
-  // 鑾峰彇鍏冪礌鏂囨湰鍐呭
-  function getElementText(element) {
-    var _element$textContent;
-    if (element.tagName === "INPUT") {
-      return element.value || element.placeholder || "";
-    }
-    if (element.tagName === "TEXTAREA") {
-      return element.value || element.placeholder || "";
-    }
-    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
-    return text.length > 50 ? text.substring(0, 50) + "..." : text;
-  }
-
-  // 鑾峰彇鍏冪礌灞炴€т俊鎭?
-  function getElementAttributes(element) {
-    var attrs = {};
-    for (var i = 0; i < element.attributes.length; i++) {
-      var attr = element.attributes[i];
-      attrs[attr.name] = attr.value;
-    }
-    return attrs;
-  }
-
-  // 榧犳爣鎮仠浜嬩欢澶勭悊
-  function handleMouseOver(e) {
-    if (!highlightEnabled) return;
-    var target = e.target;
-    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
-      return;
-    }
-
-    // 閬垮厤楂樹寒 html 鍜?body 鍏冪礌
-    if (target === document.documentElement || target === document.body) {
-      return;
-    }
-
-    // 濡傛灉鏄凡閫変腑鐨勫厓绱狅紝涓嶆樉绀烘偓鍋滈珮浜?
-    if (target === selectedElement) {
-      highlightBox.style.display = "none";
-      tagLabel.style.display = "none";
-      return;
-    }
-    var rect = target.getBoundingClientRect();
-    var selector = getElementSelector(target);
-    var text = getElementText(target);
-    var attributes = getElementAttributes(target);
-
-    // 鏇存柊鎮仠楂樹寒妗嗕綅缃?
-    highlightBox.style.display = "block";
-    highlightBox.style.left = "".concat(rect.left - 2, "px");
-    highlightBox.style.top = "".concat(rect.top - 2, "px");
-    highlightBox.style.width = "".concat(rect.width + 4, "px");
-    highlightBox.style.height = "".concat(rect.height + 4, "px");
-
-    // 鏇存柊鏍囩浣嶇疆鍜屽唴瀹?
-    tagLabel.style.display = "block";
-    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
-
-    // 璁＄畻鏍囩浣嶇疆锛岀‘淇濅笉瓒呭嚭瑙嗙獥
-    var labelTop = rect.top - 22;
-    var labelLeft = rect.left;
-
-    // 濡傛灉鏍囩浼氳秴鍑洪《閮紝鏄剧ず鍦ㄥ厓绱犱笅鏂?
-    if (labelTop < 0) {
-      labelTop = rect.bottom + 5;
-    }
-
-    // 濡傛灉鏍囩浼氳秴鍑哄彸渚э紝鍚戝乏璋冩暣
-    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
-      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
-    }
-    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
-    tagLabel.style.top = "".concat(labelTop, "px");
-
-    // 鍙戦€佹秷鎭埌鐖剁獥鍙?
-    var elementInfo = {
-      tagName: target.tagName.toLowerCase(),
-      rect: {
-        left: rect.left,
-        top: rect.top,
-        right: rect.right,
-        bottom: rect.bottom,
-        width: rect.width,
-        height: rect.height,
-        x: rect.x,
-        y: rect.y
-      },
-      selector: selector,
-      text: text,
-      attributes: attributes,
-      url: window.location.href,
-      path: window.location.pathname,
-      timestamp: Date.now()
-    };
-    try {
-      window.parent.postMessage({
-        type: "iframe-element-hover",
-        data: elementInfo,
-        source: "iframe-highlight-injector"
-      }, "*");
-    } catch (error) {
-      console.warn("鏃犳硶鍙戦€佹秷鎭埌鐖剁獥鍙?", error);
-    }
-  }
-
-  // 榧犳爣绂诲紑浜嬩欢澶勭悊
-  function handleMouseOut(e) {
-    if (!highlightEnabled) return;
-    var relatedTarget = e.relatedTarget;
-
-    // 濡傛灉榧犳爣绉诲姩鍒伴珮浜浉鍏冲厓绱犱笂锛屼笉闅愯棌楂樹寒
-    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
-      return;
-    }
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    try {
-      window.parent.postMessage({
-        type: "iframe-element-hover",
-        data: null,
-        source: "iframe-highlight-injector"
-      }, "*");
-    } catch (error) {
-      console.warn("鏃犳硶鍙戦€佹秷鎭埌鐖剁獥鍙?", error);
-    }
-  }
-
-  // 鐐瑰嚮浜嬩欢澶勭悊
-  function handleClick(e) {
-    var target = e.target;
-    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
-      return;
-    }
-
-    // 閬垮厤澶勭悊 html 鍜?body 鍏冪礌
-    if (target === document.documentElement || target === document.body) {
-      return;
-    }
-
-    // 妫€鏌ユ槸鍚︽槸浜や簰鍏冪礌锛岃繖浜涘厓绱犻渶瑕佷繚鐣欓粯璁よ涓?
-    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
-
-    // 濡傛灉楂樹寒鍔熻兘鍚敤锛屽浜庨潪浜や簰鍏冪礌闃绘榛樿琛屼负鍜屼簨浠朵紶鎾?
-    if (highlightEnabled) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    var rect = target.getBoundingClientRect();
-    var selector = getElementSelector(target);
-    var text = getElementText(target);
-    var attributes = getElementAttributes(target);
-    console.log("Element clicked:", {
-      tagName: target.tagName,
-      selector: selector,
-      rect: rect
-    });
-
-    // 绔嬪嵆鏇存柊閫変腑楂樹寒
-    updateSelectedHighlight(target);
-
-    // 闅愯棌鎮仠楂樹寒锛屽洜涓虹幇鍦ㄦ槸閫変腑鐘舵€?
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    var elementInfo = {
-      tagName: target.tagName.toLowerCase(),
-      rect: {
-        left: rect.left,
-        top: rect.top,
-        right: rect.right,
-        bottom: rect.bottom,
-        width: rect.width,
-        height: rect.height,
-        x: rect.x,
-        y: rect.y
-      },
-      selector: selector,
-      text: text,
-      attributes: attributes,
-      url: window.location.href,
-      path: window.location.pathname,
-      timestamp: Date.now()
-    };
-    try {
-      window.parent.postMessage({
-        type: "iframe-element-click",
-        data: elementInfo,
-        source: "iframe-highlight-injector"
-      }, "*");
-    } catch (error) {
-      console.warn("鏃犳硶鍙戦€佹秷鎭埌鐖剁獥鍙?", error);
-    }
-  }
-
-  // 鐩戝惉鏉ヨ嚜鐖剁獥鍙ｇ殑娑堟伅
-  function handleParentMessage(event) {
-    console.log("Received message from parent:", event.data);
-    if (event.data.type === "iframe-highlight-toggle") {
-      var enabled = event.data.enabled;
-      console.log("Highlight toggle:", enabled);
-      if (enabled) {
-        enableHighlight();
-      } else {
-        disableHighlight();
-      }
-    } else if (event.data.type === "enable-iframe-highlight") {
-      console.log("Enable iframe highlight");
-      enableHighlight();
-    } else if (event.data.type === "disable-iframe-highlight") {
-      console.log("Disable iframe highlight");
-      disableHighlight();
-    } else if (event.data.type === "toggle-iframe-highlight") {
-      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
-      console.log("Toggle iframe highlight to:", _enabled);
-      if (_enabled) {
-        enableHighlight();
-      } else {
-        disableHighlight();
-      }
-    } else if (event.data.type === "update-selected-element") {
-      var selector = event.data.selector;
-      console.log("Update selected element with selector:", selector);
-      if (selector) {
-        try {
-          var element = document.querySelector(selector);
-          console.log("Found element by selector:", element);
-          updateSelectedHighlight(element);
-        } catch (error) {
-          console.warn("Failed to select element:", error);
-          updateSelectedHighlight(null);
-        }
-      } else {
-        updateSelectedHighlight(null);
-      }
-    } else if (event.data.type === "clear-selected-element") {
-      console.log("Clear selected element");
-      updateSelectedHighlight(null);
-    }
-  }
-
-  // 鍚敤楂樹寒鍔熻兘
-  function enableHighlight() {
-    console.log("Enabling highlight");
-    document.addEventListener("mouseover", handleMouseOver, true);
-    document.addEventListener("mouseout", handleMouseOut, true);
-    document.addEventListener("click", handleClick, true);
-    highlightEnabled = true;
-    overlay.style.display = "block";
-  }
-
-  // 绂佺敤楂樹寒鍔熻兘
-  function disableHighlight() {
-    console.log("Disabling highlight");
-    highlightEnabled = false;
-    // 淇濇寔浜嬩欢鐩戝惉鍣紝浣嗛€氳繃 highlightEnabled 鍙橀噺鎺у埗琛屼负
-    // 杩欐牱鍙互淇濈暀閫変腑鐘舵€佺殑鏄剧ず
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    // 涓嶉殣钘?selectedBox 鍜?selectedLabel锛屼繚鐣欓€変腑鐘舵€?
-  }
-
-  // 瀹屽叏绂佺敤楂樹寒鍔熻兘锛堢Щ闄ゆ墍鏈夌洃鍚櫒锛?
-  function fullyDisableHighlight() {
-    console.log("Fully disabling highlight");
-    highlightEnabled = false;
-    document.removeEventListener("mouseover", handleMouseOver, true);
-    document.removeEventListener("mouseout", handleMouseOut, true);
-    document.removeEventListener("click", handleClick, true);
-    overlay.style.display = "none";
-    highlightBox.style.display = "none";
-    tagLabel.style.display = "none";
-    selectedBox.style.display = "none";
-    selectedLabel.style.display = "none";
-  }
-
-  // 娣诲姞浜嬩欢鐩戝惉
-  enableHighlight();
-  window.addEventListener("message", handleParentMessage);
-
-  // 鏆撮湶鍏ㄥ眬鍑芥暟渚涘閮ㄨ皟鐢?
-  window.__iframeHighlightControl = {
-    enable: enableHighlight,
-    disable: disableHighlight,
-    fullyDisable: fullyDisableHighlight,
-    isEnabled: function isEnabled() {
-      return highlightEnabled;
-    },
-    getSelectedElement: function getSelectedElement() {
-      return selectedElement;
-    },
-    updateSelected: updateSelectedHighlight,
-    // 閫氳繃娑堟伅鍙戦€佸紑鍏虫帶鍒?
-    sendToggleMessage: function sendToggleMessage(enabled) {
-      window.parent.postMessage({
-        type: 'iframe-highlight-status',
-        enabled: enabled || highlightEnabled,
-        source: 'iframe-highlight-injector'
-      }, '*');
-    }
-  };
-
-  // 閫氱煡鐖剁獥鍙ｈ剼鏈凡鍔犺浇
-  try {
-    window.parent.postMessage({
-      type: "iframe-highlight-ready",
-      data: {
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        timestamp: Date.now()
-      },
-      source: "iframe-highlight-injector"
-    }, "*");
-  } catch (error) {
-    console.warn("鏃犳硶鍙戦€佸氨缁秷鎭埌鐖剁獥鍙?", error);
-  }
-
-  // 娓呯悊鍑芥暟
-  window.__iframeHighlightCleanup = function () {
-    fullyDisableHighlight();
-    window.removeEventListener("message", handleParentMessage);
-    if (overlay.parentElement) {
-      overlay.parentElement.removeChild(overlay);
-    }
-    delete window.__iframeHighlightInitialized;
-    delete window.__iframeHighlightCleanup;
-  };
-})();
-
-</script>
 </body>
-</html>
 
+</html>

@@ -1,18 +1,19 @@
 /**
  * HUM Journal - Word to PDF Upload Handler
- * Converts Word to PDF and stores as base64 in Supabase articles table
+ * Converts Word to PDF and stores in Supabase Storage (papers bucket)
  */
 
 const SUPABASE_URL = 'https://gslggufgrtmdeyyyveay.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzbGdndWZncnRtZGV5eXl2ZWF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxODQ0NzIsImV4cCI6MjA5Mjc2MDQ3Mn0.N4bpqRGmez2hxfyRDoW6YAaWeQGGJkhMd1v3N7NTKWs';
+const STORAGE_BUCKET = 'papers';
 
-let supabase = null;
+let supabaseUpload = null;
 
 async function initSupabase() {
-    if (typeof window.supabase !== 'undefined' && !supabase) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if (typeof window.supabase !== 'undefined' && !supabaseUpload) {
+        supabaseUpload = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
-    return supabase;
+    return supabaseUpload;
 }
 
 async function wordToPdf(file, articleTitle, author) {
@@ -83,13 +84,44 @@ function loadPdfMake() {
     });
 }
 
-// Store PDF as base64 in articles table
-async function uploadToDatabase(pdfFile, articleTitle) {
-    // Convert file to base64
-    const base64 = await fileToBase64(pdfFile);
-    const fileName = pdfFile.name;
+// Sanitize filename for Supabase Storage (remove special chars, keep alphanumeric and basic punctuation)
+function sanitizeFileName(name) {
+    return name
+        .replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII chars (Chinese, etc.)
+        .replace(/[^a-zA-Z0-9._-]/g, '_') // Replace remaining special chars with underscore
+        .replace(/_+/g, '_') // Collapse multiple underscores
+        .replace(/^_+|_+$/g, '') // Trim leading/trailing underscores
+        .toLowerCase();
+}
 
-    // Create a pending article record
+// Upload PDF to Supabase Storage (papers bucket)
+async function uploadToStorage(pdfFile, articleTitle) {
+    await initSupabase();
+    
+    const safeName = sanitizeFileName(pdfFile.name) || 'document.pdf';
+    const fileName = `${Date.now()}_${safeName}`;
+    const filePath = `uploads/${fileName}`;
+    
+    // Upload to Storage
+    const { data, error } = await supabaseUpload.storage
+        .from(STORAGE_BUCKET)
+        .upload(filePath, pdfFile, {
+            contentType: 'application/pdf',
+            upsert: false
+        });
+    
+    if (error) {
+        throw new Error('Storage upload failed: ' + error.message);
+    }
+    
+    // Get public URL
+    const { data: urlData } = supabaseUpload.storage
+        .from(STORAGE_BUCKET)
+        .getPublicUrl(filePath);
+    
+    const publicUrl = urlData.publicUrl;
+    
+    // Create article record with file_url pointing to Storage
     const createRes = await fetch(`${SUPABASE_URL}/rest/v1/articles`, {
         method: 'POST',
         headers: {
@@ -104,8 +136,10 @@ async function uploadToDatabase(pdfFile, articleTitle) {
             email: 'pending@pending.com',
             category: 'Unknown',
             status: 'pending',
-            content: 'File upload pending',
-            pdf_data: base64
+            content: 'File upload via Storage',
+            file_url: publicUrl,
+            file_name: pdfFile.name,
+            file_size: pdfFile.size
         })
     });
 
@@ -118,31 +152,22 @@ async function uploadToDatabase(pdfFile, articleTitle) {
     const articleId = articles[0]?.id;
 
     return {
-        path: `article/${articleId}`,
-        url: `${SUPABASE_URL}/rest/v1/articles?id=eq.${articleId}`,
-        fileName: fileName,
+        path: filePath,
+        url: publicUrl,
+        fileName: pdfFile.name,
         articleId: articleId
     };
 }
 
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
-}
-
-// Full workflow: Word -> PDF -> Database
+// Full workflow: Word -> PDF -> Storage
 async function processWordUpload(file, articleTitle, author) {
     try {
         console.log('Converting Word to PDF...');
         const pdfFile = await wordToPdf(file, articleTitle, author);
         console.log('Word converted to PDF:', pdfFile.name);
 
-        console.log('Storing PDF in database...');
-        const result = await uploadToDatabase(pdfFile, articleTitle);
+        console.log('Uploading PDF to Storage...');
+        const result = await uploadToStorage(pdfFile, articleTitle);
         console.log('Upload complete:', result);
 
         return { success: true, pdfFile: pdfFile, ...result };
@@ -152,14 +177,13 @@ async function processWordUpload(file, articleTitle, author) {
     }
 }
 
-function getPreviewUrl(articleId, pdfData) {
-    if (!pdfData) return null;
-    return pdfData; // pdfData is already a data URL
+function getPreviewUrl(fileUrl) {
+    return fileUrl;
 }
 
-// For admin to preview PDF from articles table
+// For admin to get PDF URL from article
 async function fetchArticlePdf(articleId) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${articleId}&select=pdf_data,file_name`, {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/articles?id=eq.${articleId}&select=file_url,file_name`, {
         headers: {
             'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
             'apikey': SUPABASE_ANON_KEY
@@ -167,13 +191,13 @@ async function fetchArticlePdf(articleId) {
     });
     if (!res.ok) return null;
     const data = await res.json();
-    return data[0]?.pdf_data || null;
+    return data[0]?.file_url || null;
 }
 
 window.HUMUpload = {
     init: initSupabase,
     wordToPdf: wordToPdf,
-    uploadToStorage: uploadToDatabase, // backward compat alias
+    uploadToStorage: uploadToStorage,
     process: processWordUpload,
     getPreviewUrl: getPreviewUrl,
     fetchArticlePdf: fetchArticlePdf

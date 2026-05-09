@@ -1,0 +1,8 @@
+name = "hum-api"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hum-journal-db"
+database_id = "f935f1ba-b798-4862-9795-137e44d50c4b"
