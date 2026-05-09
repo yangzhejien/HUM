@@ -139,69 +139,17 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
     (function() {
         'use strict';
 
         const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
 
-        let supabase = null;
         let selectedFile = null;
-        let uploadedUrl = null;
-        let useLocalMode = false;
-        let useBase64Mode = false;
         let pdfBase64Data = null;
 
-        // 初始化 Supabase
-        function initSupabase() {
-            if (typeof window.supabase === 'undefined') {
-                console.error('Supabase SDK 未加载');
-                showMessage('Supabase SDK 未加载，请刷新页面', true);
-                useLocalMode = true;
-                return;
-            }
-
-            try {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('Supabase client initialized');
-                testConnection();
-            } catch (error) {
-                console.error('Supabase 初始化失败:', error);
-                showMessage('Supabase 配置错误: ' + error.message, true);
-                useLocalMode = true;
-            }
-        }
-
-        async function testConnection() {
-            try {
-                const { data, error } = await supabase.storage.listBuckets();
-                if (error) {
-                    console.error('Storage 连接错误:', error.message);
-
-                    if (error.message.includes('signature') || error.message.includes('JWT')) {
-                        showMessage('⚠️ Supabase 凭据无效，请检查 API 密钥', true);
-                    } else {
-                        showMessage('⚠️ Storage 连接失败: ' + error.message, true);
-                    }
-                    useLocalMode = true;
-                    return;
-                }
-
-                console.log('✅ Supabase Storage 连接成功');
-                console.log('可用存储桶:', data.map(b => b.name));
-
-                // Note: listBuckets() may return empty for anon users due to RLS
-                // The papers bucket exists and is public, uploads will work
-                const papersBucket = data.find(b => b.name === 'papers');
-                if (!papersBucket) {
-                    console.log('ℹ️ papers bucket not in list (RLS restriction), but it exists and is public');
-                }
-            } catch (error) {
-                console.error('连接测试失败:', error);
-                useLocalMode = true;
-            }
-        }
+        // 直接使用 base64 模式，无需 Supabase
+        console.log('Submission ready - using D1 API with base64 PDF storage');
 
         // 文件选择处理
         function handleFileSelect(input) {
@@ -250,90 +198,35 @@
             previewDiv.style.display = 'block';
         }
 
-        // 上传到 Supabase Storage
+        // 直接使用 base64 模式上传
         async function uploadFile(file) {
             const progressBar = document.getElementById('progressBar').querySelector('.progress');
-            const title = document.getElementById('articleTitle').value.trim() || file.name.replace(/\.[^/.]+$/, '');
-            // Sanitize filename: remove all non-ASCII chars and special chars
-            const safeName = title
-                .replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII (Chinese, etc.)
-                .replace(/[^a-zA-Z0-9]/g, '_') // Replace remaining special chars
-                .replace(/_+/g, '_') // Collapse multiple underscores
-                .replace(/^_+|_+$/g, '') // Trim leading/trailing underscores
-                .substring(0, 30) || 'document'; // Fallback name
-            const timestamp = Date.now();
-            const randomStr = Math.random().toString(36).substring(2, 8);
-            const fileName = `${safeName}_${timestamp}_${randomStr}.pdf`;
-
-            if (useLocalMode || !supabase) {
-                document.getElementById('fileStatus').textContent = '本地模式：保存到浏览器...';
-                progressBar.style.width = '100%';
-                uploadedUrl = URL.createObjectURL(file);
-                showMessage('✅ 已保存到本地（请配置 Supabase 以启用云端存储）', false);
-                return;
-            }
+            document.getElementById('fileStatus').textContent = '处理中... / Processing...';
+            progressBar.style.width = '30%';
 
             try {
-                document.getElementById('fileStatus').textContent = '上传中... / Uploading...';
-                progressBar.style.width = '30%';
-
-                const { data, error } = await supabase.storage
-                    .from('papers')
-                    .upload(fileName, file, {
-                        cacheControl: '3600',
-                        upsert: false,
-                        contentType: 'application/pdf'
-                    });
-
-                if (error) throw error;
-
-                progressBar.style.width = '80%';
-                document.getElementById('fileStatus').textContent = '获取链接... / Getting URL...';
-
-                const { data: urlData } = supabase.storage
-                    .from('papers')
-                    .getPublicUrl(fileName);
-
-                uploadedUrl = urlData.publicUrl;
-                console.log('File uploaded:', uploadedUrl);
-
-                progressBar.style.width = '100%';
-                document.getElementById('uploadBox').classList.remove('processing');
-                document.getElementById('uploadBox').classList.add('success');
-                document.getElementById('uploadIcon').textContent = '✅';
-                document.getElementById('fileStatus').textContent = '上传成功！/ Upload successful!';
-
+                // Convert file to base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    pdfBase64Data = e.target.result.split(',')[1]; // Remove data:application/pdf;base64, prefix
+                    progressBar.style.width = '100%';
+                    document.getElementById('uploadBox').classList.remove('processing');
+                    document.getElementById('uploadBox').classList.add('success');
+                    document.getElementById('uploadIcon').textContent = '✅';
+                    document.getElementById('fileStatus').textContent = 'PDF 已准备上传 / PDF ready';
+                    showMessage('✅ PDF 已准备就绪', false);
+                };
+                reader.onerror = function() {
+                    document.getElementById('uploadBox').classList.add('error');
+                    document.getElementById('fileStatus').textContent = '读取失败 / Read failed';
+                    showMessage('❌ PDF 读取失败', true);
+                };
+                reader.readAsDataURL(file);
             } catch (error) {
                 console.error('Upload error:', error);
-                document.getElementById('uploadBox').classList.remove('processing');
                 document.getElementById('uploadBox').classList.add('error');
-                document.getElementById('uploadIcon').textContent = '⚠️';
-                document.getElementById('fileStatus').textContent = 'Storage受限，将使用base64存储';
-
-                // Storage RLS blocked - switch to base64 mode
-                if (error.message.includes('row-level security') || error.message.includes('Unauthorized')) {
-                    showMessage('⚠️ Storage 权限受限，将使用 base64 方式存储 PDF', false);
-                    useBase64Mode = true;
-                    
-                    // Convert file to base64
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        pdfBase64Data = e.target.result.split(',')[1]; // Remove data:application/pdf;base64, prefix
-                        uploadedUrl = 'base64://' + fileName; // Special marker for base64 mode
-                        document.getElementById('uploadBox').classList.remove('error');
-                        document.getElementById('uploadBox').classList.add('success');
-                        document.getElementById('uploadIcon').textContent = '✅';
-                        document.getElementById('fileStatus').textContent = '已转为base64格式 / Converted to base64';
-                    };
-                    reader.readAsDataURL(file);
-                } else if (error.message.includes('signature') || error.message.includes('JWT')) {
-                    showMessage('❌ Supabase 凭据无效！请检查 API 密钥', true);
-                    useLocalMode = true;
-                    uploadedUrl = URL.createObjectURL(selectedFile);
-                } else {
-                    showMessage('❌ 上传失败: ' + error.message, true);
-                    uploadedUrl = URL.createObjectURL(selectedFile);
-                }
+                document.getElementById('fileStatus').textContent = '处理失败 / Processing failed';
+                showMessage('❌ 处理失败: ' + error.message, true);
             }
         }
 
@@ -353,7 +246,7 @@
                 return;
             }
 
-            if (!selectedFile && !uploadedUrl) {
+            if (!selectedFile && !pdfBase64Data) {
                 showMessage('请上传 PDF 文件 / Please upload PDF file', true);
                 return;
             }
@@ -369,7 +262,7 @@
 
             const status = category === 'public' ? 'published' : 'pending';
 
-            // Build article data
+            // Build article data - always use base64
             const article = {
                 title,
                 author,
@@ -378,16 +271,11 @@
                 keywords,
                 category,
                 status,
-                file_url: useBase64Mode ? null : (uploadedUrl || ''),
+                file_url: null,
                 file_name: selectedFile ? selectedFile.name : 'document.pdf',
-                content: abstract || 'PDF file: ' + (uploadedUrl || 'local file')
-                // Note: created_at is auto-generated by database
+                content: abstract || 'PDF submission',
+                pdf_data: pdfBase64Data
             };
-
-            // Add base64 data if in base64 mode
-            if (useBase64Mode && pdfBase64Data) {
-                article.pdf_data = pdfBase64Data;
-            }
 
             try {
                 const res = await fetch(`${API_BASE}/articles`, {
@@ -436,8 +324,6 @@
 
         function resetUploadArea() {
             selectedFile = null;
-            uploadedUrl = null;
-            useBase64Mode = false;
             pdfBase64Data = null;
             document.getElementById('uploadBox').classList.remove('success', 'processing', 'error');
             document.getElementById('uploadIcon').textContent = '📄';
