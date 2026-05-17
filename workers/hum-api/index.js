@@ -47,9 +47,9 @@ export default {
 
           query += " ORDER BY created_at DESC";
 
-          const stmt = env.DB.prepare(query);
+          let stmt = env.DB.prepare(query);
           if (params.length > 0) {
-            stmt.bind(...params);
+            stmt = stmt.bind(...params);
           }
           const result = await stmt.all();
 
@@ -62,11 +62,11 @@ export default {
           // Create new article
           const data = await request.json();
 
-          const stmt = env.DB.prepare(`
+          let stmt = env.DB.prepare(`
             INSERT INTO articles (title, author, email, abstract, content, keywords, category, status, file_url, pdf_data)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `);
-          stmt.bind(
+          stmt = stmt.bind(
             data.title,
             data.author || null,
             data.email || null,
@@ -95,8 +95,8 @@ export default {
         const id = articleMatch[1];
 
         if (method === "GET") {
-          const stmt = env.DB.prepare("SELECT * FROM articles WHERE id = ?");
-          stmt.bind(parseInt(id));
+          let stmt = env.DB.prepare("SELECT * FROM articles WHERE id = ?");
+          stmt = stmt.bind(parseInt(id));
           const result = await stmt.first();
 
           if (!result) {
@@ -170,8 +170,8 @@ export default {
           values.push(parseInt(id));
 
           const query = `UPDATE articles SET ${fields.join(", ")} WHERE id = ?`;
-          const stmt = env.DB.prepare(query);
-          stmt.bind(...values);
+          let stmt = env.DB.prepare(query);
+          stmt = stmt.bind(...values);
           await stmt.run();
 
           return new Response(JSON.stringify({ success: true }), {
@@ -180,8 +180,8 @@ export default {
         }
 
         if (method === "DELETE") {
-          const stmt = env.DB.prepare("DELETE FROM articles WHERE id = ?");
-          stmt.bind(parseInt(id));
+          let stmt = env.DB.prepare("DELETE FROM articles WHERE id = ?");
+          stmt = stmt.bind(parseInt(id));
           await stmt.run();
 
           return new Response(JSON.stringify({ success: true }), {

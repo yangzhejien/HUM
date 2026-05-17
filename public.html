@@ -103,16 +103,8 @@
                 const res = await fetch(`${API_BASE}/articles?category=public`);
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
-
-                if (error) throw error;
-
-                allArticles = data || [];
-
-                if (error) throw error;
-
                 allArticles = data || [];
                 renderArticles(allArticles);
-
             } catch (err) {
                 console.error('Error:', err);
                 document.getElementById('articlesList').innerHTML =
