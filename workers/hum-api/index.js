@@ -53,7 +53,7 @@ export default {
           }
           const result = await stmt.all();
 
-          return new Response(JSON.stringify(result), {
+          return new Response(JSON.stringify(result.results || []), {
             headers: { "Content-Type": "application/json", ...corsHeaders },
           });
         }
