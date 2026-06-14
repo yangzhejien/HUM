@@ -208,14 +208,21 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-    (function() {
+    window.addEventListener('DOMContentLoaded', function() {
         'use strict';
 
-        const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
+        const API_BASE = '/api';
 
-        // Get article ID from URL
+        // Convert Supabase Storage URL to proxy URL (adds CORS headers)
+        function fileProxyUrl(fileUrl) {
+          if (!fileUrl) return '';
+          // Already going through proxy
+          if (fileUrl.includes('/api/files/proxy')) return fileUrl;
+          // Encode and route through our CORS-enabled proxy
+          return `${API_BASE}/files/proxy?url=${btoa(fileUrl)}`;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const articleId = urlParams.get('id');
 
@@ -230,15 +237,14 @@
 
         async function fetchArticle() {
             try {
-                const res = await fetch(`${API_BASE}/articles/${articleId}`);
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
-
+                const resp = await fetch(`${API_BASE}/articles/${articleId}`);
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const data = await resp.json();
+                if (!data || !data.id) throw new Error('Article not found');
                 article = data;
                 renderArticle();
-
             } catch (err) {
-                console.error('Error:', err);
+                console.error('[ArticleViewer] Load error:', err);
                 document.getElementById('articleContent').innerHTML =
                     '<div class="error-message">无法加载文章 Unable to load article.<br><a href="javascript:history.back()">返回 Return</a></div>';
             }
@@ -251,18 +257,14 @@
             const categoryLabel = article.category === 'public' ? 'HUM-Public 大众刊' : 'HUM-Academic 专业刊';
             const backUrl = article.category === 'public' ? 'public.html' : 'academic.html';
             const date = formatDate(article.created_at);
-            
-            // Check if article has PDF file
-            const hasPdf = article.file_url && (article.file_url.endsWith('.pdf') || article.file_name?.endsWith('.pdf'));
-            const pdfUrl = article.file_url || '';
 
             document.getElementById('articleContent').innerHTML = `
                 <div class="article-header">
                     <span class="article-category ${categoryClass}">${categoryLabel}</span>
                     <h1 class="article-title">${escapeHtml(article.title)}</h1>
                     <p class="article-meta">${escapeHtml(article.author || 'Anonymous')} | ${date}</p>
+                    ${article.doi ? '<p style="font-size:0.875rem;color:var(--color-text-secondary);">DOI: <a href="https://doi.org/' + escapeHtml(article.doi) + '" target="_blank" style="color:var(--color-primary);">' + escapeHtml(article.doi) + '</a></p>' : ''}
                     ${article.abstract ? '<p style="color: var(--color-text-secondary); line-height: 1.6;">' + escapeHtml(article.abstract) + '</p>' : ''}
-                    ${hasPdf ? `<p style="margin-top: 0.5rem;"><a href="${escapeHtml(pdfUrl)}" target="_blank" style="color: #1E40AF; text-decoration: none;">📄 下载 PDF / Download PDF</a></p>` : ''}
                 </div>
 
                 <div class="pre-publication-notice">
@@ -271,21 +273,6 @@
                     This is a pre-publication version. Upon ISSN approval, it will be converted to official publication.
                 </div>
 
-                ${hasPdf ? `
-                <!-- PDF Viewer -->
-                <div class="viewer-frame" id="viewerFrame" style="min-height: 800px;">
-                    <div class="viewer-toolbar">
-                        <div style="font-size: 0.875rem; color: var(--color-text-secondary);">
-                            📄 PDF 预览 / PDF Preview
-                        </div>
-                        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
-                    </div>
-                    <div class="document-container" id="documentContainer" style="padding: 0; height: 750px;">
-                        <iframe src="${escapeHtml(pdfUrl)}" style="width: 100%; height: 100%; border: none;" type="application/pdf"></iframe>
-                    </div>
-                </div>
-                ` : `
-                <!-- Text Content Viewer -->
                 <div class="viewer-frame" id="viewerFrame">
                     <div class="viewer-toolbar">
                         <div class="zoom-controls">
@@ -303,11 +290,10 @@
                     </div>
                     <div class="document-container" id="documentContainer">
                         <div class="document-content" id="documentContent" style="transform: scale(${currentZoom/100});">
-                            ${article.content ? article.content : '<p style="text-align: center; color: var(--color-text-secondary);">文章内容加载中... Loading article content...</p>'}
+                            ${renderDocumentBody(article)}
                         </div>
                     </div>
                 </div>
-                `}
 
                 <div class="article-footer">
                     <p class="disclaimer">预出版版本｜仅用于学术参考<br>Pre-Publication Version | For Academic Reference Only</p>
@@ -374,6 +360,40 @@
             return div.innerHTML;
         }
 
+        // Render document body: handles pdf_data (Base64 PDF), file_url (Supabase URL), content (HTML/text)
+        function renderDocumentBody(article) {
+            // 1) Base64-encoded PDF stored in pdf_data field
+            if (article.pdf_data && typeof article.pdf_data === 'string' && article.pdf_data.length > 100) {
+                // Decode Base64 to binary and create a Blob URL for the PDF
+                try {
+                    const raw = atob(article.pdf_data);
+                    const bytes = new Uint8Array(raw.length);
+                    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+                    const blob = new Blob([bytes], { type: 'application/pdf' });
+                    const blobUrl = URL.createObjectURL(blob);
+                    // Store blobUrl for cleanup
+                    if (!window._humPdfBlobUrls) window._humPdfBlobUrls = [];
+                    window._humPdfBlobUrls.push(blobUrl);
+                    return '<iframe src="' + blobUrl + '" style="width:100%;height:800px;border:none;"></iframe>' +
+                           '<p style="text-align:center;margin-top:1rem;"><a href="' + blobUrl + '" target="_blank" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
+                } catch (e) {
+                    console.error('[ArticleViewer] PDF decode error:', e);
+                    return '<p style="color:#DC2626;">PDF 解码失败 / Failed to decode PDF.</p>';
+                }
+            }
+            // 2) Rich text / HTML content
+            if (article.content && article.content !== 'PDF submission') {
+                return article.content;
+            }
+            // 3) External file URL (Supabase Storage)
+            if (article.file_url) {
+                return '<iframe src="' + fileProxyUrl(article.file_url) + '" style="width:100%;height:600px;border:none;"></iframe>' +
+                       '<p style="text-align:center;margin-top:1rem;"><a href="' + article.file_url + '" target="_blank" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
+            }
+            // 4) Nothing available
+            return '<p style="text-align: center; color: var(--color-text-secondary);">暂无内容 No content available.</p>';
+        }
+
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
             if (e.key === '+' || e.key === '=') {
@@ -391,192 +411,8 @@
         });
 
         fetchArticle();
-    })();
+
+    }); // DOMContentLoaded
     </script>
-
-
-<style>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-.inland-security-footer {
-  position: fixed;
-  z-index: 10;
-  bottom: 0;
-  right: 0;
-  width: fit-content;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.tooltip-container {
-  position: relative;
-}
-
-.trigger-content {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  background-color: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.minimax-link {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  font-weight: 300;
-  color: #adadad;
-  text-decoration: none;
-}
-
-.minimax-link:visited {
-  color: #adadad;
-}
-
-.minimax-link:hover {
-  color: #666666;
-}
-
-.tooltip-content {
-  position: absolute;
-  bottom: 100%;
-  right: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  padding-bottom: 16px; /* 8px 内容间距 + 8px 用于鼠标移动的透明区域 */
-  font-size: 12px;
-  line-height: 17px;
-  background-color: #fafafa;
-  border-radius: 12px;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  color: #171717;
-}
-
-/* 创建透明的连接区域，让鼠标可以平滑移动到 tooltip */
-.tooltip-content::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  right: 0;
-  height: 16px;
-}
-
-.tooltip-container:hover .tooltip-content {
-  display: flex;
-}
-
-.info-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-}
-
-.beian-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: #171717;
-}
-
-.beian-icon {
-  width: 14px;
-  height: 14px;
-  margin-right: 2px;
-}
-
-.underline-text {
-  color: #171717;
-  text-decoration: underline;
-}
-
-.underline-text:hover {
-  color: #000000;
-}
-
-/* 深色模式支持 */
-@media (prefers-color-scheme: dark) {
-  .trigger-content {
-    background-color: transparent;
-  }
-
-  .minimax-link,
-  .minimax-link:visited {
-    color: #666666;
-  }
-
-  .minimax-link:hover {
-    color: #adadad;
-  }
-
-  .tooltip-content {
-    background-color: #262626;
-    color: #ededed;
-  }
-
-  .beian-link,
-  .underline-text {
-    color: #ededed;
-  }
-
-  .underline-text:hover {
-    color: #ffffff;
-  }
-}
-
-</style>
-<div class="inland-security-footer">
-  <div class="tooltip-container">
-    <div class="trigger-content">
-      <a href="https://www.minimaxi.com/" target="_blank" rel="noreferrer" class="minimax-link">
-        <span></span>
-      </a>
-    </div>
-    <div class="tooltip-content">
-      <section class="info-section">
-        <span>上海稀宇科技有限公司</span>
-      </section>
-
-      <section class="info-section">
-        <a class="beian-link" href="https://www.beian.gov.cn/portal/registerSystemInfo?recordcode=31010402010179" target="_blank" rel="noreferrer">
-          <img alt="hailuo-beian-icon" src="https://cdn.hailuoai.com/hailuo-video-web/public_assets/223037d3-79fd-4db0-a456-749f38a6a14b.png" class="beian-icon">
-          <span class="underline-text">沪公网安备31010402010179号</span>
-        </a>
-        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer" class="underline-text">
-          沪ICP备2023003282号-38
-        </a>
-      </section>
-
-      <section class="info-section"></section>
-
-      <section class="info-section">
-        <a href="https://agent.minimaxi.com/doc/zh/terms-of-service.html" target="_blank" rel="noreferrer" class="underline-text">
-          用户协议
-        </a>
-        <a href="https://agent.minimaxi.com/doc/zh/privacy-policy.html" target="_blank" rel="noreferrer" class="underline-text">
-          隐私政策
-        </a>
-      </section>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
