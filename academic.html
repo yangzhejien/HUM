@@ -129,7 +129,7 @@
                 const res = await fetch(`${API_BASE}/articles?category=academic&limit=50`);
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
-                allArticles = data.articles || Array.isArray(data) ? data : [];
+                allArticles = data.articles || (Array.isArray(data) ? data : []);
                 renderArticles(allArticles);
             } catch (err) {
                 console.error('Error:', err);
