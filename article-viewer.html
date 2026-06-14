@@ -63,12 +63,39 @@
         .viewer-toolbar {
             background: #FAFAFA;
             border-bottom: 1px solid var(--color-border);
-            padding: 1rem;
+            padding: 0.75rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 0.5rem;
+        }
+        .pdf-download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .pdf-download-btn:hover { opacity: 0.9; }
+        @media (max-width: 768px) {
+            .viewer-container { padding: 0 0.5rem; margin: 1rem auto; }
+            .article-header { padding: 1.25rem; }
+            .article-title { font-size: 1.4rem; }
+            .viewer-toolbar { flex-direction: column; align-items: stretch; }
+            .zoom-controls { justify-content: center; }
+            .viewer-frame { min-height: 400px; }
+            .document-content { padding: 0.5rem !important; }
+        }
+        @media (max-width: 480px) {
+            .article-title { font-size: 1.2rem; }
+            .viewer-container { padding: 0 0.25rem; }
         }
         .zoom-controls {
             display: flex;
@@ -190,6 +217,17 @@
             max-height: calc(100vh - 150px);
             overflow: auto;
         }
+        /* Sanitized content styling */
+        .sanitized-content {
+            line-height: 1.8;
+            font-size: 1rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+        .sanitized-content img {
+            max-width: 100%;
+            height: auto;
+        }
         @media (max-width: 768px) {
             .viewer-toolbar {
                 flex-direction: column;
@@ -286,7 +324,10 @@
                             <span class="page-indicator">页面 Page 1</span>
                             <button class="page-btn" onclick="nextPage()">下一页 ▶</button>
                         </div>
-                        <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
+                        <div style="display:flex;gap:0.5rem;align-items:center;">
+                            <a id="pdfDownloadBtn" class="pdf-download-btn" style="display:none;" download>⬇ 下载 PDF Download</a>
+                            <button class="fullscreen-btn" onclick="toggleFullscreen()">⛶ 全屏 Fullscreen</button>
+                        </div>
                     </div>
                     <div class="document-container" id="documentContainer">
                         <div class="document-content" id="documentContent" style="transform: scale(${currentZoom/100});">
@@ -360,35 +401,72 @@
             return div.innerHTML;
         }
 
+        // Sanitize HTML: strip script tags, event handlers, dangerous protocols
+        function sanitizeHtml(raw) {
+            if (!raw || typeof raw !== 'string') return '';
+            let html = raw;
+            // Remove <script> tags and their content
+            html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+            // Remove event handler attributes (onclick, onload, onerror, etc.)
+            html = html.replace(/\s+on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+            // Remove javascript: and data:text/html URLs in href/src
+            html = html.replace(/(href|src)\s*=\s*(?:"javascript:[^"]*"|'javascript:[^']*')/gi, '$1="#"');
+            html = html.replace(/(href|src)\s*=\s*(?:"data:\s*text\/html[^"]*"|'data:\s*text\/html[^']*')/gi, '$1="#"');
+            // Remove <object>, <embed>, <base>, <meta> tags (can be used for XSS)
+            html = html.replace(/<(object|embed|base|meta|link|style|iframe|form|input)[^>]*>/gi, '&lt;$1&gt;');
+            return html;
+        }
+
+        // Validate URL protocol — only allow https:// and http://
+        function isSafeUrl(url) {
+            if (!url || typeof url !== 'string') return false;
+            const trimmed = url.trim().toLowerCase();
+            return trimmed.startsWith('https://') || trimmed.startsWith('http://');
+        }
+
         // Render document body: handles pdf_data (Base64 PDF), file_url (Supabase URL), content (HTML/text)
         function renderDocumentBody(article) {
+            // Show download button if PDF is available
+            const dlBtn = document.getElementById('pdfDownloadBtn');
             // 1) Base64-encoded PDF stored in pdf_data field
             if (article.pdf_data && typeof article.pdf_data === 'string' && article.pdf_data.length > 100) {
-                // Decode Base64 to binary and create a Blob URL for the PDF
                 try {
                     const raw = atob(article.pdf_data);
                     const bytes = new Uint8Array(raw.length);
                     for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
                     const blob = new Blob([bytes], { type: 'application/pdf' });
                     const blobUrl = URL.createObjectURL(blob);
-                    // Store blobUrl for cleanup
                     if (!window._humPdfBlobUrls) window._humPdfBlobUrls = [];
                     window._humPdfBlobUrls.push(blobUrl);
-                    return '<iframe src="' + blobUrl + '" style="width:100%;height:800px;border:none;"></iframe>' +
-                           '<p style="text-align:center;margin-top:1rem;"><a href="' + blobUrl + '" target="_blank" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
+                    if (dlBtn) { dlBtn.href = blobUrl; dlBtn.download = (article.title || 'article') + '.pdf'; dlBtn.style.display = 'inline-flex'; }
+                    return '<iframe src="' + blobUrl + '" style="width:100%;height:800px;border:none;" sandbox="allow-same-origin allow-scripts"></iframe>' +
+                           '<p style="text-align:center;margin-top:1rem;"><a href="' + blobUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
                 } catch (e) {
                     console.error('[ArticleViewer] PDF decode error:', e);
                     return '<p style="color:#DC2626;">PDF 解码失败 / Failed to decode PDF.</p>';
                 }
             }
-            // 2) Rich text / HTML content
-            if (article.content && article.content !== 'PDF submission') {
-                return article.content;
+            // 2) External file URL — MUST validate protocol before iframe embed
+            if (article.file_url && isSafeUrl(article.file_url)) {
+                const safeUrl = escapeHtml(article.file_url);
+                const dlBtn = document.getElementById('pdfDownloadBtn');
+                if (dlBtn) { dlBtn.href = article.file_url; dlBtn.download = (article.title || 'article') + '.pdf'; dlBtn.style.display = 'inline-flex'; }
+                return '<iframe src="' + safeUrl + '" style="width:100%;height:800px;border:none;" sandbox="allow-same-origin allow-scripts"></iframe>' +
+                       '<p style="text-align:center;margin-top:1rem;"><a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
             }
-            // 3) External file URL (Supabase Storage)
-            if (article.file_url) {
-                return '<iframe src="' + fileProxyUrl(article.file_url) + '" style="width:100%;height:600px;border:none;"></iframe>' +
-                       '<p style="text-align:center;margin-top:1rem;"><a href="' + article.file_url + '" target="_blank" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
+            // Reject unsafe file_url silently
+            if (article.file_url && !isSafeUrl(article.file_url)) {
+                return '<p style="color:#DC2626;text-align:center;">无法显示此文件 / Unable to display this file.</p>';
+            }
+            // 3) Rich text / HTML content — MUST sanitize before innerHTML rendering
+            if (article.content && article.content !== 'PDF submission') {
+                const dlBtn = document.getElementById('pdfDownloadBtn');
+                if (dlBtn) dlBtn.style.display = 'none';
+                const cleanContent = sanitizeHtml(article.content);
+                if (!cleanContent.trim()) {
+                    return '<p style="text-align: center; color: var(--color-text-secondary);">暂无内容 No content available.</p>';
+                }
+                return '<div class="sanitized-content">' + cleanContent + '</div>';
             }
             // 4) Nothing available
             return '<p style="text-align: center; color: var(--color-text-secondary);">暂无内容 No content available.</p>';

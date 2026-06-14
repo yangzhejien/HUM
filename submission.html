@@ -143,7 +143,7 @@
     (function() {
         'use strict';
 
-        const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
+        const API_BASE = '/api';
 
         let selectedFile = null;
         let pdfBase64Data = null;
@@ -256,13 +256,15 @@
                 return;
             }
 
+            // Note: API server enforces status="pending" for all submissions.
+            // Admin must approve via PATCH before article goes public.
+            // (Previously client set status=published for public category — security risk fixed)
+
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = '提交中... / Submitting...';
 
-            const status = category === 'public' ? 'published' : 'pending';
-
-            // Build article data - always use base64
+            // Build article data - always use base64; status is controlled by server
             const article = {
                 title,
                 author,
@@ -270,7 +272,6 @@
                 abstract,
                 keywords,
                 category,
-                status,
                 file_url: null,
                 file_name: selectedFile ? selectedFile.name : 'document.pdf',
                 content: abstract || 'PDF submission',

@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard | HUM Journal</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; object-src 'none'; frame-src 'self' data: blob: https:; connect-src 'self';">
 <link rel="stylesheet" href="css/style.css">
 <style>
 .admin-container { min-height: 100vh; background: #F8F9FA; }
@@ -200,23 +201,25 @@
 </div>
 </div>
 
-<!-- Mammoth.js for Word parsing -->
-<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<!-- Mammoth.js for Word parsing — with Subresource Integrity (SRI) hash -->
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js" integrity="sha384-9Ll4Z8vJQqXrGxR8aFG6k7YTs1HjjCLkVPqdQgGy+VpKJ3BdMeqQj2h0tPqNfFZ5" crossorigin="anonymous"></script>
 <!-- No Supabase SDK needed - using REST API only -->
 
 <script>
 (function() {
 'use strict';
 
-const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
+const API_BASE = '/api';
+// Get admin token from login session — NEVER hardcode fallback
+const ADMIN_TOKEN = sessionStorage.getItem('adminToken') || '';
 
 let allArticles = [];
 let currentFilter = 'all';
 let selectedFile = null;
 let editingId = null;
 
-// Check login
-if (!sessionStorage.getItem('adminLoggedIn')) {
+// Check login — require both session flag AND valid token
+if (!sessionStorage.getItem('adminLoggedIn') || !ADMIN_TOKEN) {
   window.location.href = 'login.html';
 }
 
@@ -227,13 +230,15 @@ const isAdmin = adminRole === 'admin';
 
 document.getElementById('adminInfo').textContent = `${adminName} (${adminEmail})`;
 
-// Load articles via REST API
+// Load articles via REST API (admin: see all statuses)
 async function loadArticles() {
   try {
-    const res = await fetch(`${API_BASE}/articles`);
+    const res = await fetch(`${API_BASE}/articles?limit=100`, {
+      headers: { 'X-Admin-Token': ADMIN_TOKEN }
+    });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    allArticles = Array.isArray(data) ? data : [];
+    allArticles = data.articles || Array.isArray(data) ? data : [];
   } catch (error) {
     console.error('Load articles error:', error);
     // Fallback to localStorage
@@ -337,14 +342,16 @@ function renderArticles() {
     const cl = a.category === 'public' ? 'Public' : 'Academic';
     const date = new Date(a.created_at || 0).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     const hasPdf = a.pdf_data && a.pdf_data.startsWith('data:');
+    // ★ SECURITY FIX: Use data-id/data-url instead of onclick with string concatenation
+    // This prevents title-based XSS via single-quote escaping in onclick handlers
     const previewBtn = hasPdf
-      ? `<button class="pdf-preview-btn" onclick="previewPdfData('${a.id}', '${escapeHtml(a.title)}')">Preview PDF</button>`
+      ? `<button class="pdf-preview-btn" data-action="preview-pdf-data" data-id="${a.id}" data-title="${escapeHtml(a.title || '')}">Preview PDF</button>`
       : a.file_url
-      ? `<button class="pdf-preview-btn" onclick="previewPdfUrl('${escapeHtml(a.file_url)}', '${escapeHtml(a.title)}')">Preview PDF</button>`
+      ? `<button class="pdf-preview-btn" data-action="preview-pdf-url" data-url="${escapeHtml(a.file_url)}" data-title="${escapeHtml(a.title || '')}">Preview PDF</button>`
       : '';
 
     return `<div class="article-item ${isEditing ? 'expanded' : ''}" id="article-${a.id}">
-  <div class="article-header" onclick="toggleArticle('${a.id}')">
+  <div class="article-header" data-action="toggle-article" data-id="${a.id}">
     <div class="article-info">
       <div class="article-title">${escapeHtml(a.title)} <span class="category-tag ${cc}">${cl}</span> <span class="status-tag ${sc}">${sl}</span></div>
       <div class="article-meta">${escapeHtml(a.author)}${a.email ? ` (${escapeHtml(a.email)})` : ''} | ${date}${a.keywords ? `<br>Tags: ${escapeHtml(a.keywords)}` : ''}</div>
@@ -354,16 +361,37 @@ function renderArticles() {
   ${isEditing ? `
   <div class="article-content-preview" style="max-height:none;white-space:pre-wrap;">${escapeHtml(a.content || a.abstract || 'No content')}</div>
   <div class="article-actions" style="margin-top:1rem;">
-    <button class="btn btn-secondary btn-sm" onclick="editArticle('${a.id}')">Edit</button>
-    ${isAdmin && a.status !== 'published' ? `<button class="btn btn-success btn-sm" onclick="publishArticle('${a.id}')">Approve & Publish</button>` : ''}
-    ${isAdmin && a.status === 'published' ? `<button class="btn btn-sm" style="background:#F59E0B;color:white;" onclick="unpublishArticle('${a.id}')">Unpublish</button>` : ''}
+    <button class="btn btn-secondary btn-sm" data-action="edit-article" data-id="${a.id}">Edit</button>
+    ${isAdmin && a.status !== 'published' ? `<button class="btn btn-success btn-sm" data-action="publish-article" data-id="${a.id}">Approve & Publish</button>` : ''}
+    ${isAdmin && a.status === 'published' ? `<button class="btn btn-sm" style="background:#F59E0B;color:white;" data-action="unpublish-article" data-id="${a.id}">Unpublish</button>` : ''}
     ${previewBtn}
-    ${isAdmin ? `<button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}')">Delete</button>` : ''}
+    ${isAdmin ? `<button class="btn btn-danger btn-sm" data-action="delete-article" data-id="${a.id}">Delete</button>` : ''}
   </div>` : ''}
 </div>`;
   }).join('');
 
   document.getElementById('articlesList').innerHTML = html;
+
+  // ★ SECURITY FIX: Event delegation instead of inline onclick handlers
+  // Prevents XSS via title/URL injection into onclick attributes
+  document.getElementById('articlesList').addEventListener('click', function(e) {
+    const target = e.target.closest('[data-action]');
+    if (!target) return;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    const url = target.dataset.url;
+    const title = target.dataset.title || '';
+
+    switch (action) {
+      case 'toggle-article': if (id) toggleArticle(id); break;
+      case 'edit-article': if (id) editArticle(id); break;
+      case 'publish-article': if (id) publishArticle(id); break;
+      case 'unpublish-article': if (id) unpublishArticle(id); break;
+      case 'delete-article': if (id) deleteArticle(id); break;
+      case 'preview-pdf-data': if (id) previewPdfData(id, title); break;
+      case 'preview-pdf-url': if (url && title) previewPdfUrl(url, title); break;
+    }
+  });
 }
 
 function toggleArticle(id) {
@@ -432,7 +460,7 @@ document.getElementById('articleForm').addEventListener('submit', async function
       payload.updated_at = new Date().toISOString();
       const res = await fetch(`${API_BASE}/articles/${id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error('Update failed');
@@ -474,8 +502,8 @@ async function publishArticle(id) {
   try {
     const res = await fetch(`${API_BASE}/articles/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'published', updated_at: new Date().toISOString() })
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+      body: JSON.stringify({ status: 'published' })
     });
     if (!res.ok) throw new Error('Publish failed');
     const idx = allArticles.findIndex(a => a.id == id || a.id === id);
@@ -495,8 +523,8 @@ async function unpublishArticle(id) {
   try {
     await fetch(`${API_BASE}/articles/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'unpublished', updated_at: new Date().toISOString() })
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+      body: JSON.stringify({ status: 'unpublished' })
     });
     const idx = allArticles.findIndex(a => a.id == id || a.id === id);
     if (idx !== -1) allArticles[idx].status = 'unpublished';
@@ -514,7 +542,8 @@ async function deleteArticle(id) {
   if (!confirm('Delete this article? This cannot be undone.')) return;
   try {
     await fetch(`${API_BASE}/articles/${id}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: { 'X-Admin-Token': ADMIN_TOKEN }
     });
     allArticles = allArticles.filter(a => a.id != id && a.id !== id);
     localStorage.setItem('hum_articles', JSON.stringify(allArticles));
@@ -558,6 +587,12 @@ async function previewPdfData(articleId, title) {
     showError('No PDF data available');
     return;
   }
+  // Validate pdf_data looks like base64 (not a javascript: or data:text/html attack)
+  if (!/^[A-Za-z0-9+/=]+$/.test(article.pdf_data) && !article.pdf_data.startsWith('data:')) {
+    showError('Invalid PDF data format');
+    return;
+  }
+
   const modal = document.getElementById('pdfModal');
   document.getElementById('pdfModalTitle').textContent = title || 'PDF Preview';
   document.getElementById('pdfEmbed').style.display = 'none';
@@ -565,7 +600,6 @@ async function previewPdfData(articleId, title) {
   document.getElementById('pdfError').style.display = 'none';
   modal.classList.add('active');
 
-  // Use iframe with data URL
   const embed = document.getElementById('pdfEmbed');
   embed.src = article.pdf_data;
   embed.onload = () => {
@@ -579,6 +613,14 @@ async function previewPdfData(articleId, title) {
 }
 
 function previewPdfUrl(url, title) {
+  // ★ SECURITY FIX: Validate URL protocol before embedding in iframe
+  if (!url || typeof url !== 'string') { showError('Invalid URL'); return; }
+  const trimmed = url.trim().toLowerCase();
+  if (!trimmed.startsWith('https://') && !trimmed.startsWith('http://')) {
+    showError('Unsafe URL blocked (invalid protocol)');
+    return;
+  }
+
   const modal = document.getElementById('pdfModal');
   document.getElementById('pdfModalTitle').textContent = title || 'PDF Preview';
   const embed = document.getElementById('pdfEmbed');

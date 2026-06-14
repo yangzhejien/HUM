@@ -120,16 +120,16 @@
     (function() {
         'use strict';
 
-        const API_BASE = 'https://hum-api.yangll-0502.workers.dev/api';
+        const API_BASE = '/api';
 
         let allArticles = [];
 
         async function fetchArticles() {
             try {
-                const res = await fetch(`${API_BASE}/articles?category=academic`);
+                const res = await fetch(`${API_BASE}/articles?category=academic&limit=50`);
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
-                allArticles = data || [];
+                allArticles = data.articles || Array.isArray(data) ? data : [];
                 renderArticles(allArticles);
             } catch (err) {
                 console.error('Error:', err);
@@ -152,13 +152,15 @@
         function renderArticle(article) {
             const date = formatDate(article.created_at);
             const author = escapeHtml(article.author || 'Anonymous');
+            // ★ SECURITY: Force id to integer to prevent injection via localStorage fallback
+            const safeId = parseInt(article.id) || 0;
 
             return '<div class="article-item">' +
                 '<div class="article-info">' +
-                    '<h3 class="article-title"><a href="article-viewer.html?id=' + article.id + '">' + escapeHtml(article.title) + '</a></h3>' +
+                    '<h3 class="article-title"><a href="article-viewer.html?id=' + safeId + '">' + escapeHtml(article.title) + '</a></h3>' +
                     '<p class="article-meta">' + author + ' | ' + date + '</p>' +
                 '</div>' +
-                '<a href="article-viewer.html?id=' + article.id + '" class="word-view-btn">Word在线浏览 Word View →</a>' +
+                '<a href="article-viewer.html?id=' + safeId + '" class="word-view-btn">Word在线浏览 Word View →</a>' +
             '</div>';
         }
 
