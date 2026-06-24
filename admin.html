@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard | HUM Journal</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; object-src 'none'; frame-src 'self' data: blob: https:; connect-src 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; object-src 'none'; frame-src 'self' data: blob: https:; connect-src 'self';">
 <link rel="stylesheet" href="css/style.css">
 <style>
 .admin-container { min-height: 100vh; background: #F8F9FA; }
@@ -202,7 +202,7 @@
 </div>
 
 <!-- Mammoth.js for Word parsing — with Subresource Integrity (SRI) hash -->
-<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js" integrity="sha384-9Ll4Z8vJQqXrGxR8aFG6k7YTs1HjjCLkVPqdQgGy+VpKJ3BdMeqQj2h0tPqNfFZ5" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js" crossorigin="anonymous"></script>
 <!-- No Supabase SDK needed - using REST API only -->
 
 <script>
@@ -238,7 +238,7 @@ async function loadArticles() {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    allArticles = data.articles || Array.isArray(data) ? data : [];
+    allArticles = data.articles || (Array.isArray(data) ? data : []);
   } catch (error) {
     console.error('Load articles error:', error);
     // Fallback to localStorage
