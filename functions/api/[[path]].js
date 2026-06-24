@@ -10,13 +10,12 @@ export async function onRequest(context) {
 
   // ── CORS: restrict to own origin (prevent cross-site token theft) ──
   const origin = request.headers.get("Origin") || "";
-  const allowedOrigins = [
-    "https://hum-journal.pages.dev",
-    "http://localhost",
-    "http://127.0.0.1"
-  ];
-  // Allow same-origin and configured origins; fallback to no CORS for unknown
-  const isAllowedOrigin = allowedOrigins.some(o => origin.startsWith(o) || origin === "");
+  // Allow production, Cloudflare Pages preview subdomains (*.hum-journal.pages.dev), and local dev
+  const isAllowedOrigin = origin === "" ||
+    origin === "https://hum-journal.pages.dev" ||
+    origin.endsWith(".hum-journal.pages.dev") ||
+    origin.startsWith("http://localhost") ||
+    origin.startsWith("http://127.0.0.1");
   const corsHeaders = isAllowedOrigin ? {
     "Access-Control-Allow-Origin": origin || "*",
     "Vary": "Origin",

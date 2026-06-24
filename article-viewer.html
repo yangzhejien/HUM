@@ -262,11 +262,12 @@
         }
 
         const urlParams = new URLSearchParams(window.location.search);
-        const articleId = urlParams.get('id');
+        const rawId = urlParams.get('id');
+        const articleId = rawId ? parseInt(rawId, 10) : null;
 
-        if (!articleId) {
+        if (!articleId || articleId <= 0) {
             document.getElementById('articleContent').innerHTML =
-                '<div class="error-message">未找到文章ID Article ID not found.<br><a href="javascript:history.back()">返回 Return</a></div>';
+                '<div class="error-message">无效的文章ID Invalid article ID.<br><a href="javascript:history.back()">返回 Return</a></div>';
             return;
         }
 
