@@ -79,22 +79,29 @@ export async function onRequest(context) {
     }
 
     // ── Simple rate limiter using D1 (per-IP per-minute) ──
+    // Wrapped in try/catch so table-creation errors never crash the function
     async function checkRateLimit(clientIP, action) {
       if (!clientIP) return true;
-      const key = `${action}:${clientIP}`;
-      const recent = await db.prepare(
-        `SELECT count FROM rate_limits WHERE ip_key = ? AND created_at > datetime('now', '-1 minute')`
-      ).bind(key).first();
-      const LIMITS = { post: 3, patch: 30, delete: 10, login: 5 };
-      const limit = (LIMITS[action] || 10);
-      if (recent && recent.count >= limit) return false;
+      try {
+        const key = `${action}:${clientIP}`;
+        const recent = await db.prepare(
+          `SELECT count FROM rate_limits WHERE ip_key = ? AND created_at > datetime('now', '-1 minute')`
+        ).bind(key).first();
+        const LIMITS = { post: 3, patch: 30, delete: 10, login: 5 };
+        const limit = (LIMITS[action] || 10);
+        if (recent && recent.count >= limit) return false;
 
-      // Upsert counter
-      await db.prepare(`
-        INSERT INTO rate_limits (ip_key, count, created_at) VALUES (?, 1, CURRENT_TIMESTAMP)
-        ON CONFLICT(ip_key) DO UPDATE SET count = count + 1, created_at = CURRENT_TIMESTAMP
-      `).bind(key).run();
-      return true;
+        // Upsert counter
+        await db.prepare(`
+          INSERT INTO rate_limits (ip_key, count, created_at) VALUES (?, 1, CURRENT_TIMESTAMP)
+          ON CONFLICT(ip_key) DO UPDATE SET count = count + 1, created_at = CURRENT_TIMESTAMP
+        `).bind(key).run();
+        return true;
+      } catch (e) {
+        // Rate limit table not ready — allow the request (fail-open)
+        console.warn('[RateLimit] Table error, allowing request:', e.message);
+        return true;
+      }
     }
 
     // Helper: JSON response with NO internal error details leaked
@@ -109,17 +116,17 @@ export async function onRequest(context) {
       return json({ error: message }, status);
     }
 
-    // Ensure rate_limits table exists (idempotent)
+    // Ensure rate_limits table exists (idempotent, using run not exec for D1 compatibility)
     try {
-      await db.exec(`
+      await db.prepare(`
         CREATE TABLE IF NOT EXISTS rate_limits (
           ip_key TEXT PRIMARY KEY,
           count INTEGER NOT NULL DEFAULT 1,
           created_at TEXT NOT NULL DEFAULT (datetime('now'))
         )
-      `);
+      `).run();
     } catch (e) {
-      // Table may already exist or D1 doesn't support IF NOT EXISTS in exec
+      console.warn('[RateLimit] Could not create table:', e.message);
     }
 
     // Get client IP from Cloudflare headers
@@ -135,7 +142,8 @@ export async function onRequest(context) {
       }
 
       const body = await request.json().catch(() => ({}));
-      const email = sanitizeString(body.email?.toLowerCase().trim(), MAX_EMAIL_LEN, "email");
+      const rawEmail = (typeof body.email === "string") ? body.email.toLowerCase().trim() : "";
+      const email = sanitizeString(rawEmail, MAX_EMAIL_LEN, "email");
       const password = typeof body.password === "string" ? body.password : "";
 
       if (!email || !password) {
