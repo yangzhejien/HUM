@@ -440,20 +440,24 @@
                     if (!window._humPdfBlobUrls) window._humPdfBlobUrls = [];
                     window._humPdfBlobUrls.push(blobUrl);
                     if (dlBtn) { dlBtn.href = blobUrl; dlBtn.download = (article.title || 'article') + '.pdf'; dlBtn.style.display = 'inline-flex'; }
-                    return '<iframe src="' + blobUrl + '" style="width:100%;height:800px;border:none;" sandbox="allow-same-origin allow-scripts"></iframe>' +
-                           '<p style="text-align:center;margin-top:1rem;"><a href="' + blobUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
+                    return '<object data="' + blobUrl + '" type="application/pdf" width="100%" height="800px" style="border:none;">' +
+                           '<p style="text-align:center;padding:2rem;">您的浏览器无法直接显示 PDF。<br>' +
+                           '<a href="' + blobUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:bold;">点此在新窗口打开 PDF / Open PDF in new tab →</a></p>' +
+                           '</object>';
                 } catch (e) {
                     console.error('[ArticleViewer] PDF decode error:', e);
                     return '<p style="color:#DC2626;">PDF 解码失败 / Failed to decode PDF.</p>';
                 }
             }
-            // 2) External file URL — MUST validate protocol before iframe embed
+            // 2) External file URL — MUST validate protocol before embed
             if (article.file_url && isSafeUrl(article.file_url)) {
                 const safeUrl = escapeHtml(article.file_url);
                 const dlBtn = document.getElementById('pdfDownloadBtn');
                 if (dlBtn) { dlBtn.href = article.file_url; dlBtn.download = (article.title || 'article') + '.pdf'; dlBtn.style.display = 'inline-flex'; }
-                return '<iframe src="' + safeUrl + '" style="width:100%;height:800px;border:none;" sandbox="allow-same-origin allow-scripts"></iframe>' +
-                       '<p style="text-align:center;margin-top:1rem;"><a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);">在新窗口打开 PDF / Open PDF in new tab →</a></p>';
+                return '<object data="' + safeUrl + '" type="application/pdf" width="100%" height="800px" style="border:none;">' +
+                       '<p style="text-align:center;padding:2rem;">您的浏览器无法直接显示 PDF。<br>' +
+                       '<a href="' + safeUrl + '" target="_blank" rel="noopener noreferrer" style="color:var(--color-primary);font-weight:bold;">点此在新窗口打开 PDF / Open PDF in new tab →</a></p>' +
+                       '</object>';
             }
             // Reject unsafe file_url silently
             if (article.file_url && !isSafeUrl(article.file_url)) {

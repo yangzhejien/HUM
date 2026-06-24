@@ -1,0 +1,15 @@
+/*.html
+  Content-Type: text/html; charset=utf-8
+
+/*.htm
+  Content-Type: text/html; charset=utf-8
+
+/api/*
+  Content-Type: application/json; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/css/*
+  Content-Type: text/css; charset=utf-8
+
+/js/*
+  Content-Type: application/javascript; charset=utf-8

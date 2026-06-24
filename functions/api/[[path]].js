@@ -65,6 +65,10 @@ export async function onRequest(context) {
       if (str.length > maxLen) str = str.substring(0, maxLen);
       // Strip control characters except newline/tab
       str = str.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+      // Detect encoding corruption: U+FFFD means bytes were lost
+      if (str.includes('\uFFFD')) {
+        console.warn('[ENCODING] Replacement character (U+FFFD) detected in field:', fieldName, '- possible mojibake');
+      }
       return str;
     }
 
@@ -97,7 +101,7 @@ export async function onRequest(context) {
     function json(data, status = 200) {
       return new Response(JSON.stringify(data), {
         status,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { "Content-Type": "application/json; charset=utf-8", ...corsHeaders },
       });
     }
 
