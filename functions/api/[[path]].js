@@ -33,20 +33,24 @@ export async function onRequest(context) {
   try {
     const db = env.DB;
 
-    // ── Admin auth: require env var, NEVER fall back to default ──
-    function verifyAdmin(req) {
+    // ── Admin auth: check sessions table for valid token, return admin info ──
+    async function verifyAdmin(req) {
       const token = req.headers.get("X-Admin-Token");
-      if (!env.ADMIN_TOKEN) {
-        console.error("[SECURITY] ADMIN_TOKEN not set in environment");
-        return false;
+      if (!token) return { valid: false };
+      try {
+        const session = await db.prepare(
+          `SELECT email, role, name FROM sessions WHERE token = ?`
+        ).bind(token).first();
+        if (!session) return { valid: false };
+        return { valid: true, role: session.role, email: session.email, name: session.name };
+      } catch (e) {
+        console.error("[Auth] Session lookup error:", e.message);
+        return { valid: false };
       }
-      // Timing-safe comparison (constant-time to prevent side-channel)
-      if (!token || token.length !== env.ADMIN_TOKEN.length) return false;
-      let result = 0;
-      for (let i = 0; i < token.length; i++) {
-        result |= token.charCodeAt(i) ^ env.ADMIN_TOKEN.charCodeAt(i);
-      }
-      return result === 0;
+    }
+
+    function requireAdmin(auth) {
+      return auth.valid && auth.role === "admin";
     }
 
     // ── Input validation helpers ──
@@ -153,28 +157,56 @@ export async function onRequest(context) {
         return safeError("Invalid email format.", 400);
       }
 
-      // Verify against admin credentials stored in environment or DB
-      // For now, use env.ADMIN_PASSWORDS (JSON array of {email,passwordHash,role,name})
-      // Fallback: check env.ADMIN_CREDENTIALS JSON
-      let adminCredentials = [];
-      if (env.ADMIN_CREDENTIALS) {
-        try { adminCredentials = JSON.parse(env.ADMIN_CREDENTIALS); } catch(e) {}
+      // 1) Check admins table (primary)
+      let account = null;
+      try {
+        account = await db.prepare(
+          `SELECT email, password_hash, role, name, status FROM admins WHERE email = ?`
+        ).bind(email).first();
+      } catch (e) {
+        console.error("[Login] DB query error:", e.message);
       }
 
-      const account = adminCredentials.find(c => c.email === email);
+      // 2) Fallback to env.ADMIN_CREDENTIALS (backward compat)
+      if (!account && env.ADMIN_CREDENTIALS) {
+        try {
+          const creds = JSON.parse(env.ADMIN_CREDENTIALS);
+          const fallback = creds.find(c => c.email === email);
+          if (fallback) {
+            account = {
+              email: fallback.email,
+              password_hash: fallback.password,
+              role: fallback.role || "admin",
+              name: fallback.name || "Admin",
+              status: "active",
+            };
+          }
+        } catch (e) { /* ignore parse errors */ }
+      }
+
       if (!account) {
-        return safeError("Invalid credentials.", 401); // Same message to prevent enumeration
-      }
-
-      // Simple constant-time password comparison (in production use proper hash)
-      if (password !== account.password && account.password !== "*") {
         return safeError("Invalid credentials.", 401);
       }
 
-      // Generate session token (simple random token; in production use JWT)
+      // Check if account is disabled
+      if (account.status === "disabled") {
+        return safeError("Account has been disabled. Contact administrator.", 403);
+      }
+
+      // Password check (plain text for simplicity, matching current approach)
+      if (password !== account.password_hash && account.password_hash !== "*") {
+        return safeError("Invalid credentials.", 401);
+      }
+
+      // Generate session token and store in DB
       const sessionToken = crypto.randomUUID();
-      // Store session in a simple way - return it as bearer token
-      // Client should store this securely
+      try {
+        await db.prepare(
+          `INSERT OR REPLACE INTO sessions (token, email, role, name, created_at) VALUES (?, ?, ?, ?, datetime('now'))`
+        ).bind(sessionToken, account.email, account.role, account.name).run();
+      } catch (e) {
+        console.error("[Login] Session storage error:", e.message);
+      }
 
       return json({
         success: true,
@@ -195,7 +227,8 @@ export async function onRequest(context) {
         const limit = Math.min(Math.max(parseInt(url.searchParams.get("limit")) || 20, 1), 100);
         const offset = (page - 1) * limit;
 
-        const isAdmin = verifyAdmin(request);
+        const auth = await verifyAdmin(request);
+        const isAdmin = auth.valid;
 
         let whereParts = [];
         let params = [];
@@ -349,7 +382,8 @@ export async function onRequest(context) {
 
         if (!result) return safeError("Article not found.", 404);
 
-        const isAdmin = verifyAdmin(request);
+        const auth = await verifyAdmin(request);
+        const isAdmin = auth.valid;
         if (!isAdmin && result.status !== "published") {
           return safeError("Article not available.", 403);
         }
@@ -365,7 +399,8 @@ export async function onRequest(context) {
       }
 
       if (method === "PATCH") {
-        if (!verifyAdmin(request)) {
+        const auth = await verifyAdmin(request);
+        if (!auth.valid) {
           return safeError("Unauthorized. Admin access required.", 401);
         }
 
@@ -417,7 +452,8 @@ export async function onRequest(context) {
       }
 
       if (method === "DELETE") {
-        if (!verifyAdmin(request)) {
+        const auth = await verifyAdmin(request);
+        if (!auth.valid) {
           return safeError("Unauthorized. Admin access required.", 401);
         }
 
@@ -432,6 +468,139 @@ export async function onRequest(context) {
 
         await db.prepare("DELETE FROM articles WHERE id = ?").bind(id).run();
         return json({ success: true });
+      }
+    }
+
+    // ==================== ADMIN ACCOUNT MANAGEMENT ====================
+    if (path === "/api/admins") {
+      const auth = await verifyAdmin(request);
+      if (!requireAdmin(auth)) {
+        return safeError("Unauthorized. Admin access required.", 401);
+      }
+
+      if (method === "GET") {
+        // List all admins (hide password)
+        try {
+          const result = await db.prepare(
+            `SELECT email, role, name, status, created_at, updated_at FROM admins ORDER BY created_at ASC`
+          ).all();
+          return json({ admins: result.results || [] });
+        } catch (e) {
+          console.error("[Admins] List error:", e.message);
+          return safeError("Failed to list accounts.", 500);
+        }
+      }
+
+      if (method === "POST") {
+        const data = await request.json().catch(() => ({}));
+        const newEmail = sanitizeString(
+          (typeof data.email === "string") ? data.email.toLowerCase().trim() : "",
+          MAX_EMAIL_LEN, "email"
+        );
+        const newPassword = typeof data.password === "string" ? data.password : "";
+        const newRole = (data.role === "admin" || data.role === "editor") ? data.role : "editor";
+        const newName = sanitizeString(
+          (typeof data.name === "string") ? data.name : "Editor",
+          100, "name"
+        );
+
+        if (!newEmail || !validateEmail(newEmail) || !newPassword) {
+          return safeError("Valid email and password are required.", 400);
+        }
+        if (newPassword.length < 8) {
+          return safeError("Password must be at least 8 characters.", 400);
+        }
+
+        try {
+          await db.prepare(
+            `INSERT INTO admins (email, password_hash, role, name, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'active', datetime('now'), datetime('now'))`
+          ).bind(newEmail, newPassword, newRole, newName || "Editor").run();
+          return json({ success: true, email: newEmail }, 201);
+        } catch (e) {
+          if (e.message && e.message.includes("UNIQUE")) {
+            return safeError("An account with this email already exists.", 409);
+          }
+          console.error("[Admins] Create error:", e.message);
+          return safeError("Failed to create account.", 500);
+        }
+      }
+    }
+
+    // Admin actions on a specific account (by email)
+    const adminMatch = path.match(/^\/api\/admins\/(.+)$/);
+    if (adminMatch) {
+      const auth = await verifyAdmin(request);
+      if (!requireAdmin(auth)) {
+        return safeError("Unauthorized. Admin access required.", 401);
+      }
+
+      const targetEmail = decodeURIComponent(adminMatch[1]);
+
+      // Prevent self-disable/delete
+      if (targetEmail === auth.email) {
+        return safeError("Cannot modify your own account.", 403);
+      }
+
+      if (method === "PATCH") {
+        const data = await request.json().catch(() => ({}));
+
+        // Allowed fields to update: status, role, name, password
+        const updates = [];
+        const values = [];
+
+        if (data.status && (data.status === "active" || data.status === "disabled")) {
+          updates.push("status = ?");
+          values.push(data.status);
+        }
+        if (data.role && (data.role === "admin" || data.role === "editor")) {
+          updates.push("role = ?");
+          values.push(data.role);
+        }
+        if (typeof data.name === "string" && data.name.trim()) {
+          updates.push("name = ?");
+          values.push(sanitizeString(data.name, 100, "name"));
+        }
+        if (typeof data.password === "string" && data.password.length >= 8) {
+          updates.push("password_hash = ?");
+          values.push(data.password);
+        }
+
+        if (updates.length === 0) {
+          return safeError("No valid fields to update.", 400);
+        }
+
+        updates.push("updated_at = datetime('now')");
+        values.push(targetEmail);
+
+        try {
+          const result = await db.prepare(
+            `UPDATE admins SET ${updates.join(", ")} WHERE email = ?`
+          ).bind(...values).run();
+          if (result.meta?.changes === 0) {
+            return safeError("Account not found.", 404);
+          }
+          return json({ success: true });
+        } catch (e) {
+          console.error("[Admins] Update error:", e.message);
+          return safeError("Failed to update account.", 500);
+        }
+      }
+
+      if (method === "DELETE") {
+        try {
+          const result = await db.prepare(
+            `DELETE FROM admins WHERE email = ?`
+          ).bind(targetEmail).run();
+          if (result.meta?.changes === 0) {
+            return safeError("Account not found.", 404);
+          }
+          // Also remove any active sessions for this account
+          await db.prepare(`DELETE FROM sessions WHERE email = ?`).bind(targetEmail).run();
+          return json({ success: true });
+        } catch (e) {
+          console.error("[Admins] Delete error:", e.message);
+          return safeError("Failed to delete account.", 500);
+        }
       }
     }
 

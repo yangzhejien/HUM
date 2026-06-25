@@ -81,6 +81,21 @@
 .pdf-modal-body iframe, .pdf-modal-body embed { width: 100%; height: 100%; border: none; }
 .pdf-preview-btn { background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; border-radius: 4px; margin-left: 0.5rem; }
 .pdf-preview-btn:hover { background: #2563EB; }
+/* Account Management */
+.accounts-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+.accounts-table th { text-align: left; padding: 0.75rem; border-bottom: 2px solid #E5E5E5; font-size: 0.875rem; color: #6B7280; font-weight: 600; }
+.accounts-table td { padding: 0.75rem; border-bottom: 1px solid #E5E5E5; font-size: 0.9rem; }
+.accounts-table tr:hover td { background: #F9FAFB; }
+.role-badge { display: inline-block; padding: 0.2rem 0.5rem; font-size: 0.75rem; font-weight: 600; }
+.role-admin { background: #0A2342; color: white; }
+.role-editor { background: #DBEAFE; color: #1E40AF; }
+.status-badge { display: inline-block; padding: 0.2rem 0.5rem; font-size: 0.75rem; }
+.status-active { background: #D1FAE5; color: #065F46; }
+.status-disabled { background: #FEE2E2; color: #991B1B; }
+.account-form-row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #E5E5E5; }
+.account-form-row .form-group { margin-bottom: 0; flex: 1; min-width: 150px; }
+.account-form-row .form-label { font-size: 0.8rem; margin-bottom: 0.3rem; }
+.account-form-row .form-input, .account-form-row .form-select { font-size: 0.875rem; padding: 0.5rem 0.75rem; }
 </style>
 </head>
 <body>
@@ -190,6 +205,43 @@
 <div class="empty-state">Loading...</div>
 </div>
 </div>
+</div>
+</div>
+
+<!-- Account Management (Admin only) -->
+<div class="admin-section" id="accountsSection" style="display:none;">
+<h2>账号管理 Account Management</h2>
+<div class="accounts-table-wrapper">
+<table class="accounts-table">
+<thead>
+<tr><th>邮箱 Email</th><th>角色 Role</th><th>姓名 Name</th><th>状态 Status</th><th>操作 Actions</th></tr>
+</thead>
+<tbody id="accountsTableBody">
+<tr><td colspan="5" style="text-align:center;color:#9CA3AF;">Loading...</td></tr>
+</tbody>
+</table>
+</div>
+<div class="account-form-row">
+<div class="form-group">
+<label class="form-label">邮箱 Email *</label>
+<input type="email" id="newAccountEmail" class="form-input" placeholder="editor@hum-journal.org">
+</div>
+<div class="form-group">
+<label class="form-label">密码 Password *</label>
+<input type="password" id="newAccountPassword" class="form-input" placeholder="Min 8 characters" minlength="8">
+</div>
+<div class="form-group">
+<label class="form-label">姓名 Name</label>
+<input type="text" id="newAccountName" class="form-input" placeholder="编辑姓名">
+</div>
+<div class="form-group">
+<label class="form-label">角色 Role</label>
+<select id="newAccountRole" class="form-select">
+<option value="editor">编委 Editor</option>
+<option value="admin">主编 Admin</option>
+</select>
+</div>
+<button class="btn btn-primary btn-sm" onclick="addAccount()" id="addAccountBtn">+ 添加账号 Add</button>
 </div>
 </div>
 
@@ -580,7 +632,7 @@ function showError(msg) {
 }
 
 function logout() {
-  ['adminLoggedIn','adminEmail','adminRole','adminName'].forEach(k => sessionStorage.removeItem(k));
+  ['adminLoggedIn','adminEmail','adminRole','adminName','adminToken'].forEach(k => sessionStorage.removeItem(k));
   window.location.href = 'login.html';
 }
 
@@ -647,11 +699,125 @@ function closePdfModal() {
   document.getElementById('pdfEmbed').src = '';
 }
 
+// ─── Account Management ───
+async function loadAccounts() {
+  if (!isAdmin) return;
+  document.getElementById('accountsSection').style.display = 'block';
+  try {
+    const res = await fetch(`${API_BASE}/admins`, {
+      headers: { 'X-Admin-Token': ADMIN_TOKEN }
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const admins = data.admins || [];
+    const tbody = document.getElementById('accountsTableBody');
+    if (admins.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#9CA3AF;">暂无账号 No accounts</td></tr>';
+      return;
+    }
+    tbody.innerHTML = admins.map(a => {
+      const isSelf = a.email === adminEmail;
+      const roleLabel = a.role === 'admin' ? '主编 Admin' : '编委 Editor';
+      const statusLabel = a.status === 'active' ? '启用 Active' : '已禁用 Disabled';
+      const toggleLabel = a.status === 'active' ? '禁用 Disable' : '启用 Enable';
+      const toggleClass = a.status === 'active' ? 'btn-sm' : 'btn-sm';
+      const toggleStyle = a.status === 'active'
+        ? 'background:#F59E0B;color:white;border:none;cursor:pointer;padding:0.3rem 0.6rem;font-size:0.75rem;'
+        : 'background:#10B981;color:white;border:none;cursor:pointer;padding:0.3rem 0.6rem;font-size:0.75rem;';
+      const actions = isSelf
+        ? '<span style="color:#9CA3AF;font-size:0.75rem;">当前账号 You</span>'
+        : `<button style="${toggleStyle}" onclick="toggleAccount('${escapeHtml(a.email)}', '${a.status === 'active' ? 'disabled' : 'active'}')">${toggleLabel}</button>
+           <button style="background:#DC2626;color:white;border:none;cursor:pointer;padding:0.3rem 0.6rem;font-size:0.75rem;margin-left:0.25rem;" onclick="deleteAccount('${escapeHtml(a.email)}')">删除</button>`;
+      return `<tr>
+        <td>${escapeHtml(a.email)}</td>
+        <td><span class="role-badge role-${a.role}">${roleLabel}</span></td>
+        <td>${escapeHtml(a.name || '')}</td>
+        <td><span class="status-badge status-${a.status}">${statusLabel}</span></td>
+        <td>${actions}</td>
+      </tr>`;
+    }).join('');
+  } catch (e) {
+    console.error('Load accounts error:', e);
+    document.getElementById('accountsTableBody').innerHTML =
+      '<tr><td colspan="5" style="text-align:center;color:#DC2626;">加载失败 Failed to load</td></tr>';
+  }
+}
+
+async function addAccount() {
+  const email = document.getElementById('newAccountEmail').value.trim();
+  const password = document.getElementById('newAccountPassword').value;
+  const name = document.getElementById('newAccountName').value.trim();
+  const role = document.getElementById('newAccountRole').value;
+
+  if (!email || !password) { showError('Please fill email and password'); return; }
+  if (password.length < 8) { showError('Password must be at least 8 characters'); return; }
+
+  const btn = document.getElementById('addAccountBtn');
+  btn.disabled = true; btn.textContent = '添加中...';
+
+  try {
+    const res = await fetch(`${API_BASE}/admins`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+      body: JSON.stringify({ email, password, role, name: name || 'Editor' })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Create failed');
+    showSuccess('账号已创建 Account created: ' + email);
+    document.getElementById('newAccountEmail').value = '';
+    document.getElementById('newAccountPassword').value = '';
+    document.getElementById('newAccountName').value = '';
+    loadAccounts();
+  } catch (e) {
+    showError(e.message);
+  }
+  btn.disabled = false; btn.textContent = '+ 添加账号 Add';
+}
+
+async function toggleAccount(email, newStatus) {
+  const action = newStatus === 'disabled' ? '禁用' : '启用';
+  if (!confirm(`确认${action}账号 ${email}？`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/admins/${encodeURIComponent(email)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+      body: JSON.stringify({ status: newStatus })
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Update failed');
+    }
+    showSuccess(`账号已${action} Account ${newStatus}`);
+    loadAccounts();
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+async function deleteAccount(email) {
+  if (!confirm(`确认删除账号 ${email}？此操作不可撤销。`)) return;
+  try {
+    const res = await fetch(`${API_BASE}/admins/${encodeURIComponent(email)}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Token': ADMIN_TOKEN }
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || 'Delete failed');
+    }
+    showSuccess('账号已删除 Account deleted: ' + email);
+    loadAccounts();
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePdfModal(); });
 document.getElementById('pdfModal').addEventListener('click', e => { if (e.target === document.getElementById('pdfModal')) closePdfModal(); });
 
 // Init
 loadArticles();
+loadAccounts();
 })();
 </script>
 </body>
