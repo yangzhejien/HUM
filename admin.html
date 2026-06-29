@@ -81,6 +81,16 @@
 .pdf-modal-body iframe, .pdf-modal-body embed { width: 100%; height: 100%; border: none; }
 .pdf-preview-btn { background: #3B82F6; color: white; border: none; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; border-radius: 4px; margin-left: 0.5rem; }
 .pdf-preview-btn:hover { background: #2563EB; }
+/* Change password inline form */
+.changepw-row { display: none; background: #F0F9FF; border: 1px solid #BAE6FD; margin-top: 0.25rem; }
+.changepw-row.active { display: table-row; }
+.changepw-row td { padding: 0.75rem 1rem; }
+.changepw-form { display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap; }
+.changepw-form .form-group { margin-bottom: 0; }
+.changepw-form .form-input { padding: 0.4rem 0.6rem; font-size: 0.85rem; width: 160px; }
+.changepw-form .form-hint { font-size: 0.75rem; color: #6B7280; margin-left: 0.25rem; }
+.changepw-btn { padding: 0.3rem 0.6rem; font-size: 0.75rem; border: 1px solid #6366F1; color: #6366F1; background: white; cursor: pointer; border-radius: 4px; white-space: nowrap; }
+.changepw-btn:hover { background: #EEF2FF; }
 /* Account Management */
 .accounts-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
 .accounts-table th { text-align: left; padding: 0.75rem; border-bottom: 2px solid #E5E5E5; font-size: 0.875rem; color: #6B7280; font-weight: 600; }
@@ -720,20 +730,38 @@ async function loadAccounts() {
       const roleLabel = a.role === 'admin' ? '主编 Admin' : '编委 Editor';
       const statusLabel = a.status === 'active' ? '启用 Active' : '已禁用 Disabled';
       const toggleLabel = a.status === 'active' ? '禁用 Disable' : '启用 Enable';
-      const toggleClass = a.status === 'active' ? 'btn-sm' : 'btn-sm';
       const toggleStyle = a.status === 'active'
         ? 'background:#F59E0B;color:white;border:none;cursor:pointer;padding:0.3rem 0.6rem;font-size:0.75rem;'
         : 'background:#10B981;color:white;border:none;cursor:pointer;padding:0.3rem 0.6rem;font-size:0.75rem;';
       const actions = isSelf
         ? '<span style="color:#9CA3AF;font-size:0.75rem;">当前账号 You</span>'
         : `<button style="${toggleStyle}" onclick="toggleAccount('${escapeHtml(a.email)}', '${a.status === 'active' ? 'disabled' : 'active'}')">${toggleLabel}</button>
+           <button class="changepw-btn" onclick="showChangepwForm('${escapeHtml(a.email)}')" title="修改密码 Change Password">改密</button>
            <button style="background:#DC2626;color:white;border:none;cursor:pointer;padding:0.3rem 0.6rem;font-size:0.75rem;margin-left:0.25rem;" onclick="deleteAccount('${escapeHtml(a.email)}')">删除</button>`;
+      const emailSafe = escapeHtml(a.email).replace(/'/g, "\\'");
       return `<tr>
         <td>${escapeHtml(a.email)}</td>
         <td><span class="role-badge role-${a.role}">${roleLabel}</span></td>
         <td>${escapeHtml(a.name || '')}</td>
         <td><span class="status-badge status-${a.status}">${statusLabel}</span></td>
         <td>${actions}</td>
+      </tr>
+      <tr class="changepw-row" id="changepw-${emailSafe}">
+        <td colspan="5">
+          <div class="changepw-form">
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.8rem;">新密码 New Password</label>
+              <input type="password" id="changepw-input-${emailSafe}" class="form-input" placeholder="至少8位 ≥8 chars" minlength="8">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:0.8rem;">确认 Confirm</label>
+              <input type="password" id="changepw-confirm-${emailSafe}" class="form-input" placeholder="再次输入 Repeat">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="changePassword('${escapeHtml(a.email)}')" style="margin-top:0.2rem;">确认修改 Apply</button>
+            <button class="btn btn-secondary btn-sm" onclick="hideChangepwForm('${escapeHtml(a.email)}')" style="margin-top:0.2rem;">取消 Cancel</button>
+            <span class="form-hint">修改后该账号需重新登录</span>
+          </div>
+        </td>
       </tr>`;
     }).join('');
   } catch (e) {
@@ -807,6 +835,52 @@ async function deleteAccount(email) {
     }
     showSuccess('账号已删除 Account deleted: ' + email);
     loadAccounts();
+  } catch (e) {
+    showError(e.message);
+  }
+}
+
+function showChangepwForm(email) {
+  // Hide all other forms first
+  document.querySelectorAll('.changepw-row').forEach(r => r.classList.remove('active'));
+  // Show the target form
+  const row = document.getElementById('changepw-' + CSS.escape(email));
+  if (row) {
+    row.classList.add('active');
+    // Focus the first input
+    const input = row.querySelector('input[type="password"]');
+    if (input) setTimeout(() => input.focus(), 100);
+  }
+}
+
+function hideChangepwForm(email) {
+  const row = document.getElementById('changepw-' + CSS.escape(email));
+  if (row) row.classList.remove('active');
+}
+
+async function changePassword(email) {
+  const safeId = CSS.escape(email);
+  const pw1 = document.getElementById('changepw-input-' + safeId).value;
+  const pw2 = document.getElementById('changepw-confirm-' + safeId).value;
+
+  if (!pw1) { showError('请输入新密码 Please enter new password'); return; }
+  if (pw1.length < 8) { showError('密码至少8位 Password must be ≥ 8 characters'); return; }
+  if (pw1 !== pw2) { showError('两次密码不一致 Passwords do not match'); return; }
+
+  try {
+    const res = await fetch(`${API_BASE}/admins/${encodeURIComponent(email)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': ADMIN_TOKEN },
+      body: JSON.stringify({ password: pw1 })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Update failed');
+
+    showSuccess(`密码已更新 Password updated: ${email}`);
+    hideChangepwForm(email);
+    // Clear inputs
+    document.getElementById('changepw-input-' + safeId).value = '';
+    document.getElementById('changepw-confirm-' + safeId).value = '';
   } catch (e) {
     showError(e.message);
   }

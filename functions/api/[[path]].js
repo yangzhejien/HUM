@@ -33,10 +33,126 @@ export async function onRequest(context) {
   try {
     const db = env.DB;
 
-    // ── Admin auth: check sessions table for valid token, return admin info ──
+    // ═══════════════════════════════════════
+    // PBKDF2 Password Hashing (Web Crypto API)
+    // ═══════════════════════════════════════
+    const PBKDF2_ITERATIONS = 100000;
+    const PBKDF2_KEY_LEN = 256; // bits
+    const PBKDF2_HASH = 'SHA-256';
+
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const keyMaterial = await crypto.subtle.importKey(
+        'raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']
+      );
+      const bits = await crypto.subtle.deriveBits(
+        { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: PBKDF2_HASH },
+        keyMaterial, PBKDF2_KEY_LEN
+      );
+      const saltB64 = btoa(String.fromCharCode(...new Uint8Array(salt)));
+      const hashB64 = btoa(String.fromCharCode(...new Uint8Array(bits)));
+      return `pbkdf2:${saltB64}:${hashB64}`;
+    }
+
+    async function verifyPassword(password, storedHash) {
+      if (!storedHash || !storedHash.startsWith('pbkdf2:')) {
+        // Legacy plaintext fallback — will be auto-upgraded on successful login
+        return password === storedHash;
+      }
+      const parts = storedHash.split(':');
+      if (parts.length !== 3) return false;
+      try {
+        const salt = Uint8Array.from(atob(parts[1]), c => c.charCodeAt(0));
+        const expectedHash = parts[2];
+        const encoder = new TextEncoder();
+        const keyMaterial = await crypto.subtle.importKey(
+          'raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']
+        );
+        const bits = await crypto.subtle.deriveBits(
+          { name: 'PBKDF2', salt, iterations: PBKDF2_ITERATIONS, hash: PBKDF2_HASH },
+          keyMaterial, PBKDF2_KEY_LEN
+        );
+        const actualHash = btoa(String.fromCharCode(...new Uint8Array(bits)));
+        return actualHash === expectedHash;
+      } catch (e) {
+        console.error('[Crypto] Password verify error:', e.message);
+        return false;
+      }
+    }
+
+    // ═══════════════════════════════════════
+    // JWT (HMAC-SHA256, 24h expiry)
+    // ═══════════════════════════════════════
+    function getJwtSecret() {
+      return env.JWT_SECRET || 'hum-journal-default-jwt-secret-2026-change-in-production';
+    }
+
+    async function signJwt(payload) {
+      const encoder = new TextEncoder();
+      const header = { alg: 'HS256', typ: 'JWT' };
+      const now = Math.floor(Date.now() / 1000);
+      const tokenPayload = { ...payload, iat: now, exp: now + 86400 }; // 24h
+      const headerB64 = btoa(JSON.stringify(header)).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+      const payloadB64 = btoa(JSON.stringify(tokenPayload)).replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+      const signingInput = `${headerB64}.${payloadB64}`;
+      const secret = getJwtSecret();
+      const key = await crypto.subtle.importKey(
+        'raw', encoder.encode(secret),
+        { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+      );
+      const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(signingInput));
+      const sigB64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
+        .replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
+      return `${signingInput}.${sigB64}`;
+    }
+
+    async function verifyJwt(token) {
+      if (!token || typeof token !== 'string') return null;
+      try {
+        const parts = token.split('.');
+        if (parts.length !== 3) return null;
+        const [headerB64, payloadB64, sigB64] = parts;
+        // Verify signature
+        const encoder = new TextEncoder();
+        const signingInput = `${headerB64}.${payloadB64}`;
+        const secret = getJwtSecret();
+        const key = await crypto.subtle.importKey(
+          'raw', encoder.encode(secret),
+          { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']
+        );
+        const sigRaw = parts[2].replace(/-/g, '+').replace(/_/g, '/');
+        const sigPadding = sigRaw.length % 4 === 0 ? '' : '='.repeat(4 - sigRaw.length % 4);
+        const signature = Uint8Array.from(atob(sigRaw + sigPadding), c => c.charCodeAt(0));
+        const valid = await crypto.subtle.verify('HMAC', key, signature, encoder.encode(signingInput));
+        if (!valid) return null;
+        // Parse payload
+        const payloadRaw = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payloadPadding = payloadRaw.length % 4 === 0 ? '' : '='.repeat(4 - payloadRaw.length % 4);
+        const payload = JSON.parse(atob(payloadRaw + payloadPadding));
+        // Check expiry
+        if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+          return null; // expired
+        }
+        return payload;
+      } catch (e) {
+        console.error('[JWT] Verify error:', e.message);
+        return null;
+      }
+    }
+
+    // ── Admin auth: validate JWT, fallback to session DB check for legacy tokens ──
     async function verifyAdmin(req) {
       const token = req.headers.get("X-Admin-Token");
       if (!token) return { valid: false };
+
+      // 1) Try JWT verification first (stateless, fast)
+      const jwtPayload = await verifyJwt(token);
+      if (jwtPayload) {
+        return { valid: true, role: jwtPayload.role, email: jwtPayload.email, name: jwtPayload.name };
+      }
+
+      // 2) Fallback: legacy session token (for backward compat during transition)
       try {
         const session = await db.prepare(
           `SELECT email, role, name FROM sessions WHERE token = ?`
@@ -133,6 +249,13 @@ export async function onRequest(context) {
       console.warn('[RateLimit] Could not create table:', e.message);
     }
 
+    // Ensure sessions table has expires_at column (auto-migration)
+    try {
+      await db.prepare(`ALTER TABLE sessions ADD COLUMN expires_at TEXT NOT NULL DEFAULT ''`).run();
+    } catch (e) {
+      // Column already exists — expected
+    }
+
     // Get client IP from Cloudflare headers
     const clientIP = request.headers.get("CF-Connecting-IP") ||
                      request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim() ||
@@ -193,24 +316,43 @@ export async function onRequest(context) {
         return safeError("Account has been disabled. Contact administrator.", 403);
       }
 
-      // Password check (plain text for simplicity, matching current approach)
-      if (password !== account.password_hash && account.password_hash !== "*") {
+      // Password verification via PBKDF2 (with plaintext fallback)
+      const passwordOk = await verifyPassword(password, account.password_hash);
+      if (!passwordOk) {
         return safeError("Invalid credentials.", 401);
       }
 
-      // Generate session token and store in DB
-      const sessionToken = crypto.randomUUID();
+      // Auto-upgrade plaintext passwords to PBKDF2 hash
+      if (!account.password_hash || !account.password_hash.startsWith('pbkdf2:')) {
+        const newHash = await hashPassword(password);
+        try {
+          await db.prepare(`UPDATE admins SET password_hash = ?, updated_at = datetime('now') WHERE email = ?`)
+            .bind(newHash, account.email).run();
+          console.log(`[Security] Upgraded password hash for ${account.email} to PBKDF2`);
+        } catch (e) {
+          console.warn('[Security] Hash upgrade failed (non-critical):', e.message);
+        }
+      }
+
+      // Generate JWT (24h expiry) and store session for audit/revocation
+      const jwtToken = await signJwt({
+        email: account.email,
+        role: account.role,
+        name: account.name,
+        sub: account.email,
+      });
+      // Store session for audit trail and revocation support
       try {
         await db.prepare(
-          `INSERT OR REPLACE INTO sessions (token, email, role, name, created_at) VALUES (?, ?, ?, ?, datetime('now'))`
-        ).bind(sessionToken, account.email, account.role, account.name).run();
+          `INSERT OR REPLACE INTO sessions (token, email, role, name, created_at, expires_at) VALUES (?, ?, ?, ?, datetime('now'), datetime('now', '+24 hours'))`
+        ).bind(jwtToken, account.email, account.role, account.name).run();
       } catch (e) {
         console.error("[Login] Session storage error:", e.message);
       }
 
       return json({
         success: true,
-        token: sessionToken,
+        token: jwtToken,
         role: account.role,
         name: account.name,
         email: account.email,
@@ -511,10 +653,11 @@ export async function onRequest(context) {
           return safeError("Password must be at least 8 characters.", 400);
         }
 
+        const hashedPwd = await hashPassword(newPassword);
         try {
           await db.prepare(
             `INSERT INTO admins (email, password_hash, role, name, status, created_at, updated_at) VALUES (?, ?, ?, ?, 'active', datetime('now'), datetime('now'))`
-          ).bind(newEmail, newPassword, newRole, newName || "Editor").run();
+          ).bind(newEmail, hashedPwd, newRole, newName || "Editor").run();
           return json({ success: true, email: newEmail }, 201);
         } catch (e) {
           if (e.message && e.message.includes("UNIQUE")) {
@@ -561,8 +704,9 @@ export async function onRequest(context) {
           values.push(sanitizeString(data.name, 100, "name"));
         }
         if (typeof data.password === "string" && data.password.length >= 8) {
+          const hashedPwd = await hashPassword(data.password);
           updates.push("password_hash = ?");
-          values.push(data.password);
+          values.push(hashedPwd);
         }
 
         if (updates.length === 0) {
